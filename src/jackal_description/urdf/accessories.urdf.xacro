@@ -51,13 +51,13 @@
     - utm30            :: Hokuyo UTM30
   -->
   <!-- Primary 2D Lidar -->
-  <xacro:if value="$(optenv JACKAL_LASER 0)">
+  <xacro:if value="$(optenv JACKAL_LASER 1)">
     <xacro:property name="mount" value="$(optenv JACKAL_LASER_MOUNT front)" />
     <xacro:property name="topic" value="$(optenv JACKAL_LASER_TOPIC front/scan)" />
     <xacro:property name="tower" value="$(optenv JACKAL_LASER_TOWER 1)" />
     <xacro:property name="prefix" value="$(optenv JACKAL_LASER_PREFIX ${mount})" />
     <xacro:property name="parent" value="$(optenv JACKAL_LASER_PARENT ${mount}_mount)" />
-    <xacro:property name="lidar_model" value="$(optenv JACKAL_LASER_MODEL lms1xx)" />
+    <xacro:property name="lidar_model" value="$(optenv JACKAL_LASER_MODEL tim551)" />
     <xacro:property name="mount_type" value="$(optenv JACKAL_LASER_MOUNT_TYPE upright)" />
     <!-- SICK LMS1xx -->
     <xacro:if value="${lidar_model == 'lms1xx'}">
@@ -413,7 +413,7 @@
 
   <!-- BlackflyS Camera -->
   <xacro:include filename="$(find flir_camera_description)/urdf/flir_blackflys.urdf.xacro"/>
-  <xacro:if value="$(optenv JACKAL_BLACKFLY 0)">
+  <xacro:if value="$(optenv JACKAL_BLACKFLY 1)">
     <xacro:property name="prefix" value="$(optenv JACKAL_BLACKFLY_PREFIX front_camera)"/>
     <xacro:property name="parent" value="$(optenv JACKAL_BLACKFLY_PARENT front_mount)"/>
     <xacro:property name="xyz"    value="$(optenv JACKAL_BLACKFLY_OFFSET 0 0 0)"/>
