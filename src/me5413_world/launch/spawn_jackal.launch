@@ -1,0 +1,31 @@
+<launch>
+  <!-- Configuration of Jackal which you would like to simulate.
+       See jackal_description for details. -->
+  <arg name="config" default="base" />
+
+  <!-- Load Jackal's description, controllers, and teleop nodes. -->
+  <!-- <include file="$(find jackal_description)/launch/description.launch">
+    <arg name="config" value="$(arg config)" />
+  </include> -->
+
+  <!-- fix for oneweek project -->
+  <arg name="env_runner" value="$(eval 'env_run' if not optenv('OS', 'unknown').lower().startswith('windows') else 'env_run.bat')" />
+  <!-- the following seems to work too when in devel space, but not in install_isolated -->
+  <!-- <arg name="env_runner" value="env_run" /> -->
+
+  <param name="robot_description"
+         command="$(find jackal_description)/scripts/$(arg env_runner)
+                    $(find jackal_description)/urdf/configs/$(arg config)
+                    $(find xacro)/xacro $(find jackal_description)/urdf/jackal.urdf.xacro
+                    --inorder" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+  <include file="$(find jackal_control)/launch/control.launch" />
+  <include file="$(find jackal_control)/launch/teleop.launch">
+    <arg name="joystick" value="false" />
+  </include>
+
+  <!-- Spawn Jackal -->
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
+	      args="-urdf -model jackal -param robot_description -x 0 -y 0 -z 1 -R 0 -P 0 -Y 0" />
+</launch>

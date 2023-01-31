@@ -2,7 +2,7 @@
 
     <!-- Load the project world into Gazebo -->
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <arg name="world_name" value="$(find me5413_world)/worlds/me5413_project_world.world" />
+        <arg name="world_name" value="$(find me5413_world)/worlds/me5413_project_world.world"/>
         <arg name="debug" value="false" />
         <arg name="gui" value="true" />
         <arg name="paused" value="false"/>
@@ -11,16 +11,14 @@
     </include>
 
     <!-- Launch Rviz with our settings -->
-    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find me5413_world)/rviz/jackal.rviz" output="log" respawn="true" />
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find me5413_world)/rviz/jackal.rviz" output="log" respawn="true"/>
 
     <!-- Add our jackal robot into the simulation -->
-    <include file="$(find jackal_gazebo)/launch/spawn_jackal.launch" >
-        <arg name="config" value="front_laser" />
-        <!-- <arg name="JACKAL_IMU_MICROSTRAIN" value="0" /> -->
+    <include file="$(find me5413_world)/launch/spawn_jackal.launch" >
+        <!-- <remap from="/twist_marker_server/cmd_vel" to="/joy_teleop/cmd_vel"/> -->
     </include>
     
-    <!-- rosrun teleop_twist_keyboard teleop_twist_keyboard.py -->
-    <remap from="/cmd_vel" to="/joy_teleop/cmd_vel"/>
-    <node name="teleop_twist_keyboard" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" respawn="true" />
+    <!-- Connect the robot to a keyboard teleop controller -->
+    <!-- <node name="teleop_twist_keyboard" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" respawn="true"/> -->
 
 </launch>
