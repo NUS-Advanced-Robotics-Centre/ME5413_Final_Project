@@ -53,10 +53,11 @@
   <depend>rospy</depend>
   <depend>roscpp</depend>
   <depend>std_msgs</depend>
+  <depend>jsk_rviz_plugins</depend>
   <depend>teleop_twist_keyboard</depend>
   <depend>jackal_gazebo</depend>
-  <depend>jsk_rviz_plugins</depend>
-
+  <depend>jackal_navigation</depend>
+  
   <!-- The export tag contains other, unspecified, tags -->
   <export>
     <!-- Other tools can request additional information be placed here -->
