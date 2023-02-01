@@ -275,9 +275,9 @@
   <xacro:include filename="$(find pointgrey_camera_description)/urdf/pointgrey_flea3.urdf.xacro" />
 
   <!-- If enabled, generate the flea3 camera payload with a tilt of 30 degrees. -->
-  <xacro:if value="$(optenv JACKAL_FLEA3 0)">
+  <xacro:if value="$(optenv JACKAL_FLEA3 1)">
     <xacro:property name="name" value="$(optenv JACKAL_FLEA3_NAME front)" />
-    <xacro:property name="tilt" value="$(optenv JACKAL_FLEA3_TILT 0.5236)" />
+    <xacro:property name="tilt" value="$(optenv JACKAL_FLEA3_TILT 0.)" />
     <xacro:property name="tower" value="$(optenv JACKAL_FLEA3_TOWER 1)" />
     <xacro:property name="mount" value="$(optenv JACKAL_FLEA3_MOUNT front)" />
     <xacro:property name="prefix" value="$(optenv JACKAL_FLEA3_PREFIX ${mount})" />
@@ -413,7 +413,7 @@
 
   <!-- BlackflyS Camera -->
   <xacro:include filename="$(find flir_camera_description)/urdf/flir_blackflys.urdf.xacro"/>
-  <xacro:if value="$(optenv JACKAL_BLACKFLY 1)">
+  <xacro:if value="$(optenv JACKAL_BLACKFLY 0)">
     <xacro:property name="prefix" value="$(optenv JACKAL_BLACKFLY_PREFIX front_camera)"/>
     <xacro:property name="parent" value="$(optenv JACKAL_BLACKFLY_PARENT front_mount)"/>
     <xacro:property name="xyz"    value="$(optenv JACKAL_BLACKFLY_OFFSET 0 0 0)"/>
