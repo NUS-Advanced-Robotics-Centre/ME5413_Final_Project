@@ -1,0 +1,8 @@
+<launch>
+
+  <arg name="map_file" default="$(find me5413_world)/map/good_gmapping.yaml"/>
+
+  <!-- Run the map server -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+
+</launch>
