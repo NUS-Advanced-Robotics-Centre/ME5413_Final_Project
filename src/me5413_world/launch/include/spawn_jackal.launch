@@ -28,4 +28,7 @@
   <!-- Spawn Jackal -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
 	      args="-urdf -model jackal -param robot_description -x 0 -y 0 -z 1 -R 0 -P 0 -Y 0" />
+
+  <!-- Add a static world frame -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="world_broadcast" args="0 0 0 0 0 0 1 world odom" />
 </launch>
