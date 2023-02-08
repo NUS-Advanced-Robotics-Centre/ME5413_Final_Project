@@ -15,32 +15,26 @@ NUS ME5413 Autonomous Mobile Robotics Final Project
 * System Requirements:
   * Ubuntu 20.04 (18.04 not yet tested)
   * ROS Noetic (Melodic not yet tested)
-  * C++11 above
-  * CMake: 3.0.2 above
+  * C++11 and above
+  * CMake: 3.0.2 and above
 * This repo is self-contained, only depending on standard ROS pkgs:
-  * `jsk_recognition_msgs`
-  * `visualization_msgs`
-  * `geometry_msgs`
-  * `sensor_msgs`
-  * `nav_msgs`
-  * `std_msgs`
   * `roscpp`
   * `rospy`
+  * `rviz`
+  * `std_msgs`
+  * `nav_msgs`
+  * `geometry_msgs`
+  * `visualization_msgs`
   * `tf2_ros`
-  * `tf2_eigen`
   * `tf2_geometry_msgs`
-  * `tf`
-  * `joy`
-  * `cv_bridge`
-  * `image_transport`
-  * `rosbridge_server`
 
 ## Installation
 
-This repo is a ros workspace, containing two rospkgs:
+This repo is a ros workspace, containing three rospkgs:
 
-* `interactive_tools`
-* `me5413_world`
+* `interactive_tools` are customized tools to interact with gazebo and your robot
+* `jackal_description` contains the modified jackal robot model descriptions
+* `me5413_world` the main pkg containing the gazebo world, and the launch files
 
 **Note:** If you are working on this project, it is encouraged to fork this repository and work on your own fork instead!
 
@@ -61,13 +55,17 @@ source devel/setup.bash
 
 ## Usage
 
-### Basic Usage
+### 0. Basic Usage
+
 ```bash
 # Launch Gazebo World together with our robot
 roslaunch me5413_world world.launch
 ```
 
-### Mapping
+### 1. Mapping
+
+After launching **Step 0**, in the second terminal:
+
 ```bash
 # Launch GMapping
 roslaunch me5413_world mapping.launch
@@ -76,6 +74,11 @@ roslaunch me5413_world mapping.launch
 roscd me5413_world/maps/
 rosrun map_server map_saver -f my_map map:=/map
 ```
+
+### 2. Navigation
+
+Once completed **Step 1** and saved your map:
+Launch **Step 0**, and then in the second terminal:
 
 ```bash
 # Load a map and launch AMCL localizer
