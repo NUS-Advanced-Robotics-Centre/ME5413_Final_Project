@@ -64,11 +64,21 @@ namespace rviz_panel
          *  Here we declare some internal slots.
          */
         private Q_SLOTS:
-
-            void button_one();
-            void button_two();
+            // Helper function to construct pose msgs
             geometry_msgs::PoseStamped getPoseMsgFromConfig(const std::string& name);
+
+            // Assembly Line buttons
             void on_button_1_1_clicked();
+            void on_button_1_2_clicked();
+            // Packaging Area buttons
+            void on_button_2_1_clicked();
+            void on_button_2_2_clicked();
+            void on_button_2_3_clicked();
+            void on_button_2_4_clicked();
+            // Delivery Vehicle buttons
+            void on_button_3_1_clicked();
+            void on_button_3_2_clicked();
+            void on_button_3_3_clicked();
 
         /**
          *  Finally, we close up with protected member variables
@@ -78,11 +88,7 @@ namespace rviz_panel
             std::shared_ptr<Ui::two_button> ui_;
             // ROS declaration
             ros::NodeHandle nh_;
-            ros::Publisher button_1_pub_;
-            ros::Publisher button_2_pub_;
             ros::Publisher pub_goal_;
-
-            std_msgs::Bool msg_;
     };
 } // namespace rviz_panel
 

@@ -13,30 +13,20 @@ namespace rviz_panel
         ui_->setupUi(this);
 
         // Define ROS publisher
-        button_1_pub_ = nh_.advertise<std_msgs::Bool>("button_1_topic", 1);
-        button_2_pub_ = nh_.advertise<std_msgs::Bool>("button_2_topic", 1);
         pub_goal_ = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1);
 
-        // Declare ROS msg_
-        msg_.data = true;
-
-        connect(ui_->pushButton_1, SIGNAL(clicked()), this, SLOT(button_one()));
-        connect(ui_->pushButton_2, SIGNAL(clicked()), this, SLOT(button_two()));
+        // Connect the clicked signals to slots
         connect(ui_->pushButton_1_1, SIGNAL(clicked()), this, SLOT(on_button_1_1_clicked()));
-    }
+        connect(ui_->pushButton_1_2, SIGNAL(clicked()), this, SLOT(on_button_1_2_clicked()));
 
+        connect(ui_->pushButton_2_1, SIGNAL(clicked()), this, SLOT(on_button_2_1_clicked()));
+        connect(ui_->pushButton_2_2, SIGNAL(clicked()), this, SLOT(on_button_2_2_clicked()));
+        connect(ui_->pushButton_2_3, SIGNAL(clicked()), this, SLOT(on_button_2_3_clicked()));
+        connect(ui_->pushButton_2_4, SIGNAL(clicked()), this, SLOT(on_button_2_4_clicked()));
 
-    void simplePanel::button_one()
-    {
-        ROS_INFO_STREAM("Button one pressed.");
-        this->button_1_pub_.publish(this->msg_);
-    }
-
-
-    void simplePanel::button_two()
-    {
-        ROS_INFO_STREAM("Button two pressed.");
-        this->button_2_pub_.publish(this->msg_);
+        connect(ui_->pushButton_3_1, SIGNAL(clicked()), this, SLOT(on_button_3_1_clicked()));
+        connect(ui_->pushButton_3_2, SIGNAL(clicked()), this, SLOT(on_button_3_2_clicked()));
+        connect(ui_->pushButton_3_3, SIGNAL(clicked()), this, SLOT(on_button_3_3_clicked()));
     }
 
     geometry_msgs::PoseStamped simplePanel::getPoseMsgFromConfig(const std::string& name)
@@ -61,13 +51,65 @@ namespace rviz_panel
         return pose_msg;
     }
 
+    // Assembly Line buttons
     void simplePanel::on_button_1_1_clicked()
     {
         ROS_INFO_STREAM("Setting Assembly Line 1 as the GOAL.");
         const auto goal_pose = getPoseMsgFromConfig("/assembly_line_1");
         this->pub_goal_.publish(goal_pose);
     }
+    void simplePanel::on_button_1_2_clicked()
+    {
+        ROS_INFO_STREAM("Setting Assembly Line 2 as the GOAL.");
+        const auto goal_pose = getPoseMsgFromConfig("/assembly_line_2");
+        this->pub_goal_.publish(goal_pose);
+    }
 
+    // Packaging Area buttons
+    void simplePanel::on_button_2_1_clicked()
+    {
+        ROS_INFO_STREAM("Setting Packaging Area 1 as the GOAL.");
+        const auto goal_pose = getPoseMsgFromConfig("/packing_area_1");
+        this->pub_goal_.publish(goal_pose);
+    }
+    void simplePanel::on_button_2_2_clicked()
+    {
+        ROS_INFO_STREAM("Setting Packaging Area 2 as the GOAL.");
+        const auto goal_pose = getPoseMsgFromConfig("/packing_area_2");
+        this->pub_goal_.publish(goal_pose);
+    }
+    void simplePanel::on_button_2_3_clicked()
+    {
+        ROS_INFO_STREAM("Setting Packaging Area 3 as the GOAL.");
+        const auto goal_pose = getPoseMsgFromConfig("/packing_area_3");
+        this->pub_goal_.publish(goal_pose);
+    }
+    void simplePanel::on_button_2_4_clicked()
+    {
+        ROS_INFO_STREAM("Setting Packaging Area 4 as the GOAL.");
+        const auto goal_pose = getPoseMsgFromConfig("/packing_area_4");
+        this->pub_goal_.publish(goal_pose);
+    }
+
+    // Delivery Vehicle buttons
+    void simplePanel::on_button_3_1_clicked()
+    {
+        ROS_INFO_STREAM("Setting Vehicle 1 as the GOAL.");
+        const auto goal_pose = getPoseMsgFromConfig("/vehicle_1");
+        this->pub_goal_.publish(goal_pose);
+    }
+    void simplePanel::on_button_3_2_clicked()
+    {
+        ROS_INFO_STREAM("Setting Vehicle 2 as the GOAL.");
+        const auto goal_pose = getPoseMsgFromConfig("/vehicle_2");
+        this->pub_goal_.publish(goal_pose);
+    }
+    void simplePanel::on_button_3_3_clicked()
+    {
+        ROS_INFO_STREAM("Setting Vehicle 3 as the GOAL.");
+        const auto goal_pose = getPoseMsgFromConfig("/vehicle_3");
+        this->pub_goal_.publish(goal_pose);
+    }
 
     /**
      *  Save all configuration data from this panel to the given
