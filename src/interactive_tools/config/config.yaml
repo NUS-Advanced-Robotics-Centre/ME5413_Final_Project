@@ -1,0 +1,51 @@
+me5413_project:
+  # the frame of all the poses below
+  frame_id: 'map'
+
+  # robot starting point
+  start:
+    x: 0.0
+    y: 0.0
+    yaw: 0.0
+
+  # assembly line poses
+  assembly_line_1:
+    x: 4.2
+    y: -1.8
+    yaw: -1.57
+  assembly_line_2:
+    x: 4.2
+    y: -4.6
+    yaw: -1.57
+
+  # packing area poses
+  packing_area_1:
+    x: 12.5
+    y: -0.6
+    yaw: -1.57
+  packing_area_2:
+    x: 10.5
+    y: -0.6
+    yaw: -1.57
+  packing_area_3:
+    x: 10.5
+    y: -3.5
+    yaw: -1.57
+  packing_area_4:
+    x: 12.5
+    y: -3.5
+    yaw: -1.57
+
+  # delivery vehicle poses
+  vehicle_1:
+    x: 15.9
+    y: -9.6
+    yaw: -1.57
+  vehicle_2:
+    x: 3.4
+    y: -12.3
+    yaw: 0.0
+  vehicle_3:
+    x: 3.4
+    y: -15.3
+    yaw: 0.0

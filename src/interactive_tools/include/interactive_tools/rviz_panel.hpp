@@ -13,7 +13,9 @@
 
 // Other ROS dependencies
 #include <std_msgs/Bool.h>
-
+#include <geometry_msgs/PoseStamped.h>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 namespace rviz_panel
 {
@@ -65,6 +67,8 @@ namespace rviz_panel
 
             void button_one();
             void button_two();
+            geometry_msgs::PoseStamped getPoseMsgFromConfig(const std::string& name);
+            void on_button_1_1_clicked();
 
         /**
          *  Finally, we close up with protected member variables
@@ -76,6 +80,8 @@ namespace rviz_panel
             ros::NodeHandle nh_;
             ros::Publisher button_1_pub_;
             ros::Publisher button_2_pub_;
+            ros::Publisher pub_goal_;
+
             std_msgs::Bool msg_;
     };
 } // namespace rviz_panel
