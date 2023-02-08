@@ -61,8 +61,25 @@ source devel/setup.bash
 
 ## Usage
 
+### Basic Usage
 ```bash
-roslaunch 
+# Launch Gazebo World together with our robot
+roslaunch me5413_world world.launch
+```
+
+### Mapping
+```bash
+# Launch GMapping
+roslaunch me5413_world mapping.launch
+
+# After finishing mapping, run the following command to save the map
+roscd me5413_world/maps/
+rosrun map_server map_saver -f my_map map:=/map
+```
+
+```bash
+# Load a map and launch AMCL localizer
+roslaunch me5413_world navigation.launch
 ```
 
 ## Contribution
