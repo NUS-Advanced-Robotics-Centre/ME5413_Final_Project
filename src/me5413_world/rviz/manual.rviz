@@ -6,8 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /Sensing1
-        - /Localization1
+        - /Pose1
       Splitter Ratio: 0.5117647051811218
     Tree Height: 420
   - Class: rviz/Selection
@@ -28,6 +27,8 @@ Panels:
     Name: Time
     SyncMode: 0
     SyncSource: PointCloud2
+  - Class: rviz_panel::simplePanel
+    Name: simplePanel
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -52,6 +53,123 @@ Visualization Manager:
       Plane: XY
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
+      Value: true
+    - Class: rviz/TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: true
+        base_link:
+          Value: true
+        chassis_link:
+          Value: true
+        front_camera:
+          Value: true
+        front_camera_beam:
+          Value: true
+        front_camera_mount:
+          Value: true
+        front_camera_optical:
+          Value: true
+        front_fender_link:
+          Value: true
+        front_left_wheel_link:
+          Value: true
+        front_mount:
+          Value: true
+        front_right_wheel_link:
+          Value: true
+        imu_link:
+          Value: true
+        mid_mount:
+          Value: true
+        mid_vlp16_leg1:
+          Value: true
+        mid_vlp16_leg2:
+          Value: true
+        mid_vlp16_leg3:
+          Value: true
+        mid_vlp16_leg4:
+          Value: true
+        mid_vlp16_mount:
+          Value: true
+        mid_vlp16_plate:
+          Value: true
+        navsat_link:
+          Value: true
+        odom:
+          Value: true
+        rear_fender_link:
+          Value: true
+        rear_left_wheel_link:
+          Value: true
+        rear_mount:
+          Value: true
+        rear_right_wheel_link:
+          Value: true
+        tim551:
+          Value: true
+        tim551_mount_link:
+          Value: true
+        velodyne:
+          Value: true
+        velodyne_base_link:
+          Value: true
+        world:
+          Value: true
+      Marker Alpha: 1
+      Marker Scale: 1
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        world:
+          odom:
+            base_link:
+              chassis_link:
+                front_fender_link:
+                  {}
+                front_left_wheel_link:
+                  {}
+                front_right_wheel_link:
+                  {}
+                imu_link:
+                  {}
+                mid_mount:
+                  front_mount:
+                    front_camera_mount:
+                      front_camera_beam:
+                        front_camera:
+                          front_camera_optical:
+                            {}
+                    tim551_mount_link:
+                      tim551:
+                        {}
+                  mid_vlp16_mount:
+                    mid_vlp16_leg1:
+                      {}
+                    mid_vlp16_leg2:
+                      {}
+                    mid_vlp16_leg3:
+                      {}
+                    mid_vlp16_leg4:
+                      {}
+                    mid_vlp16_plate:
+                      velodyne_base_link:
+                        velodyne:
+                          {}
+                  rear_mount:
+                    {}
+                navsat_link:
+                  {}
+                rear_fender_link:
+                  {}
+                rear_left_wheel_link:
+                  {}
+                rear_right_wheel_link:
+                  {}
+      Update Interval: 0
       Value: true
     - Alpha: 1
       Class: rviz/RobotModel
@@ -246,8 +364,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 9.14406681060791
-            Min Value: -0.8228924870491028
+            Max Value: 5.833734512329102
+            Min Value: -1.2042242288589478
             Value: true
           Axis: X
           Channel Name: intensity
@@ -274,8 +392,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 4.77785587310791
-            Min Value: -0.07101771235466003
+            Max Value: 2.437054395675659
+            Min Value: -0.06977209448814392
             Value: true
           Axis: Z
           Channel Name: intensity
@@ -332,11 +450,27 @@ Visualization Manager:
           Value: true
       Enabled: true
       Name: Localization
+    - Alpha: 1
+      Axes Length: 1
+      Axes Radius: 0.10000000149011612
+      Class: rviz/Pose
+      Color: 255; 25; 0
+      Enabled: true
+      Head Length: 0.30000001192092896
+      Head Radius: 0.10000000149011612
+      Name: Pose
+      Queue Size: 10
+      Shaft Length: 1
+      Shaft Radius: 0.05000000074505806
+      Shape: Arrow
+      Topic: /move_base_simple/goal
+      Unreliable: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: base_link
+    Fixed Frame: world
     Frame Rate: 30
   Name: root
   Tools:
@@ -359,26 +493,20 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Class: rviz/ThirdPersonFollower
-      Distance: 4
+      Angle: 0
+      Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
-      Field of View: 0.8999999761581421
-      Focal Point:
-        X: 0
-        Y: 0
-        Z: 0
-      Focal Shape Fixed Size: true
-      Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6000000238418579
-      Target Frame: base_link
-      Yaw: 3.1500000953674316
+      Scale: 103.15828704833984
+      Target Frame: <Fixed Frame>
+      X: 0
+      Y: 0
     Saved:
       - Class: rviz/ThirdPersonFollower
         Distance: 4
@@ -422,7 +550,7 @@ Window Geometry:
   Hide Right Dock: false
   Image:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000001560000035ffc0200000009fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d0000022f000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d00610067006501000002720000012a0000001600ffffff00000001000001990000035ffc0200000004fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000003d0000035f000000a400fffffffb0000000c00540065006c0065006f00700000000287000001150000000000000000fb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000073800000039fc0100000002fb0000000800540069006d0065010000000000000738000003bc00fffffffb0000000800540069006d006501000000000000045000000000000000000000043d0000035f00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000001560000035ffc0200000009fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d0000022f000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d00610067006501000002720000012a0000001600ffffff00000001000001990000035ffc0200000005fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000003d0000022d000000a400fffffffb0000001600730069006d0070006c006500500061006e0065006c01000002700000012c0000001600fffffffb0000000c00540065006c0065006f00700000000287000001150000000000000000fb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000073800000039fc0100000002fb0000000800540069006d0065010000000000000738000003bc00fffffffb0000000800540069006d006501000000000000045000000000000000000000043d0000035f00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -434,3 +562,5 @@ Window Geometry:
   Width: 1848
   X: 72
   Y: 27
+  simplePanel:
+    collapsed: false
