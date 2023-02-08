@@ -1,0 +1,6 @@
+<launch>
+
+  <!-- Launch GMapping -->
+  <include file="$(find jackal_navigation)/launch/include/gmapping.launch" />
+
+</launch>

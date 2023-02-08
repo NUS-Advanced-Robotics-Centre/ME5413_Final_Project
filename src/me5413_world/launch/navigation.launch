@@ -1,8 +1,10 @@
 <launch>
 
-  <arg name="map_file" default="$(find me5413_world)/map/good_gmapping.yaml"/>
-
   <!-- Run the map server -->
+  <arg name="map_file" default="$(find me5413_world)/maps/good_gmapping.yaml"/>
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+  
+  <!-- Launch the AMCL Localizer -->
+  <include file="$(find jackal_navigation)/launch/include/amcl.launch" />
 
 </launch>
