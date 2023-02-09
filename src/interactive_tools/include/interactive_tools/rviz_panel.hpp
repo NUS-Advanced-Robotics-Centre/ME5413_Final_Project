@@ -12,10 +12,7 @@
 #include <ui_simple_panel.h>
 
 // Other ROS dependencies
-#include <std_msgs/Bool.h>
-#include <geometry_msgs/PoseStamped.h>
-#include <tf2/LinearMath/Quaternion.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <std_msgs/String.h>
 
 namespace rviz_panel
 {
@@ -64,9 +61,6 @@ namespace rviz_panel
          *  Here we declare some internal slots.
          */
         private Q_SLOTS:
-            // Helper function to construct pose msgs
-            geometry_msgs::PoseStamped getPoseMsgFromConfig(const std::string& name);
-
             // Assembly Line buttons
             void on_button_1_1_clicked();
             void on_button_1_2_clicked();
@@ -89,6 +83,8 @@ namespace rviz_panel
             // ROS declaration
             ros::NodeHandle nh_;
             ros::Publisher pub_goal_;
+            std_msgs::String goal_name_msg_;
+
     };
 } // namespace rviz_panel
 
