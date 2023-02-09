@@ -15,6 +15,12 @@ find_package(catkin REQUIRED COMPONENTS
   rviz
   pluginlib
   std_msgs
+  nav_msgs
+  geometry_msgs
+  tf2
+  tf2_ros
+  tf2_eigen
+  tf2_geometry_msgs
 )
 
 catkin_package(
@@ -88,3 +94,8 @@ target_link_libraries(simple_panel
   ${catkin_LIBRARIES}
   ${QT_LIBRARIES}
 )
+
+# Add Nodes
+add_executable(goal_publisher_node src/goal_publisher_node.cpp)
+target_link_libraries(goal_publisher_node ${catkin_LIBRARIES})
+add_dependencies(goal_publisher_node ${catkin_EXPORTED_TARGETS} ${${PROJECT_NAME}_EXPORTED_TARGETS})
