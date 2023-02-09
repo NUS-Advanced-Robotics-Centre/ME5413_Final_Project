@@ -13,7 +13,7 @@ namespace rviz_panel
         ui_->setupUi(this);
 
         // Define ROS publisher
-        pub_goal_ = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1);
+        pub_goal_ = nh_.advertise<std_msgs::String>("/goal_name", 1);
 
         // Connect the clicked signals to slots
         connect(ui_->pushButton_1_1, SIGNAL(clicked()), this, SLOT(on_button_1_1_clicked()));
@@ -27,88 +27,78 @@ namespace rviz_panel
         connect(ui_->pushButton_3_1, SIGNAL(clicked()), this, SLOT(on_button_3_1_clicked()));
         connect(ui_->pushButton_3_2, SIGNAL(clicked()), this, SLOT(on_button_3_2_clicked()));
         connect(ui_->pushButton_3_3, SIGNAL(clicked()), this, SLOT(on_button_3_3_clicked()));
-    }
 
-    geometry_msgs::PoseStamped simplePanel::getPoseMsgFromConfig(const std::string& name)
-    {
-        double x, y, yaw;
-        std::string frame_id;
-        nh_.getParam("/me5413_project" + name + "/x", x);
-        nh_.getParam("/me5413_project" + name + "/y", y);
-        nh_.getParam("/me5413_project" + name + "/yaw", yaw);
-        nh_.getParam("/me5413_project/frame_id", frame_id);
-
-        tf2::Quaternion q;
-        q.setRPY(0, 0, yaw);
-        q.normalize();
-
-        geometry_msgs::PoseStamped pose_msg;
-        pose_msg.header.frame_id = frame_id;
-        pose_msg.pose.position.x = x;
-        pose_msg.pose.position.y = y;
-        pose_msg.pose.orientation = tf2::toMsg(q);
-
-        return pose_msg;
+        // Initialization
+        goal_name_msg_.data = "";
     }
 
     // Assembly Line buttons
     void simplePanel::on_button_1_1_clicked()
     {
         ROS_INFO_STREAM("Setting Assembly Line 1 as the GOAL.");
-        const auto goal_pose = getPoseMsgFromConfig("/assembly_line_1");
-        this->pub_goal_.publish(goal_pose);
+        // const auto goal_pose = getPoseMsgFromConfig("/assembly_line_1");
+        this->goal_name_msg_.data = "/assembly_line_1";
+        this->pub_goal_.publish(goal_name_msg_);
     }
     void simplePanel::on_button_1_2_clicked()
     {
         ROS_INFO_STREAM("Setting Assembly Line 2 as the GOAL.");
-        const auto goal_pose = getPoseMsgFromConfig("/assembly_line_2");
-        this->pub_goal_.publish(goal_pose);
+        // const auto goal_pose = getPoseMsgFromConfig("/assembly_line_2");
+        this->goal_name_msg_.data = "/assembly_line_2";
+        this->pub_goal_.publish(goal_name_msg_);
     }
 
     // Packaging Area buttons
     void simplePanel::on_button_2_1_clicked()
     {
         ROS_INFO_STREAM("Setting Packaging Area 1 as the GOAL.");
-        const auto goal_pose = getPoseMsgFromConfig("/packing_area_1");
-        this->pub_goal_.publish(goal_pose);
+        // const auto goal_pose = getPoseMsgFromConfig("/packing_area_1");
+        this->goal_name_msg_.data = "/packing_area_1";
+        this->pub_goal_.publish(goal_name_msg_);
     }
     void simplePanel::on_button_2_2_clicked()
     {
         ROS_INFO_STREAM("Setting Packaging Area 2 as the GOAL.");
-        const auto goal_pose = getPoseMsgFromConfig("/packing_area_2");
-        this->pub_goal_.publish(goal_pose);
+        // const auto goal_pose = getPoseMsgFromConfig("/packing_area_2");
+        this->goal_name_msg_.data = "/packing_area_2";
+        this->pub_goal_.publish(goal_name_msg_);
     }
     void simplePanel::on_button_2_3_clicked()
     {
         ROS_INFO_STREAM("Setting Packaging Area 3 as the GOAL.");
-        const auto goal_pose = getPoseMsgFromConfig("/packing_area_3");
-        this->pub_goal_.publish(goal_pose);
+        // const auto goal_pose = getPoseMsgFromConfig("/packing_area_3");
+        this->goal_name_msg_.data = "/packing_area_3";
+        this->pub_goal_.publish(goal_name_msg_);
     }
     void simplePanel::on_button_2_4_clicked()
     {
         ROS_INFO_STREAM("Setting Packaging Area 4 as the GOAL.");
-        const auto goal_pose = getPoseMsgFromConfig("/packing_area_4");
-        this->pub_goal_.publish(goal_pose);
+        // const auto goal_pose = getPoseMsgFromConfig("/packing_area_4");
+        this->goal_name_msg_.data = "/packing_area_4";
+        this->pub_goal_.publish(goal_name_msg_);
     }
 
     // Delivery Vehicle buttons
     void simplePanel::on_button_3_1_clicked()
     {
         ROS_INFO_STREAM("Setting Vehicle 1 as the GOAL.");
-        const auto goal_pose = getPoseMsgFromConfig("/vehicle_1");
-        this->pub_goal_.publish(goal_pose);
+        // const auto goal_pose = getPoseMsgFromConfig("/vehicle_1");
+        this->goal_name_msg_.data = "/vehicle_1";
+        this->pub_goal_.publish(goal_name_msg_);
     }
     void simplePanel::on_button_3_2_clicked()
     {
         ROS_INFO_STREAM("Setting Vehicle 2 as the GOAL.");
-        const auto goal_pose = getPoseMsgFromConfig("/vehicle_2");
-        this->pub_goal_.publish(goal_pose);
+        // const auto goal_pose = getPoseMsgFromConfig("/vehicle_2");
+        this->goal_name_msg_.data = "/vehicle_2";
+        this->pub_goal_.publish(goal_name_msg_);
     }
     void simplePanel::on_button_3_3_clicked()
     {
         ROS_INFO_STREAM("Setting Vehicle 3 as the GOAL.");
-        const auto goal_pose = getPoseMsgFromConfig("/vehicle_3");
-        this->pub_goal_.publish(goal_pose);
+        // const auto goal_pose = getPoseMsgFromConfig("/vehicle_3");
+        this->goal_name_msg_.data = "/vehicle_3";
+        this->pub_goal_.publish(goal_name_msg_);
     }
 
     /**

@@ -1,6 +1,6 @@
 me5413_project:
   # the frame of all the poses below
-  frame_id: 'map'
+  frame_id: 'world'
 
   # robot starting point
   start:
