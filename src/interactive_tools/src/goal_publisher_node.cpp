@@ -124,59 +124,37 @@ geometry_msgs::PoseStamped GoalPublisherNode::getPoseMsgFromConfig(const std::st
   nh_.getParam("/me5413_project" + name + "/yaw", yaw);
   nh_.getParam("/me5413_project/frame_id", this->world_frame_);
 
-  tf2::Transform T_world_goal;
-  T_world_goal.setOrigin(tf2::Vector3(x, y, 0));
-  tf2::Quaternion q_world_goal;
-  q_world_goal.setRPY(0, 0, yaw);
-  T_world_goal.setRotation(q_world_goal);
+  tf2::Quaternion q;
+  q.setRPY(0, 0, yaw);
+  q.normalize();
+
+  geometry_msgs::PoseStamped P_world_goal;
+  P_world_goal.pose.position.x = x;
+  P_world_goal.pose.position.y = y;
+  P_world_goal.pose.orientation = tf2::toMsg(q);
 
   /** 
-   * Get the Transform from robot to world from the topic
+   * Get the Transform from world to map from the tf_listener
    */
-
-  tf2::Transform T_world_robot;
-  T_world_robot.setOrigin(tf2::Vector3(this->robot_pose_.position.x, this->robot_pose_.position.y, 0));
-  tf2::Quaternion q_world_robot;
-  q_world_robot.setValue(this->robot_pose_.orientation.x, this->robot_pose_.orientation.y, this->robot_pose_.orientation.z, this->robot_pose_.orientation.w);
-  T_world_robot.setRotation(q_world_robot);
-
-  /** 
-   * Get the Transform from robot to map from the tf_listener
-   */
-
-  geometry_msgs::TransformStamped transform_map_robot;
+  geometry_msgs::TransformStamped transform_map_world;
   try
   {
-      transform_map_robot = tf2_buffer_.lookupTransform(this->map_frame_, this->robot_frame_, ros::Time(0));
+      transform_map_world = tf2_buffer_.lookupTransform(this->map_frame_, this->world_frame_, ros::Time(0));
   }
   catch (tf2::TransformException& ex)
   {
       ROS_WARN("%s", ex.what());
       return geometry_msgs::PoseStamped();
   }
-  tf2::Transform T_map_robot;
-  T_map_robot.setOrigin(tf2::Vector3(transform_map_robot.transform.translation.x, transform_map_robot.transform.translation.y, 0));
-  tf2::Quaternion q_map_robot;
-  q_map_robot.setValue(transform_map_robot.transform.rotation.x, transform_map_robot.transform.rotation.y, transform_map_robot.transform.rotation.z, transform_map_robot.transform.rotation.w);
-  T_map_robot.setRotation(q_map_robot);
 
   /** 
-   * Calculate Transform from goal to map
-   * T_map_goal = T_world_goal * T_world_robot^(-1) * T_map_robot
+   * Transform pose msg to map frame
    */
+  geometry_msgs::PoseStamped P_map_goal;
+  tf2::doTransform(P_world_goal, P_map_goal, transform_map_world);
+  P_map_goal.header.frame_id = map_frame_;
 
-  const tf2::Transform T_map_goal = T_world_goal * T_world_robot.inverse() * T_map_robot;
-
-  geometry_msgs::PoseStamped pose_msg;
-  pose_msg.header.frame_id = map_frame_;
-  pose_msg.pose.position.x = T_map_goal.getOrigin().getX();
-  pose_msg.pose.position.y = T_map_goal.getOrigin().getY();
-  pose_msg.pose.orientation.x = T_map_goal.getRotation().getX();
-  pose_msg.pose.orientation.y = T_map_goal.getRotation().getY();
-  pose_msg.pose.orientation.z = T_map_goal.getRotation().getZ();
-  pose_msg.pose.orientation.w = T_map_goal.getRotation().getW();
-
-  return pose_msg;
+  return P_map_goal;
 };
 
 } // namespace lgsvl_utils
