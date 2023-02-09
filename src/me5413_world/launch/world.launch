@@ -12,13 +12,7 @@
         <arg name="headless" value="false"/>
     </include>
 
-    <!-- Launch Rviz with our settings -->
-    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find me5413_world)/rviz/manual.rviz" output="log" respawn="true"/>
-
     <!-- Add our jackal robot into the simulation -->
     <include file="$(find me5413_world)/launch/include/spawn_jackal.launch"/>
     
-    <!-- Connect the robot to a keyboard teleop controller -->
-    <node name="teleop_twist_keyboard" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" respawn="true"/>
-
 </launch>
