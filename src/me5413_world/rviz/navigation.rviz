@@ -248,8 +248,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 8.86418628692627
-            Min Value: -0.7640241980552673
+            Max Value: 8.291036605834961
+            Min Value: 2.0766117572784424
             Value: true
           Axis: X
           Channel Name: intensity
@@ -276,8 +276,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 4.787643909454346
-            Min Value: -0.07072088122367859
+            Max Value: 4.967062473297119
+            Min Value: -0.07132849097251892
             Value: true
           Axis: Z
           Channel Name: intensity
@@ -334,11 +334,27 @@ Visualization Manager:
           Value: true
       Enabled: true
       Name: Localization
+    - Alpha: 1
+      Axes Length: 1
+      Axes Radius: 0.10000000149011612
+      Class: rviz/Pose
+      Color: 255; 25; 0
+      Enabled: true
+      Head Length: 0.30000001192092896
+      Head Radius: 0.10000000149011612
+      Name: Goal Pose
+      Queue Size: 10
+      Shaft Length: 1
+      Shaft Radius: 0.05000000074505806
+      Shape: Arrow
+      Topic: /move_base_simple/goal
+      Unreliable: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: base_link
+    Fixed Frame: map
     Frame Rate: 30
   Name: root
   Tools:
