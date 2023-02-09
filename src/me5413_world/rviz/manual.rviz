@@ -6,7 +6,6 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /Pose1
       Splitter Ratio: 0.5117647051811218
     Tree Height: 420
   - Class: rviz/Selection
@@ -55,68 +54,10 @@ Visualization Manager:
       Reference Frame: <Fixed Frame>
       Value: true
     - Class: rviz/TF
-      Enabled: true
+      Enabled: false
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        base_link:
-          Value: true
-        chassis_link:
-          Value: true
-        front_camera:
-          Value: true
-        front_camera_beam:
-          Value: true
-        front_camera_mount:
-          Value: true
-        front_camera_optical:
-          Value: true
-        front_fender_link:
-          Value: true
-        front_left_wheel_link:
-          Value: true
-        front_mount:
-          Value: true
-        front_right_wheel_link:
-          Value: true
-        imu_link:
-          Value: true
-        mid_mount:
-          Value: true
-        mid_vlp16_leg1:
-          Value: true
-        mid_vlp16_leg2:
-          Value: true
-        mid_vlp16_leg3:
-          Value: true
-        mid_vlp16_leg4:
-          Value: true
-        mid_vlp16_mount:
-          Value: true
-        mid_vlp16_plate:
-          Value: true
-        navsat_link:
-          Value: true
-        odom:
-          Value: true
-        rear_fender_link:
-          Value: true
-        rear_left_wheel_link:
-          Value: true
-        rear_mount:
-          Value: true
-        rear_right_wheel_link:
-          Value: true
-        tim551:
-          Value: true
-        tim551_mount_link:
-          Value: true
-        velodyne:
-          Value: true
-        velodyne_base_link:
-          Value: true
-        world:
-          Value: true
       Marker Alpha: 1
       Marker Scale: 1
       Name: TF
@@ -124,53 +65,9 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        world:
-          odom:
-            base_link:
-              chassis_link:
-                front_fender_link:
-                  {}
-                front_left_wheel_link:
-                  {}
-                front_right_wheel_link:
-                  {}
-                imu_link:
-                  {}
-                mid_mount:
-                  front_mount:
-                    front_camera_mount:
-                      front_camera_beam:
-                        front_camera:
-                          front_camera_optical:
-                            {}
-                    tim551_mount_link:
-                      tim551:
-                        {}
-                  mid_vlp16_mount:
-                    mid_vlp16_leg1:
-                      {}
-                    mid_vlp16_leg2:
-                      {}
-                    mid_vlp16_leg3:
-                      {}
-                    mid_vlp16_leg4:
-                      {}
-                    mid_vlp16_plate:
-                      velodyne_base_link:
-                        velodyne:
-                          {}
-                  rear_mount:
-                    {}
-                navsat_link:
-                  {}
-                rear_fender_link:
-                  {}
-                rear_left_wheel_link:
-                  {}
-                rear_right_wheel_link:
-                  {}
+        {}
       Update Interval: 0
-      Value: true
+      Value: false
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
@@ -364,8 +261,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 5.833734512329102
-            Min Value: -1.2042242288589478
+            Max Value: 5.507052421569824
+            Min Value: -0.6496275663375854
             Value: true
           Axis: X
           Channel Name: intensity
@@ -392,8 +289,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 2.437054395675659
-            Min Value: -0.06977209448814392
+            Max Value: 2.3648552894592285
+            Min Value: -0.07041627168655396
             Value: true
           Axis: Z
           Channel Name: intensity
@@ -470,7 +367,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: world
+    Fixed Frame: base_link
     Frame Rate: 30
   Name: root
   Tools:
@@ -493,20 +390,26 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: 0
-      Class: rviz/TopDownOrtho
+      Class: rviz/ThirdPersonFollower
+      Distance: 4
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
+      Field of View: 0.8999999761581421
+      Focal Point:
+        X: 0
+        Y: 0
+        Z: 0
+      Focal Shape Fixed Size: true
+      Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Scale: 103.15828704833984
-      Target Frame: <Fixed Frame>
-      X: 0
-      Y: 0
+      Pitch: 0.6000000238418579
+      Target Frame: base_link
+      Yaw: 3.1500000953674316
     Saved:
       - Class: rviz/ThirdPersonFollower
         Distance: 4
