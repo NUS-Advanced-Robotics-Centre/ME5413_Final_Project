@@ -38,6 +38,7 @@ class GoalPublisherNode
   // Helper function to construct pose msgs
   void robotOdomCallback(const nav_msgs::Odometry::ConstPtr& odom);
   void goalPoseCallback(const std_msgs::String& name);
+  tf2::Transform convertPoseToTransform(const geometry_msgs::Pose& pose);
   geometry_msgs::PoseStamped getPoseMsgFromConfig(const std::string& name);
 
   // ROS declaration
@@ -47,6 +48,7 @@ class GoalPublisherNode
   ros::Subscriber sub_goal_name_;
   tf2_ros::Buffer tf2_buffer_;
   tf2_ros::TransformListener tf2_listener_;
+  tf2_ros::TransformBroadcaster tf2_bcaster_;
   // Robot pose
   std::string world_frame_;
   std::string map_frame_;
@@ -68,11 +70,27 @@ GoalPublisherNode::GoalPublisherNode() : tf2_listener_(tf2_buffer_)
 
 void GoalPublisherNode::robotOdomCallback(const nav_msgs::Odometry::ConstPtr& odom)
 {
-  // world_frame_ = odom->header.frame_id;
-  // robot_frame_ = odom->child_frame_id;
+  this->world_frame_ = odom->header.frame_id;
+  this->robot_frame_ = odom->child_frame_id;
   this->robot_pose_ = odom->pose.pose;
 
+  const tf2::Transform T_world_robot = convertPoseToTransform(this->robot_pose_);
+  const tf2::Transform T_robot_world = T_world_robot.inverse();
+
+  geometry_msgs::TransformStamped transformStamped;
   
+  transformStamped.header.stamp = ros::Time::now();
+  transformStamped.header.frame_id = this->robot_frame_;
+  transformStamped.child_frame_id = this->world_frame_;
+  transformStamped.transform.translation.x = T_robot_world.getOrigin().getX();
+  transformStamped.transform.translation.y = T_robot_world.getOrigin().getY();
+  transformStamped.transform.translation.z = 0.0;
+  transformStamped.transform.rotation.x = T_robot_world.getRotation().getX();
+  transformStamped.transform.rotation.y = T_robot_world.getRotation().getY();
+  transformStamped.transform.rotation.z = T_robot_world.getRotation().getZ();
+  transformStamped.transform.rotation.w = T_robot_world.getRotation().getW();
+  
+  tf2_bcaster_.sendTransform(transformStamped);
   return;
 };
 
@@ -83,25 +101,28 @@ void GoalPublisherNode::goalPoseCallback(const std_msgs::String& name)
   return;
 };
 
+tf2::Transform GoalPublisherNode::convertPoseToTransform(const geometry_msgs::Pose& pose)
+{
+  tf2::Transform T;
+  T.setOrigin(tf2::Vector3(pose.position.x, pose.position.y, 0));
+  tf2::Quaternion q;
+  q.setValue(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w);
+  T.setRotation(q);
+
+  return T;
+};
+
 geometry_msgs::PoseStamped GoalPublisherNode::getPoseMsgFromConfig(const std::string& name)
 {
   /** 
    * Get the Transform from goal to world from the file
    */
+
   double x, y, yaw;
   nh_.getParam("/me5413_project" + name + "/x", x);
   nh_.getParam("/me5413_project" + name + "/y", y);
   nh_.getParam("/me5413_project" + name + "/yaw", yaw);
   nh_.getParam("/me5413_project/frame_id", this->world_frame_);
-
-  // tf2::Quaternion q;
-  // q.setRPY(0, 0, yaw);
-  // q.normalize();
-
-  // geometry_msgs::Pose P_world_goal;
-  // P_world_goal.position.x = x;
-  // P_world_goal.position.y = y;
-  // P_world_goal.orientation = tf2::toMsg(q);
 
   tf2::Transform T_world_goal;
   T_world_goal.setOrigin(tf2::Vector3(x, y, 0));
@@ -112,18 +133,17 @@ geometry_msgs::PoseStamped GoalPublisherNode::getPoseMsgFromConfig(const std::st
   /** 
    * Get the Transform from robot to world from the topic
    */
-  std::cout << "fromMsg() 1" << std::endl;
-  tf2::Transform T_world_robot;
-  // tf2::fromMsg<geometry_msgs::Pose, tf2::Transform>(this->robot_pose_, T_world_robot);
 
+  tf2::Transform T_world_robot;
   T_world_robot.setOrigin(tf2::Vector3(this->robot_pose_.position.x, this->robot_pose_.position.y, 0));
   tf2::Quaternion q_world_robot;
   q_world_robot.setValue(this->robot_pose_.orientation.x, this->robot_pose_.orientation.y, this->robot_pose_.orientation.z, this->robot_pose_.orientation.w);
   T_world_robot.setRotation(q_world_robot);
 
   /** 
-   * Get the Pose of robot in map from the tf_listener
+   * Get the Transform from robot to map from the tf_listener
    */
+
   geometry_msgs::TransformStamped transform_map_robot;
   try
   {
@@ -134,28 +154,23 @@ geometry_msgs::PoseStamped GoalPublisherNode::getPoseMsgFromConfig(const std::st
       ROS_WARN("%s", ex.what());
       return geometry_msgs::PoseStamped();
   }
-
-  std::cout << "fromMsg() 2" << std::endl;
   tf2::Transform T_map_robot;
-  // tf2::fromMsg<geometry_msgs::TransformStamped, tf2::Transform>(transform_map_robot, T_map_robot);
   T_map_robot.setOrigin(tf2::Vector3(transform_map_robot.transform.translation.x, transform_map_robot.transform.translation.y, 0));
   tf2::Quaternion q_map_robot;
   q_map_robot.setValue(transform_map_robot.transform.rotation.x, transform_map_robot.transform.rotation.y, transform_map_robot.transform.rotation.z, transform_map_robot.transform.rotation.w);
   T_map_robot.setRotation(q_map_robot);
-  std::cout << "fromMsg() 3" << std::endl;
-  // geometry_msgs::Pose P_map_robot;
-  // fromMsg(T_map_robot, P_map_robot);
 
   /** 
    * Calculate Transform from goal to map
    * T_map_goal = T_world_goal * T_world_robot^(-1) * T_map_robot
    */
+
   const tf2::Transform T_map_goal = T_world_goal * T_world_robot.inverse() * T_map_robot;
 
   geometry_msgs::PoseStamped pose_msg;
   pose_msg.header.frame_id = map_frame_;
-  pose_msg.pose.position.x = T_map_goal.getOrigin().x();
-  pose_msg.pose.position.y = T_map_goal.getOrigin().y();
+  pose_msg.pose.position.x = T_map_goal.getOrigin().getX();
+  pose_msg.pose.position.y = T_map_goal.getOrigin().getY();
   pose_msg.pose.orientation.x = T_map_goal.getRotation().getX();
   pose_msg.pose.orientation.y = T_map_goal.getRotation().getY();
   pose_msg.pose.orientation.z = T_map_goal.getRotation().getZ();
