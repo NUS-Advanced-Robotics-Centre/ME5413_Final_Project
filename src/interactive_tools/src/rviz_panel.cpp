@@ -36,14 +36,14 @@ namespace rviz_panel
     void simplePanel::on_button_1_1_clicked()
     {
         ROS_INFO_STREAM("Setting Assembly Line 1 as the GOAL.");
-        // const auto goal_pose = getPoseMsgFromConfig("/assembly_line_1");
+        ui_->label_status->setText("Heading to Assembly Line 1.");
         this->goal_name_msg_.data = "/assembly_line_1";
         this->pub_goal_.publish(goal_name_msg_);
     }
     void simplePanel::on_button_1_2_clicked()
     {
         ROS_INFO_STREAM("Setting Assembly Line 2 as the GOAL.");
-        // const auto goal_pose = getPoseMsgFromConfig("/assembly_line_2");
+        ui_->label_status->setText("Heading to Assembly Line 2.");
         this->goal_name_msg_.data = "/assembly_line_2";
         this->pub_goal_.publish(goal_name_msg_);
     }
@@ -52,28 +52,28 @@ namespace rviz_panel
     void simplePanel::on_button_2_1_clicked()
     {
         ROS_INFO_STREAM("Setting Packaging Area 1 as the GOAL.");
-        // const auto goal_pose = getPoseMsgFromConfig("/packing_area_1");
+        ui_->label_status->setText("Heading to Packaging Area 1.");
         this->goal_name_msg_.data = "/packing_area_1";
         this->pub_goal_.publish(goal_name_msg_);
     }
     void simplePanel::on_button_2_2_clicked()
     {
         ROS_INFO_STREAM("Setting Packaging Area 2 as the GOAL.");
-        // const auto goal_pose = getPoseMsgFromConfig("/packing_area_2");
+        ui_->label_status->setText("Heading to Packaging Area 2.");
         this->goal_name_msg_.data = "/packing_area_2";
         this->pub_goal_.publish(goal_name_msg_);
     }
     void simplePanel::on_button_2_3_clicked()
     {
         ROS_INFO_STREAM("Setting Packaging Area 3 as the GOAL.");
-        // const auto goal_pose = getPoseMsgFromConfig("/packing_area_3");
+        ui_->label_status->setText("Heading to Packaging Area 3.");
         this->goal_name_msg_.data = "/packing_area_3";
         this->pub_goal_.publish(goal_name_msg_);
     }
     void simplePanel::on_button_2_4_clicked()
     {
         ROS_INFO_STREAM("Setting Packaging Area 4 as the GOAL.");
-        // const auto goal_pose = getPoseMsgFromConfig("/packing_area_4");
+        ui_->label_status->setText("Heading to Packaging Area 4.");
         this->goal_name_msg_.data = "/packing_area_4";
         this->pub_goal_.publish(goal_name_msg_);
     }
@@ -82,21 +82,21 @@ namespace rviz_panel
     void simplePanel::on_button_3_1_clicked()
     {
         ROS_INFO_STREAM("Setting Vehicle 1 as the GOAL.");
-        // const auto goal_pose = getPoseMsgFromConfig("/vehicle_1");
+        ui_->label_status->setText("Heading to Vehicle 1.");
         this->goal_name_msg_.data = "/vehicle_1";
         this->pub_goal_.publish(goal_name_msg_);
     }
     void simplePanel::on_button_3_2_clicked()
     {
         ROS_INFO_STREAM("Setting Vehicle 2 as the GOAL.");
-        // const auto goal_pose = getPoseMsgFromConfig("/vehicle_2");
+        ui_->label_status->setText("Heading to Vehicle 2.");
         this->goal_name_msg_.data = "/vehicle_2";
         this->pub_goal_.publish(goal_name_msg_);
     }
     void simplePanel::on_button_3_3_clicked()
     {
         ROS_INFO_STREAM("Setting Vehicle 3 as the GOAL.");
-        // const auto goal_pose = getPoseMsgFromConfig("/vehicle_3");
+        ui_->label_status->setText("Heading to Vehicle 3.");
         this->goal_name_msg_.data = "/vehicle_3";
         this->pub_goal_.publish(goal_name_msg_);
     }
