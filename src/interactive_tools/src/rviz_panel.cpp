@@ -13,7 +13,7 @@ namespace rviz_panel
         ui_->setupUi(this);
 
         // Define ROS publisher
-        pub_goal_ = nh_.advertise<std_msgs::String>("/goal_name", 1);
+        pub_goal_ = nh_.advertise<std_msgs::String>("/rviz_panel/goal_name", 1);
 
         // Connect the clicked signals to slots
         connect(ui_->pushButton_1_1, SIGNAL(clicked()), this, SLOT(on_button_1_1_clicked()));

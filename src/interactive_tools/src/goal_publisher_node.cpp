@@ -13,6 +13,7 @@
 #include <ros/ros.h>
 #include <ros/console.h>
 #include <std_msgs/String.h>
+#include <std_msgs/Float32.h>
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
@@ -37,13 +38,14 @@ class GoalPublisherNode
  private:
   // Helper function to construct pose msgs
   void robotOdomCallback(const nav_msgs::Odometry::ConstPtr& odom);
-  void goalPoseCallback(const std_msgs::String& name);
+  void goalNameCallback(const std_msgs::String& name);
   tf2::Transform convertPoseToTransform(const geometry_msgs::Pose& pose);
   geometry_msgs::PoseStamped getPoseMsgFromConfig(const std::string& name);
 
   // ROS declaration
   ros::NodeHandle nh_;
   ros::Publisher pub_goal_;
+  ros::Publisher pub_error_to_goal_;
   ros::Subscriber sub_robot_odom_;
   ros::Subscriber sub_goal_name_;
   tf2_ros::Buffer tf2_buffer_;
@@ -59,8 +61,9 @@ class GoalPublisherNode
 GoalPublisherNode::GoalPublisherNode() : tf2_listener_(tf2_buffer_)
 {
   pub_goal_ = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1);
+  pub_error_to_goal_ = nh_.advertise<std_msgs::Float32>("/interactive_tools/error_to_goal", 1);
   sub_robot_odom_ = nh_.subscribe("/gazebo/ground_truth/state", 1, &GoalPublisherNode::robotOdomCallback, this);
-  sub_goal_name_ = nh_.subscribe("/goal_name", 1, &GoalPublisherNode::goalPoseCallback, this);
+  sub_goal_name_ = nh_.subscribe("/rviz_panel/goal_name", 1, &GoalPublisherNode::goalNameCallback, this);
 
   // Initialization
   robot_frame_ = "base_link";
@@ -94,7 +97,7 @@ void GoalPublisherNode::robotOdomCallback(const nav_msgs::Odometry::ConstPtr& od
   return;
 };
 
-void GoalPublisherNode::goalPoseCallback(const std_msgs::String& name)
+void GoalPublisherNode::goalNameCallback(const std_msgs::String& name)
 {
   const auto pose_msg = getPoseMsgFromConfig(name.data);
   this->pub_goal_.publish(pose_msg);
