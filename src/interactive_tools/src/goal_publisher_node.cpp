@@ -235,7 +235,7 @@ std::pair<double, double> GoalPublisherNode::calculatePoseError(const geometry_m
   m_robot.getRPY(roll, pitch, yaw_robot);
   m_goal.getRPY(roll, pitch, yaw_goal);
 
-  const double heading_error = std::fabs(yaw_robot - yaw_goal)/M_PI*180.0;
+  const double heading_error = (yaw_robot - yaw_goal)/M_PI*180.0;
 
   return std::pair<double, double>(position_error, heading_error);
 }

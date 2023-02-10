@@ -10,8 +10,6 @@ Panels:
         - /Localization1
         - /Planning1
         - /Evaluation1
-        - /Evaluation1/Absolute Error1
-        - /Evaluation1/Relative Error1
       Splitter Ratio: 0.6628242135047913
     Tree Height: 420
   - Class: rviz/Selection
@@ -240,8 +238,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 8.167584419250488
-            Min Value: 0.6437883377075195
+            Max Value: 8.597238540649414
+            Min Value: 0.3865874409675598
             Value: true
           Axis: X
           Channel Name: intensity
@@ -268,8 +266,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 2.2847304344177246
-            Min Value: -0.07063373923301697
+            Max Value: 2.3067314624786377
+            Min Value: -0.06961843371391296
             Value: true
           Axis: Z
           Channel Name: intensity
@@ -305,13 +303,8 @@ Visualization Manager:
           Value: false
           Visibility:
             Evaluation:
-              Absolute Error:
-                Heading Error (deg): true
-                Position Error (m): true
-                Value: true
-              Relative Error:
-                Heading Error (deg): true
-                Position Error (m): true
+              "":
+                "": true
                 Value: true
               Value: true
             Grid: true
@@ -545,7 +538,7 @@ Visualization Manager:
               Name: Heading (deg)
               Topic: /interactive_tools/absolute/heading_error
               Value: true
-              auto color change: false
+              auto color change: true
               background color: 0; 0; 0
               backround alpha: 0
               clockwise rotate direction: false
@@ -647,7 +640,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 7.895290851593018
+      Distance: 2.4986886978149414
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
