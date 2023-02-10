@@ -37,21 +37,26 @@ class GoalPublisherNode
   virtual ~GoalPublisherNode() {};
 
  private:
-  // Helper function to construct pose msgs
   void timerCallback(const ros::TimerEvent&);
   void robotOdomCallback(const nav_msgs::Odometry::ConstPtr& odom);
   void goalNameCallback(const std_msgs::String::ConstPtr& name);
+  void goalPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& goal_pose);
+  
   tf2::Transform convertPoseToTransform(const geometry_msgs::Pose& pose);
   geometry_msgs::PoseStamped getGoalPoseFromConfig(const std::string& name);
+  std::pair<double, double> calculatePoseError(const geometry_msgs::Pose& pose_robot, const geometry_msgs::Pose& pose_goal);
 
   // ROS declaration
   ros::NodeHandle nh_;
   ros::Timer timer_;
   ros::Subscriber sub_robot_odom_;
   ros::Subscriber sub_goal_name_;
+  ros::Subscriber sub_goal_pose_;
   ros::Publisher pub_goal_;
-  ros::Publisher pub_position_error_;
-  ros::Publisher pub_heading_error_;
+  ros::Publisher pub_absolute_position_error_;
+  ros::Publisher pub_absolute_heading_error_;
+  ros::Publisher pub_relative_position_error_;
+  ros::Publisher pub_relative_heading_error_;
   tf2_ros::Buffer tf2_buffer_;
   tf2_ros::TransformListener tf2_listener_;
   tf2_ros::TransformBroadcaster tf2_bcaster_;
@@ -59,59 +64,55 @@ class GoalPublisherNode
   std::string world_frame_;
   std::string map_frame_;
   std::string robot_frame_;
-  geometry_msgs::Pose robot_pose_;
-  geometry_msgs::Pose goal_pose_;
-  bool goal_changed_;
-  std_msgs::Float32 position_error_msg_;
-  std_msgs::Float32 heading_error_msg_;
+  geometry_msgs::Pose pose_world_robot_;
+  geometry_msgs::Pose pose_world_goal_;
+  geometry_msgs::Pose pose_map_robot_;
+  geometry_msgs::Pose pose_map_goal_;
+  std_msgs::Float32 absolute_position_error_;
+  std_msgs::Float32 absolute_heading_error_;
+  std_msgs::Float32 relative_position_error_;
+  std_msgs::Float32 relative_heading_error_;
 };
 
 GoalPublisherNode::GoalPublisherNode() : tf2_listener_(tf2_buffer_)
 {
-  this->timer_ = nh_.createTimer(ros::Duration(0.5), &GoalPublisherNode::timerCallback, this);
-  this->sub_robot_odom_ = nh_.subscribe("/gazebo/ground_truth/state", 10, &GoalPublisherNode::robotOdomCallback, this);
-  this->sub_goal_name_ = nh_.subscribe("/rviz_panel/goal_name", 10, &GoalPublisherNode::goalNameCallback, this);
+  this->timer_ = nh_.createTimer(ros::Duration(0.2), &GoalPublisherNode::timerCallback, this);
+  this->sub_robot_odom_ = nh_.subscribe("/gazebo/ground_truth/state", 1, &GoalPublisherNode::robotOdomCallback, this);
+  this->sub_goal_name_ = nh_.subscribe("/rviz_panel/goal_name", 1, &GoalPublisherNode::goalNameCallback, this);
+  this->sub_goal_pose_ = nh_.subscribe("/move_base_simple/goal", 1, &GoalPublisherNode::goalPoseCallback, this);
   this->pub_goal_ = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1);
-  this->pub_position_error_ = nh_.advertise<std_msgs::Float32>("/interactive_tools/position_error", 1);
-  this->pub_heading_error_ = nh_.advertise<std_msgs::Float32>("/interactive_tools/heading_error", 1);
+  this->pub_absolute_position_error_ = nh_.advertise<std_msgs::Float32>("/interactive_tools/absolute/position_error", 1);
+  this->pub_absolute_heading_error_ = nh_.advertise<std_msgs::Float32>("/interactive_tools/absolute/heading_error", 1);
+  this->pub_relative_position_error_ = nh_.advertise<std_msgs::Float32>("/interactive_tools/relative/position_error", 1);
+  this->pub_relative_heading_error_ = nh_.advertise<std_msgs::Float32>("/interactive_tools/relative/heading_error", 1);
 
   // Initialization
   this->robot_frame_ = "base_link";
   this->map_frame_ = "map";
   this->world_frame_ = "world";
-  this->goal_changed_ = false;
-  this->position_error_msg_.data = 0.0;
-  this->heading_error_msg_.data = 0.0;
+  this->absolute_position_error_.data = 0.0;
+  this->absolute_heading_error_.data = 0.0;
+  this->relative_position_error_.data = 0.0;
+  this->relative_heading_error_.data = 0.0;
 };
 
 void GoalPublisherNode::timerCallback(const ros::TimerEvent&)
 {
-  // Calculate the error to goal pose
-  if (this->goal_changed_)
-  {
-    // Positional Error
-    this->position_error_msg_.data = std::sqrt(
-      std::pow(this->robot_pose_.position.x - this->goal_pose_.position.x, 2) + 
-      std::pow(this->robot_pose_.position.y - this->goal_pose_.position.y, 2)
-    );
+  // Calculate absolute errors (wrt to world frame)
+  const std::pair<double, double> error_absolute = calculatePoseError(this->pose_world_robot_, this->pose_world_goal_);
+  // Calculate relative errors (wrt to map frame)
+  const std::pair<double, double> error_relative = calculatePoseError(this->pose_map_robot_, this->pose_map_goal_);
+  
+  this->absolute_position_error_.data = error_absolute.first;
+  this->absolute_heading_error_.data = error_absolute.second;
+  this->relative_position_error_.data = error_relative.first;
+  this->relative_heading_error_.data = error_relative.second;
 
-    // Heading Error
-    tf2::Quaternion q_robot, q_goal;
-    tf2::fromMsg(this->robot_pose_.orientation, q_robot);
-    tf2::fromMsg(this->goal_pose_.orientation, q_goal);
-    const tf2::Matrix3x3 m_robot = tf2::Matrix3x3(q_robot);
-    const tf2::Matrix3x3 m_goal = tf2::Matrix3x3(q_goal);
-
-    double roll, pitch, yaw_robot, yaw_goal;
-    m_robot.getRPY(roll, pitch, yaw_robot);
-    m_goal.getRPY(roll, pitch, yaw_goal);
-
-    this->heading_error_msg_.data = std::fabs(yaw_robot - yaw_goal)/M_PI*180.0;
-
-    // Publish errors
-    this->pub_position_error_.publish(this->position_error_msg_);
-    this->pub_heading_error_.publish(this->heading_error_msg_);
-  }
+  // Publish errors
+  this->pub_absolute_position_error_.publish(this->absolute_position_error_);
+  this->pub_absolute_heading_error_.publish(this->absolute_heading_error_);
+  this->pub_relative_position_error_.publish(this->relative_position_error_);
+  this->pub_relative_heading_error_.publish(this->relative_heading_error_);
 
   return;
 };
@@ -120,9 +121,9 @@ void GoalPublisherNode::robotOdomCallback(const nav_msgs::Odometry::ConstPtr& od
 {
   this->world_frame_ = odom->header.frame_id;
   this->robot_frame_ = odom->child_frame_id;
-  this->robot_pose_ = odom->pose.pose;
+  this->pose_world_robot_ = odom->pose.pose;
 
-  const tf2::Transform T_world_robot = convertPoseToTransform(this->robot_pose_);
+  const tf2::Transform T_world_robot = convertPoseToTransform(this->pose_world_robot_);
   const tf2::Transform T_robot_world = T_world_robot.inverse();
 
   geometry_msgs::TransformStamped transformStamped;
@@ -143,15 +144,42 @@ void GoalPublisherNode::robotOdomCallback(const nav_msgs::Odometry::ConstPtr& od
 };
 
 void GoalPublisherNode::goalNameCallback(const std_msgs::String::ConstPtr& name)
-{
-  // Publish goal pose in map frame  
-  const auto goal_pose_stamped = getGoalPoseFromConfig(name->data);
-  this->goal_pose_ = goal_pose_stamped.pose;
-  this->pub_goal_.publish(goal_pose_stamped);
-  this->goal_changed_ = true;
+{ 
+  // Get the Pose of the goal in world frame
+  const auto P_world_goal = getGoalPoseFromConfig(name->data);
+  this->pose_world_goal_ = P_world_goal.pose;
+
+  // Get the Transform from world to map from the tf_listener
+  geometry_msgs::TransformStamped transform_map_world;
+  try
+  {
+    transform_map_world = this->tf2_buffer_.lookupTransform(this->map_frame_, this->world_frame_, ros::Time(0));
+  }
+  catch (tf2::TransformException& ex)
+  {
+    ROS_WARN("%s", ex.what());
+    return;
+  }
+
+  // Transform the goal pose to map frame
+  geometry_msgs::PoseStamped P_map_goal;
+  tf2::doTransform(P_world_goal, P_map_goal, transform_map_world);
+  P_map_goal.header.stamp = ros::Time::now();
+  P_map_goal.header.frame_id = map_frame_;
+
+  // Transform the robot pose to map frame
+  tf2::doTransform(this->pose_world_robot_, this->pose_map_robot_, transform_map_world);
+
+  // Publish goal pose in map frame 
+  this->pub_goal_.publish(P_map_goal);
 
   return;
 };
+
+void GoalPublisherNode::goalPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& goal_pose)
+{
+  this->pose_map_goal_ = goal_pose->pose;
+}
 
 tf2::Transform GoalPublisherNode::convertPoseToTransform(const geometry_msgs::Pose& pose)
 {
@@ -185,30 +213,32 @@ geometry_msgs::PoseStamped GoalPublisherNode::getGoalPoseFromConfig(const std::s
   P_world_goal.pose.position.y = y;
   P_world_goal.pose.orientation = tf2::toMsg(q);
 
-  /** 
-   * Get the Transform from world to map from the tf_listener
-   */
-  geometry_msgs::TransformStamped transform_map_world;
-  try
-  {
-    transform_map_world = tf2_buffer_.lookupTransform(this->map_frame_, this->world_frame_, ros::Time(0));
-  }
-  catch (tf2::TransformException& ex)
-  {
-    ROS_WARN("%s", ex.what());
-    return geometry_msgs::PoseStamped();
-  }
-
-  /** 
-   * Transform pose msg to map frame
-   */
-  geometry_msgs::PoseStamped P_map_goal;
-  tf2::doTransform(P_world_goal, P_map_goal, transform_map_world);
-  P_map_goal.header.stamp = ros::Time::now();
-  P_map_goal.header.frame_id = map_frame_;
-
-  return P_map_goal;
+  return P_world_goal;
 };
+
+std::pair<double, double> GoalPublisherNode::calculatePoseError(const geometry_msgs::Pose& pose_robot, const geometry_msgs::Pose& pose_goal)
+{
+  // Positional Error
+  const double position_error = std::sqrt(
+    std::pow(pose_robot.position.x - pose_goal.position.x, 2) + 
+    std::pow(pose_robot.position.y - pose_goal.position.y, 2)
+  );
+
+  // Heading Error
+  tf2::Quaternion q_robot, q_goal;
+  tf2::fromMsg(pose_robot.orientation, q_robot);
+  tf2::fromMsg(pose_goal.orientation, q_goal);
+  const tf2::Matrix3x3 m_robot = tf2::Matrix3x3(q_robot);
+  const tf2::Matrix3x3 m_goal = tf2::Matrix3x3(q_goal);
+
+  double roll, pitch, yaw_robot, yaw_goal;
+  m_robot.getRPY(roll, pitch, yaw_robot);
+  m_goal.getRPY(roll, pitch, yaw_goal);
+
+  const double heading_error = std::fabs(yaw_robot - yaw_goal)/M_PI*180.0;
+
+  return std::pair<double, double>(position_error, heading_error);
+}
 
 } // namespace lgsvl_utils
 
