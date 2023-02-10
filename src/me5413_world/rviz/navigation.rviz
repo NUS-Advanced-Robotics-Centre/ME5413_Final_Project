@@ -10,7 +10,9 @@ Panels:
         - /Localization1
         - /Planning1
         - /Evaluation1
-      Splitter Ratio: 0.6617646813392639
+        - /Evaluation1/Absolute Error1
+        - /Evaluation1/Relative Error1
+      Splitter Ratio: 0.6628242135047913
     Tree Height: 420
   - Class: rviz/Selection
     Name: Selection
@@ -238,8 +240,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 8.174285888671875
-            Min Value: 0.12757395207881927
+            Max Value: 8.167584419250488
+            Min Value: 0.6437883377075195
             Value: true
           Axis: X
           Channel Name: intensity
@@ -266,8 +268,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 2.247688055038452
-            Min Value: -0.07052358984947205
+            Max Value: 2.2847304344177246
+            Min Value: -0.07063373923301697
             Value: true
           Axis: Z
           Channel Name: intensity
@@ -302,9 +304,15 @@ Visualization Manager:
           Unreliable: false
           Value: false
           Visibility:
-            "":
-              PieChart: true
-              Position Error: true
+            Evaluation:
+              Absolute Error:
+                Heading Error (deg): true
+                Position Error (m): true
+                Value: true
+              Relative Error:
+                Heading Error (deg): true
+                Position Error (m): true
+                Value: true
               Value: true
             Grid: true
             InteractiveMarkers: true
@@ -505,54 +513,110 @@ Visualization Manager:
       Name: Planning
     - Class: rviz/Group
       Displays:
-        - Buffer length: 100
-          Class: jsk_rviz_plugin/Plotter2D
+        - Class: rviz/Group
+          Displays:
+            - Buffer length: 100
+              Class: jsk_rviz_plugin/Plotter2D
+              Enabled: true
+              Name: Position (m)
+              Show Value: true
+              Topic: /interactive_tools/absolute/position_error
+              Value: true
+              auto color change: true
+              auto scale: true
+              background color: 0; 0; 0
+              backround alpha: 0
+              border: true
+              foreground alpha: 0.699999988079071
+              foreground color: 25; 255; 240
+              height: 128
+              left: 20
+              linewidth: 2
+              max color: 255; 0; 0
+              max value: 10
+              min value: 0
+              show caption: true
+              text size: 14
+              top: 20
+              update interval: 0.03999999910593033
+              width: 128
+            - Class: jsk_rviz_plugin/PieChart
+              Enabled: true
+              Name: Heading (deg)
+              Topic: /interactive_tools/absolute/heading_error
+              Value: true
+              auto color change: false
+              background color: 0; 0; 0
+              backround alpha: 0
+              clockwise rotate direction: false
+              foreground alpha: 0.699999988079071
+              foreground alpha 2: 0.4000000059604645
+              foreground color: 25; 255; 240
+              left: 160
+              max color: 255; 0; 0
+              max color change threthold: 90
+              max value: 180
+              med color: 138; 226; 52
+              med color change threthold: 30
+              min value: -180
+              show caption: true
+              size: 128
+              text size: 14
+              top: 20
           Enabled: true
-          Name: Position Error
-          Show Value: true
-          Topic: /interactive_tools/position_error
-          Value: true
-          auto color change: true
-          auto scale: true
-          background color: 0; 0; 0
-          backround alpha: 0
-          border: true
-          foreground alpha: 0.699999988079071
-          foreground color: 25; 255; 240
-          height: 128
-          left: 20
-          linewidth: 1
-          max color: 255; 0; 0
-          max value: 1
-          min value: -1
-          show caption: true
-          text size: 12
-          top: 20
-          update interval: 0.03999999910593033
-          width: 128
-        - Class: jsk_rviz_plugin/PieChart
-          Enabled: true
-          Name: Heading Error
-          Topic: /interactive_tools/heading_error
-          Value: true
-          auto color change: true
-          background color: 0; 0; 0
-          backround alpha: 0
-          clockwise rotate direction: false
-          foreground alpha: 0.699999988079071
-          foreground alpha 2: 0.4000000059604645
-          foreground color: 25; 255; 240
-          left: 160
-          max color: 255; 0; 0
-          max color change threthold: 0
-          max value: 1
-          med color: 255; 0; 0
-          med color change threthold: 0
-          min value: 0
-          show caption: true
-          size: 128
-          text size: 12
-          top: 20
+          Name: Absolute Error
+        - Class: rviz/Group
+          Displays:
+            - Buffer length: 100
+              Class: jsk_rviz_plugin/Plotter2D
+              Enabled: true
+              Name: Position (m)
+              Show Value: true
+              Topic: /interactive_tools/relative/position_error
+              Value: true
+              auto color change: true
+              auto scale: true
+              background color: 0; 0; 0
+              backround alpha: 0
+              border: true
+              foreground alpha: 0.699999988079071
+              foreground color: 25; 255; 240
+              height: 128
+              left: 20
+              linewidth: 1
+              max color: 255; 0; 0
+              max value: 1
+              min value: -1
+              show caption: true
+              text size: 14
+              top: 20
+              update interval: 0.03999999910593033
+              width: 128
+            - Class: jsk_rviz_plugin/PieChart
+              Enabled: true
+              Name: Heading (deg)
+              Topic: /interactive_tools/relative/heading_error
+              Value: true
+              auto color change: true
+              background color: 0; 0; 0
+              backround alpha: 0
+              clockwise rotate direction: false
+              foreground alpha: 0.699999988079071
+              foreground alpha 2: 0.4000000059604645
+              foreground color: 25; 255; 240
+              left: 160
+              max color: 255; 0; 0
+              max color change threthold: 90
+              max value: 180
+              med color: 138; 226; 52
+              med color change threthold: 30
+              min value: -180
+              show caption: true
+              size: 128
+              text size: 14
+              top: 20
+          Enabled: false
+          Name: Relative Error
       Enabled: true
       Name: Evaluation
   Enabled: true
@@ -583,7 +647,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 4
+      Distance: 7.895290851593018
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
