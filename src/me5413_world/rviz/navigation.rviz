@@ -9,6 +9,7 @@ Panels:
         - /Sensing1
         - /Localization1
         - /Planning1
+        - /Evaluation1
       Splitter Ratio: 0.6617646813392639
     Tree Height: 420
   - Class: rviz/Selection
@@ -237,8 +238,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 8.929600715637207
-            Min Value: -0.12761542201042175
+            Max Value: 8.174285888671875
+            Min Value: 0.12757395207881927
             Value: true
           Axis: X
           Channel Name: intensity
@@ -265,8 +266,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 2.436253547668457
-            Min Value: -0.07088172435760498
+            Max Value: 2.247688055038452
+            Min Value: -0.07052358984947205
             Value: true
           Axis: Z
           Channel Name: intensity
@@ -301,6 +302,10 @@ Visualization Manager:
           Unreliable: false
           Value: false
           Visibility:
+            "":
+              PieChart: true
+              Position Error: true
+              Value: true
             Grid: true
             InteractiveMarkers: true
             Localization:
@@ -318,7 +323,6 @@ Visualization Manager:
               Value: true
             RobotModel: true
             Sensing:
-              Camera: true
               Image: true
               Imu: true
               LaserScan: true
@@ -499,6 +503,58 @@ Visualization Manager:
           Value: true
       Enabled: true
       Name: Planning
+    - Class: rviz/Group
+      Displays:
+        - Buffer length: 100
+          Class: jsk_rviz_plugin/Plotter2D
+          Enabled: true
+          Name: Position Error
+          Show Value: true
+          Topic: /interactive_tools/position_error
+          Value: true
+          auto color change: true
+          auto scale: true
+          background color: 0; 0; 0
+          backround alpha: 0
+          border: true
+          foreground alpha: 0.699999988079071
+          foreground color: 25; 255; 240
+          height: 128
+          left: 20
+          linewidth: 1
+          max color: 255; 0; 0
+          max value: 1
+          min value: -1
+          show caption: true
+          text size: 12
+          top: 20
+          update interval: 0.03999999910593033
+          width: 128
+        - Class: jsk_rviz_plugin/PieChart
+          Enabled: true
+          Name: Heading Error
+          Topic: /interactive_tools/heading_error
+          Value: true
+          auto color change: true
+          background color: 0; 0; 0
+          backround alpha: 0
+          clockwise rotate direction: false
+          foreground alpha: 0.699999988079071
+          foreground alpha 2: 0.4000000059604645
+          foreground color: 25; 255; 240
+          left: 160
+          max color: 255; 0; 0
+          max color change threthold: 0
+          max value: 1
+          med color: 255; 0; 0
+          med color change threthold: 0
+          min value: 0
+          show caption: true
+          size: 128
+          text size: 12
+          top: 20
+      Enabled: true
+      Name: Evaluation
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -527,7 +583,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 5.380419731140137
+      Distance: 4
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
