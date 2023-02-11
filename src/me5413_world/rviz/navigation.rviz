@@ -238,8 +238,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 6.936964511871338
-            Min Value: -0.8621696829795837
+            Max Value: 7.487448692321777
+            Min Value: -0.4609608054161072
             Value: true
           Axis: X
           Channel Name: intensity
@@ -266,8 +266,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 2.225914239883423
-            Min Value: -0.07092735171318054
+            Max Value: 4.779966831207275
+            Min Value: -0.07037952542304993
             Value: true
           Axis: Z
           Channel Name: intensity
@@ -303,10 +303,13 @@ Visualization Manager:
           Value: false
           Visibility:
             Evaluation:
-              "":
+              Absolute Error:
                 ADE (m): true
                 AHE (deg): true
-                Heading (deg): true
+                Value: true
+              Relative Error:
+                RDE (m): true
+                RHE (deg): true
                 Value: true
               Value: true
             Grid: true
@@ -488,22 +491,22 @@ Visualization Manager:
           Class: rviz/Map
           Color Scheme: map
           Draw Behind: false
-          Enabled: true
+          Enabled: false
           Name: Global CostMap
           Topic: /move_base/global_costmap/costmap
           Unreliable: false
           Use Timestamp: false
-          Value: true
+          Value: false
         - Alpha: 0.699999988079071
           Class: rviz/Map
           Color Scheme: map
           Draw Behind: false
-          Enabled: true
+          Enabled: false
           Name: Local CostMap
           Topic: /move_base/local_costmap/costmap
           Unreliable: false
           Use Timestamp: false
-          Value: true
+          Value: false
       Enabled: true
       Name: Planning
     - Class: rviz/Group
@@ -660,7 +663,7 @@ Visualization Manager:
               size: 128
               text size: 14
               top: 180
-          Enabled: true
+          Enabled: false
           Name: Relative Error
       Enabled: true
       Name: Evaluation
@@ -708,9 +711,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6000000238418579
+      Pitch: 0.5800000429153442
       Target Frame: base_link
-      Yaw: 3.1500000953674316
+      Yaw: 3.390005111694336
     Saved:
       - Class: rviz/ThirdPersonFollower
         Distance: 4
