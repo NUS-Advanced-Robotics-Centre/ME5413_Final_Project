@@ -14,6 +14,7 @@ namespace rviz_panel
 
         // Define ROS publisher
         pub_goal_ = nh_.advertise<std_msgs::String>("/rviz_panel/goal_name", 1);
+        // sub_error_to_goal_ = nh_.subscribe("/interactive_tools/error_to_goal", 1, &GoalPublisherNode::goalPoseCallback, this);
 
         // Connect the clicked signals to slots
         connect(ui_->pushButton_1_1, SIGNAL(clicked()), this, SLOT(on_button_1_1_clicked()));
