@@ -17,7 +17,7 @@ NUS ME5413 Autonomous Mobile Robotics Final Project
   * ROS Noetic (Melodic not yet tested)
   * C++11 and above
   * CMake: 3.0.2 and above
-* This repo is self-contained, only depending on standard ROS pkgs:
+* This repo depends on the following standard ROS pkgs:
   * `roscpp`
   * `rospy`
   * `rviz`
@@ -27,6 +27,7 @@ NUS ME5413 Autonomous Mobile Robotics Final Project
   * `visualization_msgs`
   * `tf2_ros`
   * `tf2_geometry_msgs`
+* And this [`gazebo_model`](https://github.com/osrf/gazebo_models) repositiory
 
 ## Installation
 
@@ -52,6 +53,29 @@ catkin_make
 # source 
 source devel/setup.bash
 ```
+
+To properly load the gazebo world, you will need to have the necessary model files in the `~/.gazebo/models/` directory. 
+
+There are two sources of models needed:
+
+* [Gazebo official models](https://github.com/osrf/gazebo_models)
+  
+  ```bash
+  # Clone the official gazebo models repo (assuming home here `~/`)
+  cd
+  git clone https://github.com/osrf/gazebo_models.git
+
+  # Copy the models into the `~/.gazebo/models` directory
+  cp -r ~/gazebo_models/* ~/.gazebo/models
+
+  ```
+
+* [Our customized models](https://github.com/NUS-Advanced-Robotics-Centre/ME5413_Final_Project/tree/main/src/me5413_world/models)
+
+  ```bash
+  # Copy the customized models into the `~/.gazebo/models` directory
+  cp -r ~/ME5413_Final_Project/src/me5413_world/models/* ~/.gazebo/models
+  ```
 
 ## Usage
 
