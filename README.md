@@ -8,7 +8,7 @@ NUS ME5413 Autonomous Mobile Robotics Final Project
 ![C++](https://img.shields.io/badge/Code-C++-informational?style=flat&logo=c%2B%2B&logoColor=white&color=2bbc8a)
 ![Python](https://img.shields.io/badge/Code-Python-informational?style=flat&logo=Python&logoColor=white&color=2bbc8a)
 
-![cover_image](media/cover.gif)
+![cover_image](src/me5413_world/media/gazebo_world.jpg)
 
 ## Dependencies
 
@@ -108,6 +108,8 @@ Launch **Step 0**, and then in the second terminal:
 # Load a map and launch AMCL localizer
 roslaunch me5413_world navigation.launch
 ```
+
+![rviz_navigation_image](src/me5413_world/media/rviz_navigation.png)
 
 ## Contribution
 
