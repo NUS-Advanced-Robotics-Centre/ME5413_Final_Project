@@ -1,5 +1,8 @@
 <launch>
 
+  <!-- Connect the robot to a keyboard teleop controller -->
+  <node name="teleop_twist_keyboard" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" respawn="true"/>
+  
   <!-- Launch GMapping -->
   <include file="$(find jackal_navigation)/launch/include/gmapping.launch" />
 
