@@ -27,7 +27,7 @@ NUS ME5413 Autonomous Mobile Robotics Final Project
   * `visualization_msgs`
   * `tf2_ros`
   * `tf2_geometry_msgs`
-* And this [`gazebo_model`](https://github.com/osrf/gazebo_models) repositiory
+* And this [gazebo_model](https://github.com/osrf/gazebo_models) repositiory
 
 ## Installation
 
@@ -54,7 +54,7 @@ catkin_make
 source devel/setup.bash
 ```
 
-To properly load the gazebo world, you will need to have the necessary model files in the `~/.gazebo/models/` directory. 
+To properly load the gazebo world, you will need to have the necessary model files in the `~/.gazebo/models/` directory.
 
 There are two sources of models needed:
 
@@ -67,7 +67,6 @@ There are two sources of models needed:
 
   # Copy the models into the `~/.gazebo/models` directory
   cp -r ~/gazebo_models/* ~/.gazebo/models
-
   ```
 
 * [Our customized models](https://github.com/NUS-Advanced-Robotics-Centre/ME5413_Final_Project/tree/main/src/me5413_world/models)
@@ -120,7 +119,7 @@ rosrun map_server map_saver -f my_map map:=/map
 
 ### 3. Navigation
 
-Once completed **Step 2** mapping and saved your map, quit the mapping process. 
+Once completed **Step 2** mapping and saved your map, quit the mapping process.
 
 Then, in the second terminal:
 
@@ -130,8 +129,6 @@ roslaunch me5413_world navigation.launch
 ```
 
 ![rviz_navigation_image](src/me5413_world/media/rviz_navigation.png)
-
-
 
 ## Contribution
 
@@ -145,4 +142,4 @@ We are following:
 
 ## License
 
-The `ME5413_Final_Project` is released under the [MIT License](https://github.com/NUS-Advanced-Robotics-Centre/ME5413_Final_Project/blob/main/LICENSE)
+The [ME5413_Final_Project](https://github.com/NUS-Advanced-Robotics-Centre/ME5413_Final_Project) is released under the [MIT License](https://github.com/NUS-Advanced-Robotics-Centre/ME5413_Final_Project/blob/main/LICENSE)
