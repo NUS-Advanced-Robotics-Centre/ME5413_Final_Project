@@ -105,9 +105,11 @@ roslaunch me5413_world world.launch
 If you wish to explore the gazebo world a bit, we provide you a way to manually control the robot around:
 
 ```bash
-# Launch Gazebo World together with our robot
-roslaunch me5413_world world.launch
+# Only launch the robot keyboard teleop control
+roslaunch me5413_world manual.launch
 ```
+
+**Note:** This robot keyboard teleop control is also included in all other launch files, so you don't need to launch this when you do mapping or navigation.
 
 ![rviz_manual_image](src/me5413_world/media/rviz_manual.png)
 
