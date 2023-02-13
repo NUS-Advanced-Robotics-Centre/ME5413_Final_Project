@@ -1,4 +1,4 @@
-/* goal_publisher.hpp
+/* goal_publisher_node.hpp
 
  * Copyright (C) 2023 SS47816
 
@@ -6,8 +6,8 @@
  
 **/
 
-#ifndef GOAL_PUBLISHER_H_
-#define GOAL_PUBLISHER_H_
+#ifndef GOAL_PUBLISHER_NODE_H_
+#define GOAL_PUBLISHER_NODE_H_
 
 #include <iostream>
 #include <string>
@@ -79,4 +79,4 @@ class GoalPublisherNode
 
 } // namespace me5413_world
 
-#endif // GOAL_PUBLISHER_H_
+#endif // GOAL_PUBLISHER_NODE_H_

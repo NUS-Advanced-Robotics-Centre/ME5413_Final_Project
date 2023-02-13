@@ -6,7 +6,7 @@
  
 **/
 
-#include "me5413_world/goal_publisher.hpp"
+#include "me5413_world/goal_publisher_node.hpp"
 
 namespace me5413_world 
 {
