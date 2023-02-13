@@ -25,8 +25,16 @@ NUS ME5413 Autonomous Mobile Robotics Final Project
   * `nav_msgs`
   * `geometry_msgs`
   * `visualization_msgs`
+  * `tf2`
   * `tf2_ros`
   * `tf2_geometry_msgs`
+  * `pluginlib`
+  * `map_server`
+  * `gazebo_ros`
+  * `jsk_rviz_plugins`
+  * `jackal_gazebo`
+  * `jackal_navigation`
+  * `teleop_twist_keyboard`
 * And this [gazebo_model](https://github.com/osrf/gazebo_models) repositiory
 
 ## Installation
@@ -37,12 +45,14 @@ This repo is a ros workspace, containing three rospkgs:
 * `jackal_description` contains the modified jackal robot model descriptions
 * `me5413_world` the main pkg containing the gazebo world, and the launch files
 
-**Note:** If you are working on this project, it is encouraged to fork this repository and work on your own fork instead!
+**Note:** If you are working on this project, it is encouraged to fork this repository and work on your own fork!
+
+After forking this repo to your own github:
 
 ```bash
 # clone the repo to somewhere (assuming home here `~/`)
 cd
-git clone https://github.com/NUS-Advanced-Robotics-Centre/ME5413_Final_Project.git
+git clone https://github.com/<YOUR_GITHUB_USERNAME>/ME5413_Final_Project.git
 cd ME5413_Final_Project
 
 # install dependencies
@@ -61,8 +71,11 @@ There are two sources of models needed:
 * [Gazebo official models](https://github.com/osrf/gazebo_models)
   
   ```bash
-  # Clone the official gazebo models repo (assuming home here `~/`)
+  # Create the destination directory
   cd
+  mkdir -p .gazebo/models
+
+  # Clone the official gazebo models repo (assuming home here `~/`)
   git clone https://github.com/osrf/gazebo_models.git
 
   # Copy the models into the `~/.gazebo/models` directory
