@@ -50,17 +50,17 @@ This repo is a ros workspace, containing three rospkgs:
 After forking this repo to your own github:
 
 ```bash
-# clone the repo to somewhere (assuming home here `~/`)
+# Clone your own fork of this repo (assuming home here `~/`)
 cd
 git clone https://github.com/<YOUR_GITHUB_USERNAME>/ME5413_Final_Project.git
 cd ME5413_Final_Project
 
-# install dependencies
+# Install all dependencies
 rosdep install --from-paths src --ignore-src -r -y
 
-# build
+# Build
 catkin_make
-# source 
+# Source 
 source devel/setup.bash
 ```
 
