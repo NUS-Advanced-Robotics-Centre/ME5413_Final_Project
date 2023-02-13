@@ -27,7 +27,7 @@
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
-namespace interactive_tools 
+namespace me5413_project 
 {
 
 class GoalPublisherNode
@@ -81,10 +81,10 @@ GoalPublisherNode::GoalPublisherNode() : tf2_listener_(tf2_buffer_)
   this->sub_goal_name_ = nh_.subscribe("/rviz_panel/goal_name", 1, &GoalPublisherNode::goalNameCallback, this);
   this->sub_goal_pose_ = nh_.subscribe("/move_base_simple/goal", 1, &GoalPublisherNode::goalPoseCallback, this);
   this->pub_goal_ = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1);
-  this->pub_absolute_position_error_ = nh_.advertise<std_msgs::Float32>("/interactive_tools/absolute/position_error", 1);
-  this->pub_absolute_heading_error_ = nh_.advertise<std_msgs::Float32>("/interactive_tools/absolute/heading_error", 1);
-  this->pub_relative_position_error_ = nh_.advertise<std_msgs::Float32>("/interactive_tools/relative/position_error", 1);
-  this->pub_relative_heading_error_ = nh_.advertise<std_msgs::Float32>("/interactive_tools/relative/heading_error", 1);
+  this->pub_absolute_position_error_ = nh_.advertise<std_msgs::Float32>("/me5413_project/absolute/position_error", 1);
+  this->pub_absolute_heading_error_ = nh_.advertise<std_msgs::Float32>("/me5413_project/absolute/heading_error", 1);
+  this->pub_relative_position_error_ = nh_.advertise<std_msgs::Float32>("/me5413_project/relative/position_error", 1);
+  this->pub_relative_heading_error_ = nh_.advertise<std_msgs::Float32>("/me5413_project/relative/heading_error", 1);
 
   // Initialization
   this->robot_frame_ = "base_link";
@@ -245,7 +245,7 @@ std::pair<double, double> GoalPublisherNode::calculatePoseError(const geometry_m
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "goal_publisher_node");
-  interactive_tools::GoalPublisherNode goal_publisher_node;
+  me5413_project::GoalPublisherNode goal_publisher_node;
   ros::spin();  // spin the ros node.
   return 0;
 }

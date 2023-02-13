@@ -518,7 +518,7 @@ Visualization Manager:
               Enabled: true
               Name: ADE (m)
               Show Value: true
-              Topic: /interactive_tools/absolute/position_error
+              Topic: /me5413_project/absolute/position_error
               Value: true
               auto color change: true
               auto scale: true
@@ -543,7 +543,7 @@ Visualization Manager:
               Enabled: true
               Name: AHE (deg)
               Show Value: true
-              Topic: /interactive_tools/absolute/heading_error
+              Topic: /me5413_project/absolute/heading_error
               Value: true
               auto color change: true
               auto scale: true
@@ -566,7 +566,7 @@ Visualization Manager:
             - Class: jsk_rviz_plugin/PieChart
               Enabled: false
               Name: AHE (deg)
-              Topic: /interactive_tools/absolute/heading_error
+              Topic: /me5413_project/absolute/heading_error
               Value: false
               auto color change: true
               background color: 0; 0; 0
@@ -595,7 +595,7 @@ Visualization Manager:
               Enabled: true
               Name: RDE (m)
               Show Value: true
-              Topic: /interactive_tools/relative/position_error
+              Topic: /me5413_project/relative/position_error
               Value: true
               auto color change: true
               auto scale: true
@@ -620,7 +620,7 @@ Visualization Manager:
               Enabled: true
               Name: RHE (deg)
               Show Value: true
-              Topic: /interactive_tools/relative/heading_error
+              Topic: /me5413_project/relative/heading_error
               Value: true
               auto color change: true
               auto scale: true
@@ -643,7 +643,7 @@ Visualization Manager:
             - Class: jsk_rviz_plugin/PieChart
               Enabled: false
               Name: RHE (deg)
-              Topic: /interactive_tools/relative/heading_error
+              Topic: /me5413_project/relative/heading_error
               Value: false
               auto color change: true
               background color: 0; 0; 0
