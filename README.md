@@ -1,7 +1,7 @@
 # ME5413_Final_Project
 
 NUS ME5413 Autonomous Mobile Robotics Final Project
-> Authors: [Christina Lee](https://github.com/ldaowen), [Dongen Li](https://github.com/nuslde), [Yuhang Han](https://github.com/yuhang1008), and [Shuo Sun](https://github.com/SS47816)
+> Authors: Christina Lee, Dongen Li, Yuhang Han, and Shuo Sun
 
 ![Ubuntu 20.04](https://img.shields.io/badge/OS-Ubuntu_20.04-informational?style=flat&logo=ubuntu&logoColor=white&color=2bbc8a)
 ![ROS Noetic](https://img.shields.io/badge/Tools-ROS_Noetic-informational?style=flat&logo=ROS&logoColor=white&color=2bbc8a)
