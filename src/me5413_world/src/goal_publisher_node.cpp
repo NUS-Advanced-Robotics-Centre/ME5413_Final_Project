@@ -6,73 +6,10 @@
  
 **/
 
-#include <iostream>
-#include <string>
-#include <vector>
+#include "me5413_world/goal_publisher.hpp"
 
-#include <ros/ros.h>
-#include <ros/console.h>
-#include <std_msgs/String.h>
-#include <std_msgs/Float32.h>
-#include <nav_msgs/Odometry.h>
-#include <geometry_msgs/Pose.h>
-#include <geometry_msgs/PoseStamped.h>
-#include <geometry_msgs/TransformStamped.h>
-
-#include <tf2/convert.h>
-#include <tf2/LinearMath/Matrix3x3.h>
-#include <tf2/LinearMath/Transform.h>
-#include <tf2/LinearMath/Quaternion.h>
-#include <tf2_ros/transform_listener.h>
-#include <tf2_ros/transform_broadcaster.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
-
-namespace me5413_project 
+namespace me5413_world 
 {
-
-class GoalPublisherNode
-{
- public:
-  GoalPublisherNode();
-  virtual ~GoalPublisherNode() {};
-
- private:
-  void timerCallback(const ros::TimerEvent&);
-  void robotOdomCallback(const nav_msgs::Odometry::ConstPtr& odom);
-  void goalNameCallback(const std_msgs::String::ConstPtr& name);
-  void goalPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& goal_pose);
-  
-  tf2::Transform convertPoseToTransform(const geometry_msgs::Pose& pose);
-  geometry_msgs::PoseStamped getGoalPoseFromConfig(const std::string& name);
-  std::pair<double, double> calculatePoseError(const geometry_msgs::Pose& pose_robot, const geometry_msgs::Pose& pose_goal);
-
-  // ROS declaration
-  ros::NodeHandle nh_;
-  ros::Timer timer_;
-  ros::Subscriber sub_robot_odom_;
-  ros::Subscriber sub_goal_name_;
-  ros::Subscriber sub_goal_pose_;
-  ros::Publisher pub_goal_;
-  ros::Publisher pub_absolute_position_error_;
-  ros::Publisher pub_absolute_heading_error_;
-  ros::Publisher pub_relative_position_error_;
-  ros::Publisher pub_relative_heading_error_;
-  tf2_ros::Buffer tf2_buffer_;
-  tf2_ros::TransformListener tf2_listener_;
-  tf2_ros::TransformBroadcaster tf2_bcaster_;
-  // Robot pose
-  std::string world_frame_;
-  std::string map_frame_;
-  std::string robot_frame_;
-  geometry_msgs::Pose pose_world_robot_;
-  geometry_msgs::Pose pose_world_goal_;
-  geometry_msgs::Pose pose_map_robot_;
-  geometry_msgs::Pose pose_map_goal_;
-  std_msgs::Float32 absolute_position_error_;
-  std_msgs::Float32 absolute_heading_error_;
-  std_msgs::Float32 relative_position_error_;
-  std_msgs::Float32 relative_heading_error_;
-};
 
 GoalPublisherNode::GoalPublisherNode() : tf2_listener_(tf2_buffer_)
 {
@@ -81,10 +18,10 @@ GoalPublisherNode::GoalPublisherNode() : tf2_listener_(tf2_buffer_)
   this->sub_goal_name_ = nh_.subscribe("/rviz_panel/goal_name", 1, &GoalPublisherNode::goalNameCallback, this);
   this->sub_goal_pose_ = nh_.subscribe("/move_base_simple/goal", 1, &GoalPublisherNode::goalPoseCallback, this);
   this->pub_goal_ = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1);
-  this->pub_absolute_position_error_ = nh_.advertise<std_msgs::Float32>("/me5413_project/absolute/position_error", 1);
-  this->pub_absolute_heading_error_ = nh_.advertise<std_msgs::Float32>("/me5413_project/absolute/heading_error", 1);
-  this->pub_relative_position_error_ = nh_.advertise<std_msgs::Float32>("/me5413_project/relative/position_error", 1);
-  this->pub_relative_heading_error_ = nh_.advertise<std_msgs::Float32>("/me5413_project/relative/heading_error", 1);
+  this->pub_absolute_position_error_ = nh_.advertise<std_msgs::Float32>("/me5413_world/absolute/position_error", 1);
+  this->pub_absolute_heading_error_ = nh_.advertise<std_msgs::Float32>("/me5413_world/absolute/heading_error", 1);
+  this->pub_relative_position_error_ = nh_.advertise<std_msgs::Float32>("/me5413_world/relative/position_error", 1);
+  this->pub_relative_heading_error_ = nh_.advertise<std_msgs::Float32>("/me5413_world/relative/heading_error", 1);
 
   // Initialization
   this->robot_frame_ = "base_link";
@@ -199,10 +136,10 @@ geometry_msgs::PoseStamped GoalPublisherNode::getGoalPoseFromConfig(const std::s
    */
 
   double x, y, yaw;
-  nh_.getParam("/me5413_project" + name + "/x", x);
-  nh_.getParam("/me5413_project" + name + "/y", y);
-  nh_.getParam("/me5413_project" + name + "/yaw", yaw);
-  nh_.getParam("/me5413_project/frame_id", this->world_frame_);
+  nh_.getParam("/me5413_world" + name + "/x", x);
+  nh_.getParam("/me5413_world" + name + "/y", y);
+  nh_.getParam("/me5413_world" + name + "/yaw", yaw);
+  nh_.getParam("/me5413_world/frame_id", this->world_frame_);
 
   tf2::Quaternion q;
   q.setRPY(0, 0, yaw);
@@ -240,12 +177,12 @@ std::pair<double, double> GoalPublisherNode::calculatePoseError(const geometry_m
   return std::pair<double, double>(position_error, heading_error);
 }
 
-} // namespace lgsvl_utils
+} // namespace me5413_world
 
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "goal_publisher_node");
-  me5413_project::GoalPublisherNode goal_publisher_node;
+  me5413_world::GoalPublisherNode goal_publisher_node;
   ros::spin();  // spin the ros node.
   return 0;
 }
