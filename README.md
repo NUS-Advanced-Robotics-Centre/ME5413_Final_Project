@@ -143,6 +143,32 @@ roslaunch me5413_world navigation.launch
 
 ![rviz_navigation_image](src/me5413_world/media/rviz_navigation.png)
 
+## Student Tasks
+
+### 1. Map the environment
+
+* You may use any SLAM algorithm you like, any type:
+  * 2D LiDAR
+  * 3D LiDAR
+  * Vision
+  * Multi-sensor
+* Verify your SLAM accuracy by comparing your odometry with the published `/gazebo/ground_truth/state` topic (`nav_msgs::Odometry`), which contains the gournd truth odometry of the robot.
+* You may want to use tools like [EVO](https://github.com/MichaelGrupp/evo) to quantitativly evaluate the performance of your SLAM algorithm.
+
+### 2. Using your own map, navigate your robot
+
+* From the starting point, move to the given pose within each area in sequence
+  * Assembly Line 1, 2
+  * Packaging Area 1, 2, 3, 4
+  * Delivery Vehicle 1, 2, 3
+* We have provided you a GUI in RVIZ that allows you to click and publish these given goal poses to the `/move_base_simple/goal` topic:
+  ![rviz_panel_image](src/me5413_world/media/rviz_panel.png)
+* We also provides you four topics (and visualized in RVIZ) that computes the real-time pose error between your robot and the selelcted goal pose:
+  * `/me5413_world/absolute/heading_error` (in degrees, wrt `world` frame, `std_msgs::Float32`)
+  * `/me5413_world/absolute/position_error` (in meters, wrt `world` frame, `std_msgs::Float32`)
+  * `/me5413_world/relative/heading_error` (in degrees, wrt `map` frame, `std_msgs::Float32`)
+  * `/me5413_world/relative/position_error` (in meters wrt `map` frame, `std_msgs::Float32`)
+
 ## Contribution
 
 You are welcome contributing to this repo by opening a pull-request
