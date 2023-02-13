@@ -15,4 +15,7 @@
     <!-- Add our jackal robot into the simulation -->
     <include file="$(find me5413_world)/launch/include/spawn_jackal.launch"/>
     
+    <!-- Load the destination configuration -->
+    <rosparam command="load" file="$(find me5413_world)/config/config.yaml" />
+
 </launch>

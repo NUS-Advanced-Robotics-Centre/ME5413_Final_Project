@@ -16,6 +16,6 @@
   <!-- Launch Rviz with our settings -->
   <node type="rviz" name="rviz" pkg="rviz" args="-d $(find me5413_world)/rviz/navigation.rviz" output="log" respawn="true"/>
 
-  <node ns="interactive_tools" pkg="interactive_tools" type="goal_publisher_node" name="goal_publisher_node" output="screen" />
+  <node ns="me5413_world" pkg="me5413_world" type="goal_publisher_node" name="goal_publisher_node" output="screen" />
 
 </launch>
