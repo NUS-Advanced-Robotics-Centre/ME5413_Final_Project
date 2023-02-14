@@ -166,7 +166,9 @@ roslaunch me5413_world navigation.launch
   * Packaging Area 1, 2, 3, 4
   * Delivery Vehicle 1, 2, 3
 * We have provided you a GUI in RVIZ that allows you to click and publish these given goal poses to the `/move_base_simple/goal` topic:
+  
   ![rviz_panel_image](src/me5413_world/media/rviz_panel.png)
+
 * We also provides you four topics (and visualized in RVIZ) that computes the real-time pose error between your robot and the selelcted goal pose:
   * `/me5413_world/absolute/heading_error` (in degrees, wrt `world` frame, `std_msgs::Float32`)
   * `/me5413_world/absolute/position_error` (in meters, wrt `world` frame, `std_msgs::Float32`)
