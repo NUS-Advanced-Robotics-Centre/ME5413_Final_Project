@@ -7,6 +7,8 @@ NUS ME5413 Autonomous Mobile Robotics Final Project
 ![ROS Noetic](https://img.shields.io/badge/Tools-ROS_Noetic-informational?style=flat&logo=ROS&logoColor=white&color=2bbc8a)
 ![C++](https://img.shields.io/badge/Code-C++-informational?style=flat&logo=c%2B%2B&logoColor=white&color=2bbc8a)
 ![Python](https://img.shields.io/badge/Code-Python-informational?style=flat&logo=Python&logoColor=white&color=2bbc8a)
+![GitHub Repo stars](https://img.shields.io/github/stars/NUS-Advanced-Robotics-Centre/ME5413_Final_Project?color=FFE333)
+![GitHub Repo forks](https://img.shields.io/github/forks/NUS-Advanced-Robotics-Centre/ME5413_Final_Project?color=FFE333)
 
 ![cover_image](src/me5413_world/media/gazebo_world.jpg)
 
@@ -155,7 +157,7 @@ roslaunch me5413_world navigation.launch
   * Vision
   * Multi-sensor
 * Verify your SLAM accuracy by comparing your odometry with the published `/gazebo/ground_truth/state` topic (`nav_msgs::Odometry`), which contains the gournd truth odometry of the robot.
-* You may want to use tools like [EVO](https://github.com/MichaelGrupp/evo) to quantitativly evaluate the performance of your SLAM algorithm.
+* You may want to use tools like [EVO](https://github.com/MichaelGrupp/evo) to quantitatively evaluate the performance of your SLAM algorithm.
 
 ### 2. Using your own map, navigate your robot
 
