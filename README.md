@@ -36,6 +36,7 @@ NUS ME5413 Autonomous Mobile Robotics Final Project
   * `jsk_rviz_plugins`
   * `jackal_gazebo`
   * `jackal_navigation`
+  * `velodyne_simulator`
   * `teleop_twist_keyboard`
 * And this [gazebo_model](https://github.com/osrf/gazebo_models) repositiory
 
