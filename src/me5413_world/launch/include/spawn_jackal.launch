@@ -20,7 +20,9 @@
                     --inorder" />
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
-  <include file="$(find jackal_control)/launch/control.launch" />
+  <!-- 改用自己的control文件, lee, 2023.03.23 -->
+  <!-- <include file="$(find jackal_control)/launch/control.launch" /> -->
+  <include file="$(find jackal_description)/launch/include/control.launch" />   
   <include file="$(find jackal_control)/launch/teleop.launch">
     <arg name="joystick" value="false" />
   </include>
