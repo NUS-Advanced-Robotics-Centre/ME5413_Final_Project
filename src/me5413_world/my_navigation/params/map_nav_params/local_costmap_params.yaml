@@ -1,0 +1,13 @@
+local_costmap:
+   global_frame: map
+   robot_base_frame: base_link
+   update_frequency: 20.0
+   publish_frequency: 5.0
+   width: 1.5
+   height: 1.5
+   resolution: 0.02
+   static_map: false
+   rolling_window: true
+
+   inflation_radius: 0.2
+   cost_scaling_factor: 3.0
