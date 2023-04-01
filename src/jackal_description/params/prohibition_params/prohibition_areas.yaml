@@ -1,0 +1,18 @@
+prohibition_areas: 
+# your first prohibited area is only a point
+#  - [2.00, 0.8]
+# #  now we define a line
+# #  it will become the thickness of the costmap resolution
+#  - [[8.33, 2.11],
+#     [8.26, 5.11]]
+# #  and last but not least a polygon with an individual number of points
+
+# workspace not allow to go inside
+ - [[-1, 0.8],
+    [4.8, 0.8],
+    [-1,4],
+    [4.8,4]]
+
+# the frame obstacle
+ - [[14.5,-8],
+    [17.5,-8]]
