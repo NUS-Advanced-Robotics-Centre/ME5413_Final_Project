@@ -9,7 +9,7 @@ NUS ME5413 Autonomous Mobile Robotics Final Project
 
 
 
-![](E:\Resources\02_Projects\ME5413-FinalProject\wkspace\ME5413_Final_Project\src\me5413_world\media\cartographer_navigation.jpg)
+![](src\me5413_world\media\cartographer_navigation.jpg)
 
 
 
@@ -222,7 +222,7 @@ Then play your rosbag in the second terminal
 rosbag play yourrosbag.bag
 ```
 
-![](E:\Resources\02_Projects\ME5413-FinalProject\wkspace\ME5413_Final_Project\src\me5413_world\media\rviz_mapping_alom.jpg)
+![](src\me5413_world\media\rviz_mapping_alom.jpg)
 
 
 
@@ -271,7 +271,7 @@ roscd me5413_world/maps/
 rosrun map_server map_saver -f my_map map:=/map
 ```
 
-![](E:\Resources\02_Projects\ME5413-FinalProject\wkspace\ME5413_Final_Project\src\me5413_world\media\mapping_result.png)
+![](src\me5413_world\media\mapping_result.png)
 
 
 
@@ -291,7 +291,7 @@ source ${YourCartographer_ws}/devel_isolated/cartographer_ros/setup.bash
 roslaunch me5413_world navigation_test.launch
 ```
 
-![](E:\Resources\02_Projects\ME5413-FinalProject\wkspace\ME5413_Final_Project\src\me5413_world\media\rviz_navigation_cartographer.jpg)
+![](src\me5413_world\media\rviz_navigation_cartographer.jpg)
 
 
 
