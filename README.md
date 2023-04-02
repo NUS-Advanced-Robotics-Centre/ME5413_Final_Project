@@ -1,16 +1,17 @@
 # ME5413_Final_Project
 
 NUS ME5413 Autonomous Mobile Robotics Final Project
-> Authors: Christina Lee, Dongen Li, Yuhang Han, and Shuo Sun
 
 ![Ubuntu 20.04](https://img.shields.io/badge/OS-Ubuntu_20.04-informational?style=flat&logo=ubuntu&logoColor=white&color=2bbc8a)
 ![ROS Noetic](https://img.shields.io/badge/Tools-ROS_Noetic-informational?style=flat&logo=ROS&logoColor=white&color=2bbc8a)
 ![C++](https://img.shields.io/badge/Code-C++-informational?style=flat&logo=c%2B%2B&logoColor=white&color=2bbc8a)
 ![Python](https://img.shields.io/badge/Code-Python-informational?style=flat&logo=Python&logoColor=white&color=2bbc8a)
-![GitHub Repo stars](https://img.shields.io/github/stars/NUS-Advanced-Robotics-Centre/ME5413_Final_Project?color=FFE333)
-![GitHub Repo forks](https://img.shields.io/github/forks/NUS-Advanced-Robotics-Centre/ME5413_Final_Project?color=FFE333)
 
-![cover_image](src/me5413_world/media/gazebo_world.jpg)
+
+
+![](E:\Resources\02_Projects\ME5413-FinalProject\wkspace\ME5413_Final_Project\src\me5413_world\media\cartographer_navigation.jpg)
+
+
 
 ## Dependencies
 
@@ -38,24 +39,32 @@ NUS ME5413 Autonomous Mobile Robotics Final Project
   * `jackal_navigation`
   * `velodyne_simulator`
   * `teleop_twist_keyboard`
+  * `spatio-temporal-voxel-layer`
 * And this [gazebo_model](https://github.com/osrf/gazebo_models) repositiory
+
+
+
+<br/>
 
 ## Installation
 
-This repo is a ros workspace, containing three rospkgs:
+This repo is a ros workspace, containing four rospkgs:
 
 * `interactive_tools` are customized tools to interact with gazebo and your robot
 * `jackal_description` contains the modified jackal robot model descriptions
 * `me5413_world` the main pkg containing the gazebo world, and the launch files
+* `costmap_prohibition_layer` the pkg for generating the restricted area in move_base global planner
 
-**Note:** If you are working on this project, it is encouraged to fork this repository and work on your own fork!
 
-After forking this repo to your own github:
+
+<br/>
+
+### Clone the repo and build
 
 ```bash
-# Clone your own fork of this repo (assuming home here `~/`)
+# Clone the repo (assuming home here `~/`)
 cd
-git clone https://github.com/<YOUR_GITHUB_USERNAME>/ME5413_Final_Project.git
+git clone https://github.com/ljw19970/ME5413_Final_Project.git
 cd ME5413_Final_Project
 
 # Install all dependencies
@@ -66,6 +75,12 @@ catkin_make
 # Source 
 source devel/setup.bash
 ```
+
+
+
+<br/>
+
+### Installation of Gazabo models
 
 To properly load the gazebo world, you will need to have the necessary model files in the `~/.gazebo/models/` directory.
 
@@ -92,9 +107,56 @@ There are two sources of models needed:
   cp -r ~/ME5413_Final_Project/src/me5413_world/models/* ~/.gazebo/models
   ```
 
+
+
+<br/>
+
+### Installation of Cartographer
+
+Install the Cartographer, follow [Cartographer Installation](https://google-cartographer-ros.readthedocs.io/en/latest/compilation.html)
+
+after installing the Cartographer, copy the .lua files in folder `/cartographer/configurations` to the `${YourCartographer_ws}/install_isolated/share/cartographer_ros/configuration_files`
+
+
+
+<br/>
+
+### Installation of A-LOAM
+
+Install the Cartographer, follow [A-LOAM Installation](https://github.com/nuslde/aloam_lidar_odom_result_generate)
+
+modify the 3d-lidar topic in file scanRegistration.cpp from /velodyne_points to /mid/points in main function
+
+
+
+<br/>
+
+### Installation of pcd2pgm
+
+```bash
+# Clone the code
+cd
+git clone https://github.com/Hinson-A/pcd2pgm_package.git
+cd pcd2pgm_package
+
+# Build
+catkin_make
+```
+
+open the pcd_to_pgm_ws/src/pcd2pgm_package/pcd2pgm/launch/run.launch, modify the following parameters 
+
+- `file_directory`: the path where the .pcd file is stored, for example /home/lee/Resources/control_cmd/pcd2pgm/
+- `file_name`: the .pcd file name
+- `thre_z_min`: the minimum height of the points. The points within the range thre_z_min and thre_z_max will be reserved, otherwise will be filtered
+- `thre_z_max`: the maximum height of the points
+
+
+
+<br/>
+
 ## Usage
 
-### 0. Gazebo World
+### Launch Gazabo World
 
 This command will launch the gazebo with the project world
 
@@ -102,8 +164,13 @@ This command will launch the gazebo with the project world
 # Launch Gazebo World together with our robot
 roslaunch me5413_world world.launch
 ```
+![cover_image](src/me5413_world/media/gazebo_world.jpg)
 
-### 1. Manual Control
+
+
+<br/>
+
+### Manual Control 
 
 If you wish to explore the gazebo world a bit, we provide you a way to manually control the robot around:
 
@@ -116,75 +183,121 @@ roslaunch me5413_world manual.launch
 
 ![rviz_manual_image](src/me5413_world/media/rviz_manual.png)
 
-### 2. Mapping
 
-After launching **Step 0**, in the second terminal:
+
+<br/>
+
+### Mapping using A-LOAM
+
+#### Directly Run
+
+After launching the Gazabo world, running the following command in the second terminal:
 
 ```bash
-# Launch GMapping
-roslaunch me5413_world mapping.launch
+# change to your A-LOAM workspace
+source devel/setup.bash
+
+# run the A-LOAM
+roslaunch aloam_velodyne aloam_velodyne_VLP_16.launch
 ```
 
-After finishing mapping, run the following command in the thrid terminal to save the map:
+
+
+#### Rosbag Example
+
+Firstly, launch the A-LOAM program in the first terminal
 
 ```bash
-# Save the map as `my_map` in the `maps/` folder
+# change to your A-LOAM workspace
+source devel/setup.bash
+
+# run the A-LOAM
+roslaunch aloam_velodyne aloam_velodyne_VLP_16.launch
+```
+
+Then play your rosbag in the second terminal
+
+```bash
+# play your rosbag
+rosbag play yourrosbag.bag
+```
+
+![](E:\Resources\02_Projects\ME5413-FinalProject\wkspace\ME5413_Final_Project\src\me5413_world\media\rviz_mapping_alom.jpg)
+
+
+
+<br/>
+
+#### Save A-LOAM Result
+
+Before A-LOAM finishing mapping, run the following command in the thrid terminal  to record the 3D SLAM result
+
+```bash
+# record the /laser_cloud_surrod which contains the 3D SLAM result
+# save the rosbag as 'alom_result'
+rosbag record -O alom_result.bag out /laser_cloud_surround
+
+# change the 3D SLAM result '/laser_cloud_surround' to 'pcd' files in folder 'mypcd'
+rosrun pcl_ros bag_to_pcd alom_result.bag /laser_cloud_surround mypcd
+```
+
+There might be many pcd files in 'mypcd' folder depending on the time length of your bag and the file name is named with timestamp in the bag. The pcd file can be viewed by using following command
+
+```bash
+pcl_viewer yourfilename.pcd
+```
+
+
+
+<br/>
+
+#### Convert PCD to PGM
+
+Choose the pcd file with the latest timestamp and modify the pcd2pgm parameters according to the chapter **'Installation of pcd2pgm_package'**, and then run the following command
+
+```bash
+# launch the pcd2pgm program
+cd
+cd pcd2pgm_package
+source devel/setup.bash
+roslaunch pcd2pgm run.launch
+```
+
+then run the following command to save the 2D map in the second terminal
+
+```bash
+# save the 'map'
 roscd me5413_world/maps/
 rosrun map_server map_saver -f my_map map:=/map
 ```
 
-![rviz_nmapping_image](src/me5413_world/media/rviz_mapping.png)
+![](E:\Resources\02_Projects\ME5413-FinalProject\wkspace\ME5413_Final_Project\src\me5413_world\media\mapping_result.png)
 
-### 3. Navigation
 
-Once completed **Step 2** mapping and saved your map, quit the mapping process.
+
+<br/>
+
+### Navigation using Cartographer
+
+Once completed **Step 2** mapping and saved your map, quit the mapping process
+
+Before the navigation, please ensure the Gazebo world has been launched
 
 Then, in the second terminal:
 
 ```bash
-# Load a map and launch AMCL localizer
-roslaunch me5413_world navigation.launch
+# Load a map and launch Cartographer localizer
+source ${YourCartographer_ws}/devel_isolated/cartographer_ros/setup.bash
+roslaunch me5413_world navigation_test.launch
 ```
 
-![rviz_navigation_image](src/me5413_world/media/rviz_navigation.png)
+![](E:\Resources\02_Projects\ME5413-FinalProject\wkspace\ME5413_Final_Project\src\me5413_world\media\rviz_navigation_cartographer.jpg)
 
-## Student Tasks
 
-### 1. Map the environment
 
-* You may use any SLAM algorithm you like, any type:
-  * 2D LiDAR
-  * 3D LiDAR
-  * Vision
-  * Multi-sensor
-* Verify your SLAM accuracy by comparing your odometry with the published `/gazebo/ground_truth/state` topic (`nav_msgs::Odometry`), which contains the gournd truth odometry of the robot.
-* You may want to use tools like [EVO](https://github.com/MichaelGrupp/evo) to quantitatively evaluate the performance of your SLAM algorithm.
 
-### 2. Using your own map, navigate your robot
 
-* From the starting point, move to the given pose within each area in sequence
-  * Assembly Line 1, 2
-  * Packaging Area 1, 2, 3, 4
-  * Delivery Vehicle 1, 2, 3
-* We have provided you a GUI in RVIZ that allows you to click and publish these given goal poses to the `/move_base_simple/goal` topic:
-  
-  ![rviz_panel_image](src/me5413_world/media/rviz_panel.png)
-
-* We also provides you four topics (and visualized in RVIZ) that computes the real-time pose error between your robot and the selelcted goal pose:
-  * `/me5413_world/absolute/heading_error` (in degrees, wrt `world` frame, `std_msgs::Float32`)
-  * `/me5413_world/absolute/position_error` (in meters, wrt `world` frame, `std_msgs::Float32`)
-  * `/me5413_world/relative/heading_error` (in degrees, wrt `map` frame, `std_msgs::Float32`)
-  * `/me5413_world/relative/position_error` (in meters wrt `map` frame, `std_msgs::Float32`)
-
-## Contribution
-
-You are welcome contributing to this repo by opening a pull-request
-
-We are following:
-
-* [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html),
-* [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#main),
-* [ROS C++ Style Guide](http://wiki.ros.org/CppStyleGuide)
+<br/>
 
 ## License
 
