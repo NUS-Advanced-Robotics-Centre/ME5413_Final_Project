@@ -9,7 +9,7 @@ NUS ME5413 Autonomous Mobile Robotics Final Project
 
 
 
-![cover_image](src\me5413_world\media\cartographer_navigation.jpg)
+![cartographer_navigation](src\me5413_world\media\cartographer_navigation.jpg)
 
 
 
@@ -164,7 +164,7 @@ This command will launch the gazebo with the project world
 # Launch Gazebo World together with our robot
 roslaunch me5413_world world.launch
 ```
-![gazebo_world_image](src/me5413_world/media/gazebo_world.jpg)
+![gazebo_world](src/me5413_world/media/gazebo_world.jpg)
 
 
 
@@ -181,7 +181,7 @@ roslaunch me5413_world manual.launch
 
 **Note:** This robot keyboard teleop control is also included in all other launch files, so you don't need to launch this when you do mapping or navigation.
 
-![rviz_manual_image](src/me5413_world/media/rviz_manual.png)
+![rviz_manual](src/me5413_world/media/rviz_manual.png)
 
 
 
@@ -222,7 +222,7 @@ Then play your rosbag in the second terminal
 rosbag play yourrosbag.bag
 ```
 
-![rviz_mapping_alom_image](src\me5413_world\media\rviz_mapping_alom.jpg)
+![rviz_mapping_alom](src\me5413_world\media\rviz_mapping_alom.jpg)
 
 
 
@@ -271,7 +271,7 @@ roscd me5413_world/maps/
 rosrun map_server map_saver -f my_map map:=/map
 ```
 
-![mapping_result_image](src\me5413_world\media\mapping_result.png)
+![mapping_result](src\me5413_world\media\mapping_result.png)
 
 
 
@@ -291,7 +291,7 @@ source ${YourCartographer_ws}/devel_isolated/cartographer_ros/setup.bash
 roslaunch me5413_world navigation_test.launch
 ```
 
-![rviz_navigation_cartographer_image](src\me5413_world\media\rviz_navigation_cartographer.jpg)
+![rviz_navigation_cartographer](src\me5413_world\media\rviz_navigation_cartographer.jpg)
 
 
 
