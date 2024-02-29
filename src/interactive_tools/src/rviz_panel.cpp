@@ -1,3 +1,11 @@
+/* rviz_panel.cpp
+
+ * Copyright (C) 2023 SS47816
+
+ * Rviz Panel for controling goal poses 
+ 
+**/
+
 #include <pluginlib/class_list_macros.hpp>
 #include "interactive_tools/rviz_panel.hpp"
 
@@ -7,13 +15,14 @@ namespace rviz_panel
 {
     simplePanel::simplePanel(QWidget * parent)
     :   rviz::Panel(parent),
-        ui_(std::make_shared<Ui::two_button>())
+        ui_(std::make_shared<Ui::TaskControlPanel>())
     {
         // Extend the widget with all attributes and children from UI file
         ui_->setupUi(this);
 
         // Define ROS publisher
-        pub_goal_ = nh_.advertise<std_msgs::String>("/rviz_panel/goal_name", 1);
+        this->pub_goal_ = nh_.advertise<std_msgs::String>("/rviz_panel/goal_name", 1);
+        this->pub_respawn_ = nh_.advertise<std_msgs::Int16>("/rviz_panel/respawn_objects", 1);
         // sub_error_to_goal_ = nh_.subscribe("/interactive_tools/error_to_goal", 1, &GoalPublisherNode::goalPoseCallback, this);
 
         // Connect the clicked signals to slots
@@ -29,6 +38,9 @@ namespace rviz_panel
         connect(ui_->pushButton_3_2, SIGNAL(clicked()), this, SLOT(on_button_3_2_clicked()));
         connect(ui_->pushButton_3_3, SIGNAL(clicked()), this, SLOT(on_button_3_3_clicked()));
 
+        connect(ui_->pushButton_regen, SIGNAL(clicked()), this, SLOT(on_button_regen_clicked()));
+        connect(ui_->pushButton_clear, SIGNAL(clicked()), this, SLOT(on_button_clear_clicked()));
+
         // Initialization
         goal_name_msg_.data = "";
     }
@@ -39,14 +51,14 @@ namespace rviz_panel
         ROS_INFO_STREAM("Setting Assembly Line 1 as the GOAL.");
         ui_->label_status->setText("Heading to Assembly Line 1.");
         this->goal_name_msg_.data = "/assembly_line_1";
-        this->pub_goal_.publish(goal_name_msg_);
+        this->pub_goal_.publish(this->goal_name_msg_);
     }
     void simplePanel::on_button_1_2_clicked()
     {
         ROS_INFO_STREAM("Setting Assembly Line 2 as the GOAL.");
         ui_->label_status->setText("Heading to Assembly Line 2.");
         this->goal_name_msg_.data = "/assembly_line_2";
-        this->pub_goal_.publish(goal_name_msg_);
+        this->pub_goal_.publish(this->goal_name_msg_);
     }
 
     // Packaging Area buttons
@@ -55,28 +67,28 @@ namespace rviz_panel
         ROS_INFO_STREAM("Setting Packaging Area 1 as the GOAL.");
         ui_->label_status->setText("Heading to Packaging Area 1.");
         this->goal_name_msg_.data = "/packing_area_1";
-        this->pub_goal_.publish(goal_name_msg_);
+        this->pub_goal_.publish(this->goal_name_msg_);
     }
     void simplePanel::on_button_2_2_clicked()
     {
         ROS_INFO_STREAM("Setting Packaging Area 2 as the GOAL.");
         ui_->label_status->setText("Heading to Packaging Area 2.");
         this->goal_name_msg_.data = "/packing_area_2";
-        this->pub_goal_.publish(goal_name_msg_);
+        this->pub_goal_.publish(this->goal_name_msg_);
     }
     void simplePanel::on_button_2_3_clicked()
     {
         ROS_INFO_STREAM("Setting Packaging Area 3 as the GOAL.");
         ui_->label_status->setText("Heading to Packaging Area 3.");
         this->goal_name_msg_.data = "/packing_area_3";
-        this->pub_goal_.publish(goal_name_msg_);
+        this->pub_goal_.publish(this->goal_name_msg_);
     }
     void simplePanel::on_button_2_4_clicked()
     {
         ROS_INFO_STREAM("Setting Packaging Area 4 as the GOAL.");
         ui_->label_status->setText("Heading to Packaging Area 4.");
         this->goal_name_msg_.data = "/packing_area_4";
-        this->pub_goal_.publish(goal_name_msg_);
+        this->pub_goal_.publish(this->goal_name_msg_);
     }
 
     // Delivery Vehicle buttons
@@ -85,21 +97,36 @@ namespace rviz_panel
         ROS_INFO_STREAM("Setting Vehicle 1 as the GOAL.");
         ui_->label_status->setText("Heading to Vehicle 1.");
         this->goal_name_msg_.data = "/vehicle_1";
-        this->pub_goal_.publish(goal_name_msg_);
+        this->pub_goal_.publish(this->goal_name_msg_);
     }
     void simplePanel::on_button_3_2_clicked()
     {
         ROS_INFO_STREAM("Setting Vehicle 2 as the GOAL.");
         ui_->label_status->setText("Heading to Vehicle 2.");
         this->goal_name_msg_.data = "/vehicle_2";
-        this->pub_goal_.publish(goal_name_msg_);
+        this->pub_goal_.publish(this->goal_name_msg_);
     }
     void simplePanel::on_button_3_3_clicked()
     {
         ROS_INFO_STREAM("Setting Vehicle 3 as the GOAL.");
         ui_->label_status->setText("Heading to Vehicle 3.");
         this->goal_name_msg_.data = "/vehicle_3";
-        this->pub_goal_.publish(goal_name_msg_);
+        this->pub_goal_.publish(this->goal_name_msg_);
+    }
+
+    void simplePanel::on_button_regen_clicked()
+    {
+        ROS_INFO_STREAM("Respawning Random Objects");
+        ui_->label_status->setText("Please select a goal pose");
+        this->regen_cmd_msg_.data = 1;
+        this->pub_respawn_.publish(this->regen_cmd_msg_);
+    }
+    void simplePanel::on_button_clear_clicked()
+    {
+        ROS_INFO_STREAM("Clearing Random Objects");
+        ui_->label_status->setText("Please select a goal pose");
+        this->regen_cmd_msg_.data = 0;
+        this->pub_respawn_.publish(this->regen_cmd_msg_);
     }
 
     /**

@@ -11,7 +11,7 @@
 
 #include <ros/ros.h>
 #include <ros/console.h>
-#include <std_msgs/Bool.h>
+#include <std_msgs/Int16.h>
 
 #include <ignition/math/Pose3.hh>
 #include <gazebo/gazebo.hh>
@@ -49,9 +49,9 @@ class ObjectSpawner : public WorldPlugin
     node->Init(_world->Name());
     this->pub_factory_ = node->Advertise<msgs::Factory>("~/factory");
     clt_delete_objects_ = nh_.serviceClient<gazebo_msgs::DeleteModel>("/gazebo/delete_model");
-    this->sub_respawn_objects_ = nh_.subscribe("/me5413_world/respawn_objects", 1, &ObjectSpawner::respawnCmdCallback, this);
+    this->sub_respawn_objects_ = nh_.subscribe("/rviz_panel/respawn_objects", 1, &ObjectSpawner::respawnCmdCallback, this);
 
-    spawnRandomObjects();
+    // spawnRandomObjects();
   }
 
  private:
@@ -61,38 +61,6 @@ class ObjectSpawner : public WorldPlugin
   ros::ServiceClient clt_delete_objects_;
   ros::Subscriber sub_respawn_objects_;
   ros::Publisher pub_rviz_markers_;
-
-  void respawnCmdCallback(const std_msgs::Bool::ConstPtr& respawn_msg)
-  {
-    ROS_INFO_STREAM("Respawning Random Objects!");
-    // std::cout << "Respawning Random Objects!" << std::endl;
-
-    deleteObject(box_1_name);
-    deleteObject(box_2_name);
-    deleteObject(box_3_name);
-    deleteObject(cone_name);
-    spawnRandomObjects();
-
-    ROS_INFO_STREAM("Random Objects Respawned!");
-    // std::cout << "Random Objects Respawned!" << std::endl;
-    return;
-  };
-
-  void deleteObject(const std::string& object_name)
-  {
-    gazebo_msgs::DeleteModel delete_model_srv;
-    delete_model_srv.request.model_name = object_name;
-    this->clt_delete_objects_.call(delete_model_srv);
-    if (delete_model_srv.response.success == true)
-    {
-      ROS_INFO_STREAM("Object: " << object_name << "successfully deleted");
-    }
-    else
-    {
-      ROS_ERROR_STREAM("Failed to delete Object: " << object_name << std::endl);
-    }
-    return;
-  };
 
   void spawnRandomObjects()
   {
@@ -165,6 +133,51 @@ class ObjectSpawner : public WorldPlugin
     this->pub_factory_->Publish(box_3_msg);
     this->pub_factory_->Publish(cone_msg);
   }
+
+  void deleteObject(const std::string& object_name)
+  {
+    gazebo_msgs::DeleteModel delete_model_srv;
+    delete_model_srv.request.model_name = object_name;
+    this->clt_delete_objects_.call(delete_model_srv);
+    if (delete_model_srv.response.success == true)
+    {
+      ROS_INFO_STREAM("Object: " << object_name << "successfully deleted");
+    }
+    else
+    {
+      ROS_ERROR_STREAM("Failed to delete Object: " << object_name << std::endl);
+    }
+    return;
+  };
+
+  void respawnCmdCallback(const std_msgs::Int16::ConstPtr& respawn_msg)
+  {
+    const int cmd = respawn_msg->data;
+    if (cmd == 0)
+    {
+      deleteObject(box_1_name);
+      deleteObject(box_2_name);
+      deleteObject(box_3_name);
+      deleteObject(cone_name);
+      ROS_INFO_STREAM("Random Objects Cleared!");
+    }
+    else if (cmd == 1)
+    {
+      deleteObject(box_1_name);
+      deleteObject(box_2_name);
+      deleteObject(box_3_name);
+      deleteObject(cone_name);
+      spawnRandomObjects();
+      ROS_INFO_STREAM("Random Objects Respawned!");
+    }
+    else
+    {
+      ROS_INFO_STREAM("Respawned Command Not Recognized!");
+    }
+
+    return;
+  };
+
 };
 
 // Register this plugin with the simulator
