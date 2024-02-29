@@ -10,13 +10,13 @@ namespace gazebo
 class ObjectSpawner : public WorldPlugin
 {
 public:
-  void Load(physics::WorldPtr _parent, sdf::ElementPtr /*_sdf*/)
+  void Load(physics::WorldPtr _world, sdf::ElementPtr _sdf)
   {
     // Create a new transport node
     transport::NodePtr node(new transport::Node());
 
     // Initialize the node with the world name
-    node->Init(_parent->Name());
+    node->Init(_world->Name());
 
     // Create a publisher on the ~/factory topic
     transport::PublisherPtr factoryPub = node->Advertise<msgs::Factory>("~/factory");
