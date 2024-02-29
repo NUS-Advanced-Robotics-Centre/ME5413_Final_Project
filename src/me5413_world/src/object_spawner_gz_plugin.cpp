@@ -45,7 +45,7 @@ void ObjectSpawner::spawnRandomObjects()
   {
     p1 = ignition::math::Vector2d(
       static_cast<double>(std::rand()) / RAND_MAX * 8.0 + 8,
-      1 - static_cast<double>(std::rand()) / RAND_MAX * 7.25);
+      -6.25 + static_cast<double>(std::rand()) / RAND_MAX * 7.25);
 
     p2 = ignition::math::Vector2d(
       static_cast<double>(std::rand()) / RAND_MAX * 8.0 + 8,
@@ -55,11 +55,8 @@ void ObjectSpawner::spawnRandomObjects()
       static_cast<double>(std::rand()) / RAND_MAX * 8.0 + 8,
       -6.25 + static_cast<double>(std::rand()) / RAND_MAX * 7.25);
   } while ((p1 - p2).Length() <= 4.3 ||
-            (p1 - p3).Length() <= 4.3 ||
-            (p2 - p3).Length() <= 4.3 ||
-            (p1.X() > 16.2 && p1.X() < 16.9 && p1.Y() > -6.16 && p1.Y() < -5.76) ||
-            (p2.X() > 16.2 && p2.X() < 16.9 && p2.Y() > -6.16 && p2.Y() < -5.76) ||
-            (p3.X() > 16.2 && p3.X() < 16.9 && p3.Y() > -6.16 && p3.Y() < -5.76));
+          (p1 - p3).Length() <= 4.3 ||
+          (p2 - p3).Length() <= 4.3);
 
   // Model file to load
   box_1_msg.set_sdf_filename("model://number1");
