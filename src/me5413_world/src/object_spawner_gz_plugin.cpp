@@ -1,32 +1,72 @@
-#include <ignition/math/Pose3.hh>
-#include "gazebo/physics/physics.hh"
-#include "gazebo/common/common.hh"
-#include "gazebo/gazebo.hh"
-#include <cstdlib>
+/* object_spawner_gz_plugin.cpp
+
+ * Copyright (C) 2024 nuslde, SS47816
+
+ * Gazebo Plugin for spawning objects
+ 
+**/
+
 #include <ctime>
+#include <cstdlib>
+
+#include <ros/ros.h>
+#include <ros/console.h>
+#include <std_msgs/Bool.h>
+
+#include <ignition/math/Pose3.hh>
+#include "gazebo/gazebo.hh"
+#include "gazebo/common/common.hh"
+#include "gazebo/physics/physics.hh"
 
 namespace gazebo
 {
 class ObjectSpawner : public WorldPlugin
 {
-public:
+ public:
+  ObjectSpawner() : WorldPlugin() {};
+  virtual ~ObjectSpawner() {};
+  
   void Load(physics::WorldPtr _world, sdf::ElementPtr _sdf)
   {
     // Create a new transport node
     transport::NodePtr node(new transport::Node());
-
     // Initialize the node with the world name
     node->Init(_world->Name());
-
     // Create a publisher on the ~/factory topic
-    transport::PublisherPtr factoryPub = node->Advertise<msgs::Factory>("~/factory");
+    this->pub_factory = node->Advertise<msgs::Factory>("~/factory");
+    
+    this->sub_respawn_objects_ = nh_.subscribe("/me5413_world/respawn_objects", 1, &ObjectSpawner::respawnCmdCallback, this);
+    
+    spawnRandomObjects();
+  }
 
-    // Create the message
-    msgs::Factory box_1_msg;
-    msgs::Factory box_2_msg;
-    msgs::Factory box_3_msg;
-    msgs::Factory cone_msg;
+ private:
+  // Gazebo object messages
+  msgs::Factory box_1_msg;
+  msgs::Factory box_2_msg;
+  msgs::Factory box_3_msg;
+  msgs::Factory cone_msg;
 
+  transport::PublisherPtr pub_factory;
+
+  ros::NodeHandle nh_;
+  ros::Subscriber sub_respawn_objects_;
+  // ros::Publisher pub_rviz_markers_;
+
+  void respawnCmdCallback(const std_msgs::Bool::ConstPtr& respawn_msg)
+  {
+    ROS_INFO_STREAM("Respawning Random Objects!");
+    std::cout << "Respawning Random Objects!" << std::endl;
+
+    spawnRandomObjects();
+
+    ROS_INFO_STREAM("Random Objects Respawned!");
+    std::cout << "Random Objects Respawned!" << std::endl;
+    return;
+  };
+
+  void spawnRandomObjects()
+  {
     /*********************************** Generate Random Boxes **********************************/
     // Seed for random number generation
     std::srand(std::time(0));
@@ -91,10 +131,10 @@ public:
     }
 
     // Send messages
-    factoryPub->Publish(box_1_msg);
-    factoryPub->Publish(box_2_msg);
-    factoryPub->Publish(box_3_msg);
-    factoryPub->Publish(cone_msg);
+    pub_factory->Publish(box_1_msg);
+    pub_factory->Publish(box_2_msg);
+    pub_factory->Publish(box_3_msg);
+    pub_factory->Publish(cone_msg);
   }
 };
 
