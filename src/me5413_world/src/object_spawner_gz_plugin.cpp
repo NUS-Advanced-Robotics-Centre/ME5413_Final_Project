@@ -56,10 +56,10 @@ public:
       transport::PublisherPtr factoryPub = node->Advertise<msgs::Factory>("~/factory");
 
       // Create the message
-      msgs::Factory msg_1;
-      msgs::Factory msg_2;
-      msgs::Factory msg_3;
-      msgs::Factory msg_cone;
+      msgs::Factory box_1_msg;
+      msgs::Factory box_2_msg;
+      msgs::Factory box_3_msg;
+      msgs::Factory cone_msg;
 
       // Generate random points within a 10 by 8 area with a distance greater than 4.3
       ignition::math::Vector2d p1, p2, p3;
@@ -85,50 +85,50 @@ public:
                (p3.X() > 16.2 && p3.X() < 16.9 && p3.Y() > -6.16 && p3.Y() < -5.76));
 
       // Model file to load
-      msg_1.set_sdf_filename("model://number1");
-      msg_2.set_sdf_filename("model://number2");
-      msg_3.set_sdf_filename("model://number3");
-      msg_cone.set_sdf_filename("model://construction_cone");
+      box_1_msg.set_sdf_filename("model://number1");
+      box_2_msg.set_sdf_filename("model://number2");
+      box_3_msg.set_sdf_filename("model://number3");
+      cone_msg.set_sdf_filename("model://construction_cone");
 
       // Seed for random number generation
       std::srand(std::time(0));
 
       if (std::rand() % 2 == 0)
       {
-        msgs::Set(msg_cone.mutable_pose(),
+        msgs::Set(cone_msg.mutable_pose(),
                   ignition::math::Pose3d(
                       ignition::math::Vector3d(12.7, 2.5, 0.4),
                       ignition::math::Quaterniond(0, 0, 0)));
       }
       else
       {
-        msgs::Set(msg_cone.mutable_pose(),
+        msgs::Set(cone_msg.mutable_pose(),
                   ignition::math::Pose3d(
                       ignition::math::Vector3d(16.9, 2.5, 0.4),
                       ignition::math::Quaterniond(0, 0, 0)));
       }
 
       // Pose to initialize the model to
-      msgs::Set(msg_1.mutable_pose(),
+      msgs::Set(box_1_msg.mutable_pose(),
                 ignition::math::Pose3d(
                     ignition::math::Vector3d(p1.X(), p1.Y(), 0.4),
                     ignition::math::Quaterniond(0, 0, 0)));
 
-      msgs::Set(msg_2.mutable_pose(),
+      msgs::Set(box_2_msg.mutable_pose(),
                 ignition::math::Pose3d(
                     ignition::math::Vector3d(p2.X(), p2.Y(), 0.4),
                     ignition::math::Quaterniond(0, 0, 0)));
 
-      msgs::Set(msg_3.mutable_pose(),
+      msgs::Set(box_3_msg.mutable_pose(),
                 ignition::math::Pose3d(
                     ignition::math::Vector3d(p3.X(), p3.Y(), 0.4),
                     ignition::math::Quaterniond(0, 0, 0)));
 
       // Send the message
-      factoryPub->Publish(msg_1);
-      factoryPub->Publish(msg_2);
-      factoryPub->Publish(msg_3);
-      factoryPub->Publish(msg_cone);
+      factoryPub->Publish(box_1_msg);
+      factoryPub->Publish(box_2_msg);
+      factoryPub->Publish(box_3_msg);
+      factoryPub->Publish(cone_msg);
     }
   }
 };
