@@ -19,6 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf2_eigen
   tf2_geometry_msgs
 )
+find_package(gazebo REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
@@ -30,10 +31,17 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${GAZEBO_INCLUDE_DIRS}
 )
+
+link_directories(${GAZEBO_LIBRARY_DIRS})
+list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
 # Add Nodes
 add_executable(goal_publisher_node src/goal_publisher_node.cpp)
 target_link_libraries(goal_publisher_node ${catkin_LIBRARIES})
 add_dependencies(goal_publisher_node ${catkin_EXPORTED_TARGETS} ${${PROJECT_NAME}_EXPORTED_TARGETS})
 
+add_library(object_spawner_gz_plugin SHARED src/object_spawner_gz_plugin.cpp)
+target_link_libraries(object_spawner_gz_plugin ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})

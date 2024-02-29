@@ -5497,5 +5497,7 @@
       </link>
       <pose frame=''>-0.759737 -4.1022 -0 1.5708 -0 1.5708</pose>
     </model>
+
+    <plugin name="object_spawner_gz_plugin" filename="libobject_spawner_gz_plugin.so"/>
   </world>
 </sdf>
