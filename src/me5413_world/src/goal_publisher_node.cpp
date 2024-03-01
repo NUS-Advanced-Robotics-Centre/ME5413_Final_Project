@@ -13,16 +13,18 @@ namespace me5413_world
 
 GoalPublisherNode::GoalPublisherNode() : tf2_listener_(tf2_buffer_)
 {
-  this->timer_ = nh_.createTimer(ros::Duration(0.2), &GoalPublisherNode::timerCallback, this);
-  this->sub_robot_odom_ = nh_.subscribe("/gazebo/ground_truth/state", 1, &GoalPublisherNode::robotOdomCallback, this);
-  this->sub_goal_name_ = nh_.subscribe("/rviz_panel/goal_name", 1, &GoalPublisherNode::goalNameCallback, this);
-  this->sub_goal_pose_ = nh_.subscribe("/move_base_simple/goal", 1, &GoalPublisherNode::goalPoseCallback, this);
   this->pub_goal_ = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1);
   this->pub_absolute_position_error_ = nh_.advertise<std_msgs::Float32>("/me5413_world/absolute/position_error", 1);
   this->pub_absolute_heading_error_ = nh_.advertise<std_msgs::Float32>("/me5413_world/absolute/heading_error", 1);
   this->pub_relative_position_error_ = nh_.advertise<std_msgs::Float32>("/me5413_world/relative/position_error", 1);
   this->pub_relative_heading_error_ = nh_.advertise<std_msgs::Float32>("/me5413_world/relative/heading_error", 1);
 
+  this->timer_ = nh_.createTimer(ros::Duration(0.2), &GoalPublisherNode::timerCallback, this);
+  this->sub_robot_odom_ = nh_.subscribe("/gazebo/ground_truth/state", 1, &GoalPublisherNode::robotOdomCallback, this);
+  this->sub_goal_name_ = nh_.subscribe("/rviz_panel/goal_name", 1, &GoalPublisherNode::goalNameCallback, this);
+  this->sub_goal_pose_ = nh_.subscribe("/move_base_simple/goal", 1, &GoalPublisherNode::goalPoseCallback, this);
+  this->sub_box_markers_ = nh_.subscribe("/gazebo/ground_truth/box_markers", 1, &GoalPublisherNode::boxMarkersCallback, this);
+  
   // Initialization
   this->robot_frame_ = "base_link";
   this->map_frame_ = "map";
@@ -82,10 +84,31 @@ void GoalPublisherNode::robotOdomCallback(const nav_msgs::Odometry::ConstPtr& od
 
 void GoalPublisherNode::goalNameCallback(const std_msgs::String::ConstPtr& name)
 { 
-  // Get the Pose of the goal in world frame
-  const auto P_world_goal = getGoalPoseFromConfig(name->data);
-  this->pose_world_goal_ = P_world_goal.pose;
+  const std::string goal_name = name->data;
+  int end = goal_name.find_last_of("_");
+  const std::string goal_type = goal_name.substr(0, end);
+  const int goal_box_id = stoi(goal_name.substr(end+1, 1));
 
+  std::cout << goal_type << " and " << goal_box_id << std::endl;
+
+  geometry_msgs::PoseStamped P_world_goal;
+  if (goal_type == "box")
+  {
+    if (box_poses_.empty())
+    {
+      ROS_ERROR_STREAM("Box poses unknown, please spawn boxes first!");
+      return;
+    }
+
+    P_world_goal = box_poses_[goal_box_id];
+  }
+  else
+  {
+    // Get the Pose of the goal in world frame
+    P_world_goal = getGoalPoseFromConfig(goal_name);
+  }
+
+  this->pose_world_goal_ = P_world_goal.pose;
   // Get the Transform from world to map from the tf_listener
   geometry_msgs::TransformStamped transform_map_world;
   try
@@ -127,6 +150,19 @@ tf2::Transform GoalPublisherNode::convertPoseToTransform(const geometry_msgs::Po
   T.setRotation(q);
 
   return T;
+};
+
+void GoalPublisherNode::boxMarkersCallback(const visualization_msgs::MarkerArray::ConstPtr& box_markers)
+{
+  this->box_poses_.clear();
+  for (const auto& box : box_markers->markers)
+  {
+    geometry_msgs::PoseStamped pose;
+    pose.pose = box.pose;
+    this->box_poses_.emplace_back(pose);
+  }
+
+  return;
 };
 
 geometry_msgs::PoseStamped GoalPublisherNode::getGoalPoseFromConfig(const std::string& name)

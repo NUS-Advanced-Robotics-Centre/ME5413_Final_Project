@@ -134,7 +134,7 @@ void ObjectSpawner::spawnRandomBoxes(const int num)
   }
 
   // remove the tree point
-  box_points.erase(box_points.begin());
+  this->box_points.erase(this->box_points.begin());
 
   return;
 };
