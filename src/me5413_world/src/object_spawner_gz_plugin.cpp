@@ -24,13 +24,13 @@ void ObjectSpawner::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf)
   clt_delete_objects_ = nh_.serviceClient<gazebo_msgs::DeleteModel>("/gazebo/delete_model");
   this->sub_respawn_objects_ = nh_.subscribe("/rviz_panel/respawn_objects", 1, &ObjectSpawner::respawnCmdCallback, this);
 
-  // spawnRandomObjects();
   return;
 };
 
 void ObjectSpawner::spawnRandomCones()
 {
-  this->cone_name = "construction_cone_0";
+  this->cone_name = "Construction Cone_0";
+
   msgs::Factory cone_msg;
   cone_msg.set_sdf_filename("model://construction_cone");
 
@@ -38,13 +38,13 @@ void ObjectSpawner::spawnRandomCones()
   if (std::rand() % 2 == 0)
   {
     msgs::Set(cone_msg.mutable_pose(), ignition::math::Pose3d(
-                ignition::math::Vector3d(12.7, 2.5, 0.4),
+                ignition::math::Vector3d(12.7, 2.5, 0.1),
                 ignition::math::Quaterniond(0, 0, 0)));
   }
   else
   {
     msgs::Set(cone_msg.mutable_pose(), ignition::math::Pose3d(
-                ignition::math::Vector3d(16.9, 2.5, 0.4),
+                ignition::math::Vector3d(16.9, 2.5, 0.1),
                 ignition::math::Quaterniond(0, 0, 0)));
   }
   this->pub_factory_->Publish(cone_msg);
@@ -52,12 +52,11 @@ void ObjectSpawner::spawnRandomCones()
   return;
 };
 
-void ObjectSpawner::spawnRandomBoxes(int num)
+void ObjectSpawner::spawnRandomBoxes(const int num)
 {
   if (num > 9)
   {
     ROS_WARN_STREAM("Maximum 9 boxes are allowed!, Spawning 9 boxes instead");
-    num = 9;
   }
 
   std::srand(std::time(0));
@@ -65,7 +64,7 @@ void ObjectSpawner::spawnRandomBoxes(int num)
   this->box_points.clear();
   this->box_points.emplace_back(ignition::math::Vector2d(16.576, -5.96)); // add tree point
 
-  for (int i = 1; i <= num; ++i)
+  for (int i = 1; i <= std::min(num, 9); ++i)
   {
     const std::string box_name = "number" + std::to_string(i);
     ignition::math::Vector2d point;
@@ -104,6 +103,7 @@ void ObjectSpawner::spawnRandomBoxes(int num)
 
   // remove tree point
   // return box_points, box_names;
+
   return;
 };
 
@@ -120,30 +120,33 @@ void ObjectSpawner::deleteObject(const std::string& object_name)
   {
     ROS_ERROR_STREAM("Failed to delete Object: " << object_name << std::endl);
   }
+
   return;
 };
 
-void ObjectSpawner::deleteObjects(std::vector<std::string>& object_names)
+void ObjectSpawner::deleteObjects(const std::vector<std::string>& object_names)
 {
   for (const auto& object_name : object_names)
   {
     deleteObject(object_name);
   }
-  object_names.clear();
+
+  return;
 };
 
 void ObjectSpawner::respawnCmdCallback(const std_msgs::Int16::ConstPtr& respawn_msg)
 {
   const int cmd = respawn_msg->data;
-  deleteObject(cone_name);
-  deleteObjects(box_names);
-
   if (cmd == 0)
   {
+    deleteObject(this->cone_name);
+    deleteObjects(this->box_names);
     ROS_INFO_STREAM("Random Objects Cleared!");
   }
   else if (cmd == 1)
   {
+    deleteObject(this->cone_name);
+    deleteObjects(this->box_names);
     spawnRandomCones();
     spawnRandomBoxes(9);
     ROS_INFO_STREAM("Random Objects Respawned!");
@@ -152,6 +155,7 @@ void ObjectSpawner::respawnCmdCallback(const std_msgs::Int16::ConstPtr& respawn_
   {
     ROS_INFO_STREAM("Respawned Command Not Recognized!");
   }
+
   return;
 };
 

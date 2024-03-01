@@ -29,12 +29,12 @@ class ObjectSpawner : public WorldPlugin
 {
  public:
   std::string cone_name;
+  ignition::math::Vector2d cone_point;
   std::vector<std::string> box_names;
   std::vector<ignition::math::Vector2d> box_points;
 
   ObjectSpawner();
   virtual ~ObjectSpawner();
-  
   void Load(physics::WorldPtr _world, sdf::ElementPtr _sdf);
 
  private:
@@ -45,9 +45,9 @@ class ObjectSpawner : public WorldPlugin
   ros::Publisher pub_rviz_markers_;
   
   void spawnRandomCones();
-  void spawnRandomBoxes(int num);
+  void spawnRandomBoxes(const int num);
   void deleteObject(const std::string& object_name);
-  void deleteObjects(std::vector<std::string>& object_names);
+  void deleteObjects(const std::vector<std::string>& object_names);
   void respawnCmdCallback(const std_msgs::Int16::ConstPtr& respawn_msg);
 };
 
