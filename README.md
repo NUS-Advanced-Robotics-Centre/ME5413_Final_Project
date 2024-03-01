@@ -10,7 +10,7 @@ NUS ME5413 Autonomous Mobile Robotics Final Project
 ![GitHub Repo stars](https://img.shields.io/github/stars/NUS-Advanced-Robotics-Centre/ME5413_Final_Project?color=FFE333)
 ![GitHub Repo forks](https://img.shields.io/github/forks/NUS-Advanced-Robotics-Centre/ME5413_Final_Project?color=FFE333)
 
-![cover_image](src/me5413_world/media/gazebo_world.jpg)
+![cover_image](src/me5413_world/media/gazebo_world.png)
 
 ## Dependencies
 
@@ -164,7 +164,7 @@ roslaunch me5413_world navigation.launch
 
 * From the starting point, move to the given pose within each area in sequence
   * Assembly Line 1, 2
-  * Packaging Area 1, 2, 3, 4
+  * Random Box 1, 2, 3, 4
   * Delivery Vehicle 1, 2, 3
 * We have provided you a GUI in RVIZ that allows you to click and publish these given goal poses to the `/move_base_simple/goal` topic:
   

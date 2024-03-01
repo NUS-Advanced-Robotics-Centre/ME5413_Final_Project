@@ -10,42 +10,42 @@ me5413_world:
 
   # assembly line poses
   assembly_line_1:
-    x: 4.2
-    y: -1.8
+    x: 4.0
+    y: -1.7
     yaw: -1.57
   assembly_line_2:
-    x: 4.2
-    y: -4.6
+    x: 4.0
+    y: -4.7
     yaw: -1.57
 
   # packing area poses
-  packing_area_1:
-    x: 13.0
-    y: -0.6
-    yaw: -1.57
-  packing_area_2:
-    x: 10.0
-    y: -0.6
-    yaw: -1.57
-  packing_area_3:
-    x: 10.0
-    y: -3.5
-    yaw: -1.57
-  packing_area_4:
-    x: 13.0
-    y: -3.5
-    yaw: -1.57
+  # packing_area_1:
+  #   x: 13.0
+  #   y: -0.6
+  #   yaw: -1.57
+  # packing_area_2:
+  #   x: 10.0
+  #   y: -0.6
+  #   yaw: -1.57
+  # packing_area_3:
+  #   x: 10.0
+  #   y: -3.5
+  #   yaw: -1.57
+  # packing_area_4:
+  #   x: 13.0
+  #   y: -3.5
+  #   yaw: -1.57
 
   # delivery vehicle poses
   vehicle_1:
-    x: 15.8
-    y: -9.8
+    x: 15.5
+    y: -8.2
     yaw: -1.57
   vehicle_2:
-    x: 3.4
-    y: -12.3
+    x: 2.9
+    y: -9.9
     yaw: 0.0
   vehicle_3:
-    x: 3.4
-    y: -15.3
+    x: 2.9
+    y: -13.1
     yaw: 0.0
