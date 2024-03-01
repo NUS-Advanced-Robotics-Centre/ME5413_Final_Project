@@ -104,8 +104,8 @@ void ObjectSpawner::spawnRandomBoxes(const int num)
 
     msgs::Factory box_msg;
     box_msg.set_sdf_filename("model://" + box_name); // TODO: change to our own file
-    ignition::math::Vector3d spawn_point = ignition::math::Vector3d(point.X(), point.Y(), static_cast<double>(std::rand()) / RAND_MAX * 1.5 + 0.5);
-    msgs::Set(box_msg.mutable_pose(), ignition::math::Pose3d(spawn_point, ignition::math::Quaterniond(0, 0, 0)));
+    // ignition::math::Vector3d spawn_point = ignition::math::Vector3d(point.X(), point.Y(), static_cast<double>(std::rand()) / RAND_MAX * 1.5 + 0.5);
+    msgs::Set(box_msg.mutable_pose(), ignition::math::Pose3d(point, ignition::math::Quaterniond(0, 0, 0)));
     this->pub_factory_->Publish(box_msg);
 
     visualization_msgs::Marker box_marker;
@@ -122,13 +122,13 @@ void ObjectSpawner::spawnRandomBoxes(const int num)
     box_marker.pose.orientation.y = 0.0;
     box_marker.pose.orientation.z = 0.0;
     box_marker.pose.orientation.w = 1.0;
-    box_marker.scale.x = 1.0;
-    box_marker.scale.y = 1.0;
-    box_marker.scale.z = 1.0;
-    box_marker.color.a = 0.8; // Don't forget to set the alpha!
-    box_marker.color.r = static_cast<double>(std::rand()) / RAND_MAX;
-    box_marker.color.g = static_cast<double>(std::rand()) / RAND_MAX;
-    box_marker.color.b = static_cast<double>(std::rand()) / RAND_MAX;
+    box_marker.scale.x = 0.8;
+    box_marker.scale.y = 0.8;
+    box_marker.scale.z = 0.8;
+    box_marker.color.a = 0.7; // Don't forget to set the alpha!
+    box_marker.color.r = static_cast<double>(std::rand()) / RAND_MAX * 0.5 + 0.25;
+    box_marker.color.g = static_cast<double>(std::rand()) / RAND_MAX * 0.5 + 0.25;
+    box_marker.color.b = static_cast<double>(std::rand()) / RAND_MAX * 0.5 + 0.25;
 
     this->box_markers_msg_.markers.emplace_back(box_marker);
   }
@@ -167,9 +167,9 @@ void ObjectSpawner::deleteCone()
 
 void ObjectSpawner::deleteBoxs()
 {
-  for (int i; i < this->box_names.size(); ++i)
+  for (const auto& box_name: this->box_names)
   {
-    deleteObject(this->box_names[i]);
+    deleteObject(box_name);
   }
   this->box_names.clear();
   this->box_points.clear();
