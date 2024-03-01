@@ -20,9 +20,19 @@ void ObjectSpawner::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf)
   // Create a new transport node
   transport::NodePtr node(new transport::Node());
   node->Init(_world->Name());
-  this->pub_factory_ = node->Advertise<msgs::Factory>("~/factory");
   clt_delete_objects_ = nh_.serviceClient<gazebo_msgs::DeleteModel>("/gazebo/delete_model");
+  this->timer_ = nh_.createTimer(ros::Duration(0.2), &ObjectSpawner::timerCallback, this);
+  this->pub_factory_ = node->Advertise<msgs::Factory>("~/factory");
   this->sub_respawn_objects_ = nh_.subscribe("/rviz_panel/respawn_objects", 1, &ObjectSpawner::respawnCmdCallback, this);
+  this->pub_rviz_markers_ = nh_.advertise<visualization_msgs::MarkerArray>("/gazebo/ground_truth/box_markers", 0);
+  
+  return;
+};
+
+void ObjectSpawner::timerCallback(const ros::TimerEvent&)
+{
+  // publish rviz markers
+  this->pub_rviz_markers_.publish(this->box_markers_msg_);
 
   return;
 };
@@ -62,20 +72,20 @@ void ObjectSpawner::spawnRandomBoxes(const int num)
   std::srand(std::time(0));
   this->box_names.clear();
   this->box_points.clear();
-  this->box_points.emplace_back(ignition::math::Vector2d(16.576, -5.96)); // add tree point
+  this->box_markers_msg_.markers.clear();
+  this->box_points.emplace_back(ignition::math::Vector3d(16.576, -5.96, 1.0)); // add tree point
 
   for (int i = 1; i <= std::min(num, 9); ++i)
   {
-    const std::string box_name = "number" + std::to_string(i);
-    ignition::math::Vector2d point;
-    bool has_collision = true;
+    ignition::math::Vector3d point;
     // Generate random box_points within a 10 by 8 area with a distance greater than 4.3
+    bool has_collision = true;
     while (has_collision)
     {
       has_collision = false;
-      point = ignition::math::Vector2d(static_cast<double>(std::rand()) / RAND_MAX * 8.0 + 8,
-                                       -6.25 + static_cast<double>(std::rand()) / RAND_MAX * 7.25);
-      
+      point = ignition::math::Vector3d(static_cast<double>(std::rand()) / RAND_MAX * 8.0 + 8,
+                                       -6.25 + static_cast<double>(std::rand()) / RAND_MAX * 7.25,
+                                       0.4);
       for (const auto& pre_point : this->box_points)
       {
         const double dist = (point - pre_point).Length();
@@ -89,20 +99,42 @@ void ObjectSpawner::spawnRandomBoxes(const int num)
 
     // Add this box to the list
     this->box_points.push_back(point);
+    const std::string box_name = "number" + std::to_string(i);
     this->box_names.push_back(box_name);
 
     msgs::Factory box_msg;
     box_msg.set_sdf_filename("model://" + box_name); // TODO: change to our own file
-    msgs::Set(box_msg.mutable_pose(),
-              ignition::math::Pose3d(
-              ignition::math::Vector3d(point.X(), point.Y(), 0.5),
-              ignition::math::Quaterniond(0, 0, 0))
-              );
+    ignition::math::Vector3d spawn_point = ignition::math::Vector3d(point.X(), point.Y(), static_cast<double>(std::rand()) / RAND_MAX * 1.5 + 0.5);
+    msgs::Set(box_msg.mutable_pose(), ignition::math::Pose3d(spawn_point, ignition::math::Quaterniond(0, 0, 0)));
     this->pub_factory_->Publish(box_msg);
+
+    visualization_msgs::Marker box_marker;
+    box_marker.header.frame_id = "world";
+    box_marker.header.stamp = ros::Time();
+    box_marker.ns = "gazebo";
+    box_marker.id = i;
+    box_marker.type = visualization_msgs::Marker::CUBE;
+    box_marker.action = visualization_msgs::Marker::ADD;
+    box_marker.pose.position.x = point.X();
+    box_marker.pose.position.y = point.Y();
+    box_marker.pose.position.z = point.Z();
+    box_marker.pose.orientation.x = 0.0;
+    box_marker.pose.orientation.y = 0.0;
+    box_marker.pose.orientation.z = 0.0;
+    box_marker.pose.orientation.w = 1.0;
+    box_marker.scale.x = 1.0;
+    box_marker.scale.y = 1.0;
+    box_marker.scale.z = 1.0;
+    box_marker.color.a = 0.8; // Don't forget to set the alpha!
+    box_marker.color.r = static_cast<double>(std::rand()) / RAND_MAX;
+    box_marker.color.g = static_cast<double>(std::rand()) / RAND_MAX;
+    box_marker.color.b = static_cast<double>(std::rand()) / RAND_MAX;
+
+    this->box_markers_msg_.markers.emplace_back(box_marker);
   }
 
-  // remove tree point
-  // return box_points, box_names;
+  // remove the tree point
+  box_points.erase(box_points.begin());
 
   return;
 };
@@ -124,12 +156,24 @@ void ObjectSpawner::deleteObject(const std::string& object_name)
   return;
 };
 
-void ObjectSpawner::deleteObjects(const std::vector<std::string>& object_names)
+void ObjectSpawner::deleteCone()
 {
-  for (const auto& object_name : object_names)
+  deleteObject(this->cone_name);
+  this->cone_name = "";
+  this->cone_point = ignition::math::Vector3d();
+
+  return;
+};
+
+void ObjectSpawner::deleteBoxs()
+{
+  for (int i; i < this->box_names.size(); ++i)
   {
-    deleteObject(object_name);
+    deleteObject(this->box_names[i]);
   }
+  this->box_names.clear();
+  this->box_points.clear();
+  this->box_markers_msg_.markers.clear();
 
   return;
 };
@@ -139,21 +183,21 @@ void ObjectSpawner::respawnCmdCallback(const std_msgs::Int16::ConstPtr& respawn_
   const int cmd = respawn_msg->data;
   if (cmd == 0)
   {
-    deleteObject(this->cone_name);
-    deleteObjects(this->box_names);
+    deleteCone();
+    deleteBoxs();
     ROS_INFO_STREAM("Random Objects Cleared!");
   }
   else if (cmd == 1)
   {
-    deleteObject(this->cone_name);
-    deleteObjects(this->box_names);
+    deleteCone();
+    deleteBoxs();
     spawnRandomCones();
     spawnRandomBoxes(9);
     ROS_INFO_STREAM("Random Objects Respawned!");
   }
   else
   {
-    ROS_INFO_STREAM("Respawned Command Not Recognized!");
+    ROS_INFO_STREAM("Respawn Command Not Recognized!");
   }
 
   return;
