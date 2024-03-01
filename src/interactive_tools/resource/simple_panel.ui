@@ -75,7 +75,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Packaging Area</string>
+       <string>Box</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
