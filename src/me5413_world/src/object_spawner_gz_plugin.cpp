@@ -21,7 +21,7 @@ void ObjectSpawner::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf)
   transport::NodePtr node(new transport::Node());
   node->Init(_world->Name());
   clt_delete_objects_ = nh_.serviceClient<gazebo_msgs::DeleteModel>("/gazebo/delete_model");
-  this->timer_ = nh_.createTimer(ros::Duration(0.2), &ObjectSpawner::timerCallback, this);
+  this->timer_ = nh_.createTimer(ros::Duration(0.1), &ObjectSpawner::timerCallback, this);
   this->pub_factory_ = node->Advertise<msgs::Factory>("~/factory");
   this->sub_respawn_objects_ = nh_.subscribe("/rviz_panel/respawn_objects", 1, &ObjectSpawner::respawnCmdCallback, this);
   this->pub_rviz_markers_ = nh_.advertise<visualization_msgs::MarkerArray>("/gazebo/ground_truth/box_markers", 0);
@@ -115,6 +115,9 @@ void ObjectSpawner::spawnRandomBoxes(const int num)
     box_marker.id = i;
     box_marker.type = visualization_msgs::Marker::CUBE;
     box_marker.action = visualization_msgs::Marker::ADD;
+    box_marker.frame_locked = true;
+    box_marker.lifetime = ros::Duration(0.2);
+    box_marker.text = std::to_string(i);
     box_marker.pose.position.x = point.X();
     box_marker.pose.position.y = point.Y();
     box_marker.pose.position.z = point.Z();
@@ -167,13 +170,15 @@ void ObjectSpawner::deleteCone()
 
 void ObjectSpawner::deleteBoxs()
 {
+  this->box_markers_msg_.markers.clear();
+  this->pub_rviz_markers_.publish(this->box_markers_msg_);
+
   for (const auto& box_name: this->box_names)
   {
     deleteObject(box_name);
   }
   this->box_names.clear();
   this->box_points.clear();
-  this->box_markers_msg_.markers.clear();
 
   return;
 };
