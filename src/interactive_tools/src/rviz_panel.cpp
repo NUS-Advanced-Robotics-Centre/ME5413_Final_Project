@@ -50,14 +50,14 @@ namespace rviz_panel
     {
         ROS_INFO_STREAM("Setting Assembly Line 1 as the GOAL.");
         ui_->label_status->setText("Heading to Assembly Line 1");
-        this->goal_name_msg_.data = "assembly_line_1";
+        this->goal_name_msg_.data = "/assembly_line_1";
         this->pub_goal_.publish(this->goal_name_msg_);
     }
     void simplePanel::on_button_1_2_clicked()
     {
         ROS_INFO_STREAM("Setting Assembly Line 2 as the GOAL.");
         ui_->label_status->setText("Heading to Assembly Line 2");
-        this->goal_name_msg_.data = "assembly_line_2";
+        this->goal_name_msg_.data = "/assembly_line_2";
         this->pub_goal_.publish(this->goal_name_msg_);
     }
 
@@ -66,28 +66,28 @@ namespace rviz_panel
     {
         ROS_INFO_STREAM("Setting Box 1 as the GOAL.");
         ui_->label_status->setText("Heading to Box 1");
-        this->goal_name_msg_.data = "box_1";
+        this->goal_name_msg_.data = "/box_1";
         this->pub_goal_.publish(this->goal_name_msg_);
     }
     void simplePanel::on_button_2_2_clicked()
     {
         ROS_INFO_STREAM("Setting Box 2 as the GOAL.");
         ui_->label_status->setText("Heading to Box 2");
-        this->goal_name_msg_.data = "box_2";
+        this->goal_name_msg_.data = "/box_2";
         this->pub_goal_.publish(this->goal_name_msg_);
     }
     void simplePanel::on_button_2_3_clicked()
     {
         ROS_INFO_STREAM("Setting Box 3 as the GOAL.");
         ui_->label_status->setText("Heading to Box 3");
-        this->goal_name_msg_.data = "box_3";
+        this->goal_name_msg_.data = "/box_3";
         this->pub_goal_.publish(this->goal_name_msg_);
     }
     void simplePanel::on_button_2_4_clicked()
     {
         ROS_INFO_STREAM("Setting Box 4 as the GOAL.");
         ui_->label_status->setText("Heading to Box 4");
-        this->goal_name_msg_.data = "box_4";
+        this->goal_name_msg_.data = "/box_4";
         this->pub_goal_.publish(this->goal_name_msg_);
     }
 
@@ -96,21 +96,21 @@ namespace rviz_panel
     {
         ROS_INFO_STREAM("Setting Vehicle 1 as the GOAL.");
         ui_->label_status->setText("Heading to Vehicle 1");
-        this->goal_name_msg_.data = "vehicle_1";
+        this->goal_name_msg_.data = "/vehicle_1";
         this->pub_goal_.publish(this->goal_name_msg_);
     }
     void simplePanel::on_button_3_2_clicked()
     {
         ROS_INFO_STREAM("Setting Vehicle 2 as the GOAL.");
         ui_->label_status->setText("Heading to Vehicle 2");
-        this->goal_name_msg_.data = "vehicle_2";
+        this->goal_name_msg_.data = "/vehicle_2";
         this->pub_goal_.publish(this->goal_name_msg_);
     }
     void simplePanel::on_button_3_3_clicked()
     {
         ROS_INFO_STREAM("Setting Vehicle 3 as the GOAL.");
         ui_->label_status->setText("Heading to Vehicle 3");
-        this->goal_name_msg_.data = "vehicle_3";
+        this->goal_name_msg_.data = "/vehicle_3";
         this->pub_goal_.publish(this->goal_name_msg_);
     }
 

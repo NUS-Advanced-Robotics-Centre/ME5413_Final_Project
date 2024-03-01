@@ -47,6 +47,12 @@ void GoalPublisherNode::timerCallback(const ros::TimerEvent&)
   this->relative_position_error_.data = error_relative.first;
   this->relative_heading_error_.data = error_relative.second;
 
+  if (this->goal_type_ == "box")
+  {
+    this->absolute_heading_error_.data = 0.0;
+    this->relative_heading_error_.data = 0.0;
+  }
+
   // Publish errors
   this->pub_absolute_position_error_.publish(this->absolute_position_error_);
   this->pub_absolute_heading_error_.publish(this->absolute_heading_error_);
@@ -85,14 +91,12 @@ void GoalPublisherNode::robotOdomCallback(const nav_msgs::Odometry::ConstPtr& od
 void GoalPublisherNode::goalNameCallback(const std_msgs::String::ConstPtr& name)
 { 
   const std::string goal_name = name->data;
-  int end = goal_name.find_last_of("_");
-  const std::string goal_type = goal_name.substr(0, end);
+  const int end = goal_name.find_last_of("_");
+  this->goal_type_ = goal_name.substr(1, end-1);
   const int goal_box_id = stoi(goal_name.substr(end+1, 1));
 
-  std::cout << goal_type << " and " << goal_box_id << std::endl;
-
   geometry_msgs::PoseStamped P_world_goal;
-  if (goal_type == "box")
+  if (this->goal_type_ == "box")
   {
     if (box_poses_.empty())
     {

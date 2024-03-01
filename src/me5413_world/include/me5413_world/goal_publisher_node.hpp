@@ -74,6 +74,7 @@ class GoalPublisherNode
   std::string world_frame_;
   std::string map_frame_;
   std::string robot_frame_;
+  std::string goal_type_;
 
   geometry_msgs::Pose pose_world_robot_;
   geometry_msgs::Pose pose_world_goal_;
