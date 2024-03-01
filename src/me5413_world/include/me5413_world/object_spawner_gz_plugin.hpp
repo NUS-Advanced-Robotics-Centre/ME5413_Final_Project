@@ -8,11 +8,15 @@
 
 #include <ctime>
 #include <cstdlib>
+#include <iostream>
+#include <string>
+#include <vector>
 
 #include <ros/ros.h>
 #include <ros/console.h>
 #include <std_msgs/Int16.h>
 
+#include <ignition/math/Vector2.hh>
 #include <ignition/math/Pose3.hh>
 #include <gazebo/gazebo.hh>
 #include <gazebo/common/common.hh>
@@ -24,14 +28,9 @@ namespace gazebo
 class ObjectSpawner : public WorldPlugin
 {
  public:
-  std::string box_1_name;
-  std::string box_2_name;
-  std::string box_3_name;
   std::string cone_name;
-  msgs::Factory box_1_msg;
-  msgs::Factory box_2_msg;
-  msgs::Factory box_3_msg;
-  msgs::Factory cone_msg;
+  std::vector<std::string> box_names;
+  std::vector<ignition::math::Vector2d> box_points;
 
   ObjectSpawner();
   virtual ~ObjectSpawner();
@@ -40,14 +39,15 @@ class ObjectSpawner : public WorldPlugin
 
  private:
   transport::PublisherPtr pub_factory_;
-
   ros::NodeHandle nh_;
   ros::ServiceClient clt_delete_objects_;
   ros::Subscriber sub_respawn_objects_;
   ros::Publisher pub_rviz_markers_;
   
-  void spawnRandomObjects();
+  void spawnRandomCones();
+  void spawnRandomBoxes(int num);
   void deleteObject(const std::string& object_name);
+  void deleteObjects(std::vector<std::string>& object_names);
   void respawnCmdCallback(const std_msgs::Int16::ConstPtr& respawn_msg);
 };
 

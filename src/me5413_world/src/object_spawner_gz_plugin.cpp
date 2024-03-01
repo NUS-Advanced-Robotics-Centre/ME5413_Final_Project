@@ -11,13 +11,7 @@
 namespace gazebo
 {
 
-ObjectSpawner::ObjectSpawner() : WorldPlugin()
-{
-  this->box_1_name = "number1";
-  this->box_2_name = "number2";
-  this->box_3_name = "number3";
-  this->cone_name = "Construction Cone_0";
-};
+ObjectSpawner::ObjectSpawner() : WorldPlugin() {};
 
 ObjectSpawner::~ObjectSpawner() {};
   
@@ -34,73 +28,82 @@ void ObjectSpawner::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf)
   return;
 };
 
-void ObjectSpawner::spawnRandomObjects()
+void ObjectSpawner::spawnRandomCones()
 {
-  /*********************************** Generate Random Boxes **********************************/
-  // Seed for random number generation
-  std::srand(std::time(0));
-  // Generate random points within a 10 by 8 area with a distance greater than 4.3
-  ignition::math::Vector2d p1, p2, p3;
-  do
-  {
-    p1 = ignition::math::Vector2d(
-      static_cast<double>(std::rand()) / RAND_MAX * 8.0 + 8,
-      -6.25 + static_cast<double>(std::rand()) / RAND_MAX * 7.25);
-
-    p2 = ignition::math::Vector2d(
-      static_cast<double>(std::rand()) / RAND_MAX * 8.0 + 8,
-      -6.25 + static_cast<double>(std::rand()) / RAND_MAX * 7.25);
-
-    p3 = ignition::math::Vector2d(
-      static_cast<double>(std::rand()) / RAND_MAX * 8.0 + 8,
-      -6.25 + static_cast<double>(std::rand()) / RAND_MAX * 7.25);
-  } while ((p1 - p2).Length() <= 4.3 ||
-          (p1 - p3).Length() <= 4.3 ||
-          (p2 - p3).Length() <= 4.3);
-
-  // Model file to load
-  box_1_msg.set_sdf_filename("model://number1");
-  box_2_msg.set_sdf_filename("model://number2");
-  box_3_msg.set_sdf_filename("model://number3");
+  this->cone_name = "construction_cone_0";
+  msgs::Factory cone_msg;
   cone_msg.set_sdf_filename("model://construction_cone");
 
-  // Pose to initialize the model to
-  msgs::Set(box_1_msg.mutable_pose(),
-            ignition::math::Pose3d(
-                ignition::math::Vector3d(p1.X(), p1.Y(), 0.4),
-                ignition::math::Quaterniond(0, 0, 0)));
-
-  msgs::Set(box_2_msg.mutable_pose(),
-            ignition::math::Pose3d(
-                ignition::math::Vector3d(p2.X(), p2.Y(), 0.4),
-                ignition::math::Quaterniond(0, 0, 0)));
-
-  msgs::Set(box_3_msg.mutable_pose(),
-            ignition::math::Pose3d(
-                ignition::math::Vector3d(p3.X(), p3.Y(), 0.4),
-                ignition::math::Quaterniond(0, 0, 0)));
-
-  /*********************************** Generate Traffic Cone **********************************/
+  std::srand(std::time(0));
   if (std::rand() % 2 == 0)
   {
-    msgs::Set(cone_msg.mutable_pose(),
-              ignition::math::Pose3d(
-                  ignition::math::Vector3d(12.7, 2.5, 0.4),
-                  ignition::math::Quaterniond(0, 0, 0)));
+    msgs::Set(cone_msg.mutable_pose(), ignition::math::Pose3d(
+                ignition::math::Vector3d(12.7, 2.5, 0.4),
+                ignition::math::Quaterniond(0, 0, 0)));
   }
   else
   {
-    msgs::Set(cone_msg.mutable_pose(),
-              ignition::math::Pose3d(
-                  ignition::math::Vector3d(16.9, 2.5, 0.4),
-                  ignition::math::Quaterniond(0, 0, 0)));
+    msgs::Set(cone_msg.mutable_pose(), ignition::math::Pose3d(
+                ignition::math::Vector3d(16.9, 2.5, 0.4),
+                ignition::math::Quaterniond(0, 0, 0)));
+  }
+  this->pub_factory_->Publish(cone_msg);
+  
+  return;
+};
+
+void ObjectSpawner::spawnRandomBoxes(int num)
+{
+  if (num > 9)
+  {
+    ROS_WARN_STREAM("Maximum 9 boxes are allowed!, Spawning 9 boxes instead");
+    num = 9;
   }
 
-  // Send messages
-  this->pub_factory_->Publish(box_1_msg);
-  this->pub_factory_->Publish(box_2_msg);
-  this->pub_factory_->Publish(box_3_msg);
-  this->pub_factory_->Publish(cone_msg);
+  std::srand(std::time(0));
+  this->box_names.clear();
+  this->box_points.clear();
+  this->box_points.emplace_back(ignition::math::Vector2d(16.576, -5.96)); // add tree point
+
+  for (int i = 1; i <= num; ++i)
+  {
+    const std::string box_name = "number" + std::to_string(i);
+    ignition::math::Vector2d point;
+    bool has_collision = true;
+    // Generate random box_points within a 10 by 8 area with a distance greater than 4.3
+    while (has_collision)
+    {
+      has_collision = false;
+      point = ignition::math::Vector2d(static_cast<double>(std::rand()) / RAND_MAX * 8.0 + 8,
+                                       -6.25 + static_cast<double>(std::rand()) / RAND_MAX * 7.25);
+      
+      for (const auto& pre_point : this->box_points)
+      {
+        const double dist = (point - pre_point).Length();
+        if (dist <= 1.2)
+        {
+          has_collision = true;
+          break;
+        }
+      }
+    } 
+
+    // Add this box to the list
+    this->box_points.push_back(point);
+    this->box_names.push_back(box_name);
+
+    msgs::Factory box_msg;
+    box_msg.set_sdf_filename("model://" + box_name); // TODO: change to our own file
+    msgs::Set(box_msg.mutable_pose(),
+              ignition::math::Pose3d(
+              ignition::math::Vector3d(point.X(), point.Y(), 0.5),
+              ignition::math::Quaterniond(0, 0, 0))
+              );
+    this->pub_factory_->Publish(box_msg);
+  }
+
+  // remove tree point
+  // return box_points, box_names;
   return;
 };
 
@@ -120,24 +123,29 @@ void ObjectSpawner::deleteObject(const std::string& object_name)
   return;
 };
 
+void ObjectSpawner::deleteObjects(std::vector<std::string>& object_names)
+{
+  for (const auto& object_name : object_names)
+  {
+    deleteObject(object_name);
+  }
+  object_names.clear();
+};
+
 void ObjectSpawner::respawnCmdCallback(const std_msgs::Int16::ConstPtr& respawn_msg)
 {
   const int cmd = respawn_msg->data;
+  deleteObject(cone_name);
+  deleteObjects(box_names);
+
   if (cmd == 0)
   {
-    deleteObject(box_1_name);
-    deleteObject(box_2_name);
-    deleteObject(box_3_name);
-    deleteObject(cone_name);
     ROS_INFO_STREAM("Random Objects Cleared!");
   }
   else if (cmd == 1)
   {
-    deleteObject(box_1_name);
-    deleteObject(box_2_name);
-    deleteObject(box_3_name);
-    deleteObject(cone_name);
-    spawnRandomObjects();
+    spawnRandomCones();
+    spawnRandomBoxes(9);
     ROS_INFO_STREAM("Random Objects Respawned!");
   }
   else
