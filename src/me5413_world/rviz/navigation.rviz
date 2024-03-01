@@ -238,8 +238,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 6.319511413574219
-            Min Value: -1.3403688669204712
+            Max Value: 13.978616714477539
+            Min Value: 4.047664642333984
             Value: true
           Axis: X
           Channel Name: intensity
@@ -266,8 +266,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 2.4192609786987305
-            Min Value: -0.06985008716583252
+            Max Value: 1.4930524826049805
+            Min Value: -0.07171478867530823
             Value: true
           Axis: Z
           Channel Name: intensity
@@ -307,7 +307,7 @@ Visualization Manager:
                 ADE (m): true
                 AHE (deg): true
                 Value: true
-              MarkerArray: true
+              BoxMarkerArray: true
               Relative Error:
                 RDE (m): true
                 RHE (deg): true
@@ -664,7 +664,7 @@ Visualization Manager:
               size: 128
               text size: 14
               top: 180
-          Enabled: false
+          Enabled: true
           Name: Relative Error
         - Class: rviz/MarkerArray
           Enabled: true
@@ -704,25 +704,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 19.54844856262207
+      Distance: 10
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
-      Field of View: 0.8999999761581421
+      Field of View: 0.7853981852531433
       Focal Point:
         X: 0
         Y: 0
         Z: 0
-      Focal Shape Fixed Size: true
+      Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5800000429153442
+      Pitch: 0.7853981852531433
       Target Frame: base_link
-      Yaw: 3.390005111694336
+      Yaw: 0.7853981852531433
     Saved:
       - Class: rviz/ThirdPersonFollower
         Distance: 4
