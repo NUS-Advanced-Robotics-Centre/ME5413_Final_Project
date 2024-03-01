@@ -100,7 +100,7 @@ void GoalPublisherNode::goalNameCallback(const std_msgs::String::ConstPtr& name)
       return;
     }
 
-    P_world_goal = box_poses_[goal_box_id];
+    P_world_goal = box_poses_[goal_box_id - 1];
   }
   else
   {
