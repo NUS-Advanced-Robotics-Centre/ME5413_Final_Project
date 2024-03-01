@@ -75,6 +75,7 @@ void ObjectSpawner::spawnRandomBoxes(const int num)
   this->box_markers_msg_.markers.clear();
   this->box_points.emplace_back(ignition::math::Vector3d(16.576, -5.96, 1.0)); // add tree point
 
+  visualization_msgs::MarkerArray text_markers_msg;
   for (int i = 1; i <= std::min(num, 9); ++i)
   {
     ignition::math::Vector3d point;
@@ -117,7 +118,6 @@ void ObjectSpawner::spawnRandomBoxes(const int num)
     box_marker.action = visualization_msgs::Marker::ADD;
     box_marker.frame_locked = true;
     box_marker.lifetime = ros::Duration(0.2);
-    box_marker.text = std::to_string(i);
     box_marker.pose.position.x = point.X();
     box_marker.pose.position.y = point.Y();
     box_marker.pose.position.z = point.Z();
@@ -128,16 +128,29 @@ void ObjectSpawner::spawnRandomBoxes(const int num)
     box_marker.scale.x = 0.8;
     box_marker.scale.y = 0.8;
     box_marker.scale.z = 0.8;
-    box_marker.color.a = 0.7; // Don't forget to set the alpha!
+    box_marker.color.a = 0.7;
     box_marker.color.r = static_cast<double>(std::rand()) / RAND_MAX * 0.5 + 0.25;
     box_marker.color.g = static_cast<double>(std::rand()) / RAND_MAX * 0.5 + 0.25;
     box_marker.color.b = static_cast<double>(std::rand()) / RAND_MAX * 0.5 + 0.25;
-
     this->box_markers_msg_.markers.emplace_back(box_marker);
+
+    visualization_msgs::Marker text_marker = box_marker;
+    text_marker.id = num + i;
+    text_marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
+    text_marker.text = std::to_string(i);
+    text_marker.pose.position.z += 0.5;
+    text_marker.scale.z = 0.5;
+    text_marker.color.a = 0.8;
+    text_marker.color.r = 0.0;
+    text_marker.color.g = 0.0;
+    text_marker.color.b = 0.0;
+    text_markers_msg.markers.emplace_back(text_marker);
   }
 
   // remove the tree point
   this->box_points.erase(this->box_points.begin());
+  // merge the two marker arrays
+  this->box_markers_msg_.markers.insert(this->box_markers_msg_.markers.end(), text_markers_msg.markers.begin(), text_markers_msg.markers.end());
 
   return;
 };
