@@ -19,4 +19,3 @@ I will be documenting my progress, thoughts, and reflections throughout this pro
 - [PROGRESS.md](PROGRESS.md): Track project milestones and completed tasks.
 - [REFLECTIONS.md](REFLECTIONS.md): Capture my learning journey, ideas, and questions.
 - [ISSUES.md](ISSUES.md): Log any encountered issues and their resolutions.
-- [PROGRESS.md](PROGRESS.md): Track project milestones and completed tasks.
