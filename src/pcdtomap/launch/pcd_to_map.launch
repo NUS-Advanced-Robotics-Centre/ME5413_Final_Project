@@ -1,0 +1,24 @@
+<!-- -->
+<launch>
+    <node pkg="pcd_to_map" name="pcd_to_map" type="pcd_to_map" output="screen">
+    <!-- filepath to save .pcd file -->
+    <param name="file_directory" value= "/home/renjie/workspace/ME5413_Final_Project/src/FAST_LIO_/PCD/" />
+    <!-- .pcd file name-->
+    <param name="file_name" value= "scans" />
+    <!-- minimum height-->
+    <param name="thre_z_min" value= "-2.0" />
+    <!-- maximum height-->
+    <param name="thre_z_max" value= "0.7" />
+    <!--0 select points in height range, １ select points out of height range -->
+    <param name="flag_pass_through" value= "1" />
+    <!-- radius filter's radius-->
+    <param name="thre_radius" value= "0.3" />
+    <!-- radius filter's points required-->
+    <param name="thres_point_count" value= "10" />
+    <!-- resolution of gripmap-->
+    <param name="map_resolution" value= "0.05" />
+    <!-- topic of gripmap, use map_server to save -->
+    <param name="map_topic_name" value= "map" />
+    </node>
+
+</launch>

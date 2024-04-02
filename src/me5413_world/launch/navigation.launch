@@ -4,15 +4,17 @@
   <node name="teleop_twist_keyboard" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" respawn="true"/>
 
   <!-- Run the map server -->
-  <arg name="map_file" default="$(find me5413_world)/maps/my_map.yaml"/>
+  <arg name="map_file" default="$(find pcdtomap)/map/map-test.yaml"/>
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
   
   <!-- Launch the AMCL Localizer -->
-  <include file="$(find jackal_navigation)/launch/include/amcl.launch" />
+  <include file="$(find me5413_world)/launch/amcl.launch" />
+  <!-- <include file="$(find me5413_world)/launch/ekf_template.launch" /> -->
+  <!-- <include file="$(find cartographer_ros)/launch/demo_backpack_3d_localization.launch" /> -->
+  <!-- <include file="$(find robot_pose_ekf)/robot_pose_ekf.launch" /> -->
 
   <!-- Launch Move Base -->
-  <include file="$(find jackal_navigation)/launch/include/move_base.launch" />
-
+  <include file="$(find me5413_world)/launch/move_base.launch" />
   <!-- Launch Rviz with our settings -->
   <node type="rviz" name="rviz" pkg="rviz" args="-d $(find me5413_world)/rviz/navigation.rviz" output="log" respawn="true"/>
 

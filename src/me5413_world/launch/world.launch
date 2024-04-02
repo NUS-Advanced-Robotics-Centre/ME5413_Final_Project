@@ -19,3 +19,25 @@
     <rosparam command="load" file="$(find me5413_world)/config/config.yaml" />
 
 </launch>
+
+<launch>
+    <!-- Using the simulation clock -->
+    <param name="/use_sim_time" value="true"/>
+
+    <!-- Load the project world into Gazebo -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find me5413_world)/worlds/me5413_project.world"/>
+        <arg name="debug" value="false" />
+        <arg name="gui" value="true" />
+        <arg name="paused" value="false"/>
+        <arg name="use_sim_time" value="true"/>
+        <arg name="headless" value="false"/>
+    </include>
+
+    <!-- Add our jackal robot into the simulation -->
+    <include file="$(find me5413_world)/launch/include/spawn_jackal.launch"/>
+    
+    <!-- Load the destination configuration -->
+    <rosparam command="load" file="$(find me5413_world)/config/config.yaml" />
+
+</launch>
