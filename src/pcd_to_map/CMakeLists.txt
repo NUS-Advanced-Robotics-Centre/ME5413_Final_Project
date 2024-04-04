@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(pcdtomap)
+project(pcd_to_map)
 
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS

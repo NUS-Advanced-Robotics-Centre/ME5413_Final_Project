@@ -1,10 +1,9 @@
-<!-- -->
 <launch>
     <node pkg="pcd_to_map" name="pcd_to_map" type="pcd_to_map" output="screen">
     <!-- filepath to save .pcd file -->
-    <param name="file_directory" value= "/home/renjie/workspace/ME5413_Final_Project/src/FAST_LIO_/PCD/" />
+    <param name="file_directory" value= "/home/john/ME5413_Final/src/FAST_LIO/PCD/" />
     <!-- .pcd file name-->
-    <param name="file_name" value= "scans" />
+    <param name="file_name" value= "map" />
     <!-- minimum height-->
     <param name="thre_z_min" value= "-2.0" />
     <!-- maximum height-->
