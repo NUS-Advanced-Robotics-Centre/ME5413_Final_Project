@@ -1,57 +1,75 @@
-#import "template.typ": project
+#import "@preview/charged-ieee:0.1.0": ieee
 
-#show: project.with(
-  title: "ME5413 Final Project Report",
+#show: ieee.with(
+  title: [ME5413 Final Project],
+  abstract: [
+
+  ],
   authors: (
-    (name: "Cao Chenyu", 
-    email: "E1192847@u.nus.edu", 
-    ID: "A0285295N"),
-    (name: "Li Zhangjin",
-    email: "E1192649@u.nus.edu",
-    ID: "A0285091B"),
-    (name: "Zhao Xu",
-    email: "E1192836@u.nus.edu",
-    ID: "A0285284U"),
+    (
+      name: "Cao Chenyu",
+      department: [Mechanical Engineering],
+      organization: [National University of Singapore],
+      location: [Singapore, Singapore],
+      email: "e1192847@u.nus.edu"
+    ),
+    (
+      name: "Li Zhangjin",
+      department: [Mechanical Engineering],
+      organization: [National University of Singapore],
+      location: [Singapore, Singapore],
+      email: "e1192847@u.nus.edu"
+    ),
+    (
+      name: "Zhao Xu",
+      department: [Mechanical Engineering],
+      organization: [National University of Singapore],
+      location: [Singapore, Singapore],
+      email: "e1192847@u.nus.edu"
+    ),
   ),
-  logo: "./assets/logo-nus.png",
-  abstract: lorem(59)
+  index-terms: ("Scientific writing", "Typesetting", "Document creation", "Syntax"),
+  bibliography: bibliography("refs.bib"),
 )
 
 = Introduction
-#lorem(60)
+// - Brief overview of the final project
+// - Objectives and goals
+// - Robot platform and environment description
 
-== In this paper
-#lorem(20)
+= Mapping
+== Mapping Pipeline
+// - Describe your SLAM algorithm and mapping approach
+// - Explain the key components and techniques used
+// - Provide a system diagram or flowchart
 
-=== Contributions
-#lorem(40)
-#parbreak()
-#lorem(30)
+== Mapping Results
+// - Present qualitative results (maps, visualizations)
+// - Provide quantitative analysis (accuracy, consistency)
+// - Compare estimated odometry with ground truth
 
-== Related Work
-#lorem(500)
-#lorem(500)
+== Challenges and Solutions
+// - Discuss the challenges encountered during mapping
+// - Describe your solutions and their effectiveness
+// - Provide examples and comparisons
 
-== More related work
-#lorem(100)
+= Navigation
+== Navigation Pipeline
+// - Describe your navigation stack and approach
+// - Explain the key components and techniques used
+// - Provide a system diagram or flowchart
 
-= A New Life
-#lorem(700)
+== Navigation Results
+// - Present qualitative results (paths, visualizations)
+// - Provide quantitative analysis (accuracy, efficiency)
+// - Evaluate performance using multiple metrics
 
-= A New World
-#lorem(20)
-#parbreak()
-#lorem(500)
+== Challenges and Solutions
+// - Discuss the challenges encountered during navigation
+// - Describe your solutions and their effectiveness
+// - Provide examples and comparisons
 
-== Check out the Headers
-#lorem(150)
-#lorem(150)
-
-=== Do you like them?
-#lorem(300)
-
-// Bibliography section
-#pagebreak(weak: true)
-#set page(header: [])
-= Bibliography
-#lorem(30)
+= Conclusion
+// - Summarize the key findings and achievements
+// - Highlight the strengths and limitations of your approach
+// - Discuss potential future improvements or extensions
