@@ -238,8 +238,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 13.978616714477539
-            Min Value: 4.047664642333984
+            Max Value: 6.665712833404541
+            Min Value: -0.6683915257453918
             Value: true
           Axis: X
           Channel Name: intensity
@@ -266,8 +266,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 1.4930524826049805
-            Min Value: -0.07171478867530823
+            Max Value: 2.4278030395507812
+            Min Value: -0.0698767602443695
             Value: true
           Axis: Z
           Channel Name: intensity
@@ -303,15 +303,7 @@ Visualization Manager:
           Value: false
           Visibility:
             Evaluation:
-              Absolute Error:
-                ADE (m): true
-                AHE (deg): true
-                Value: true
-              BoxMarkerArray: true
-              Relative Error:
-                RDE (m): true
-                RHE (deg): true
-                Value: true
+              "": true
               Value: true
             Grid: true
             InteractiveMarkers: true
@@ -492,12 +484,12 @@ Visualization Manager:
           Class: rviz/Map
           Color Scheme: map
           Draw Behind: false
-          Enabled: false
+          Enabled: true
           Name: Global CostMap
           Topic: /move_base/global_costmap/costmap
           Unreliable: false
           Use Timestamp: false
-          Value: false
+          Value: true
         - Alpha: 0.699999988079071
           Class: rviz/Map
           Color Scheme: map
@@ -671,7 +663,7 @@ Visualization Manager:
           Marker Topic: /gazebo/ground_truth/box_markers
           Name: BoxMarkerArray
           Namespaces:
-            gazebo: true
+            {}
           Queue Size: 100
           Value: true
       Enabled: true
@@ -704,7 +696,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 10
+      Distance: 19.516515731811523
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -778,7 +770,7 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1920
-  X: 0
-  Y: 0
+  X: 72
+  Y: 27
   simplePanel:
     collapsed: false

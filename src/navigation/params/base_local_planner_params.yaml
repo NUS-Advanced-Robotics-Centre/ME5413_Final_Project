@@ -12,7 +12,7 @@ TrajectoryPlannerROS:
   min_in_place_vel_theta: 0.314
 
   holonomic_robot: false
-  escape_vel: -0.3
+  escape_vel: -0.5
 
   # Goal Tolerance Parameters
   yaw_goal_tolerance: 0.12
@@ -33,8 +33,8 @@ TrajectoryPlannerROS:
   # path_distance_bias: 0.75  #     The weighting for how much the controller should stay close to the path it was given . default 0.6
   # goal_distance_bias: 1.0 #     The weighting for how much the controller should attempt to reach its local goal, also controls speed  default 0.8
 
-  pdist_scale: 0.75  #     The weighting for how much the controller should stay close to the path it was given . default 0.6
-  gdist_scale: 1.0 #     The weighting for how much the controller should attempt to reach its local goal, also controls speed  default 0.8
+  pdist_scale: 0.6  #     The weighting for how much the controller should stay close to the path it was given . default 0.6
+  gdist_scale: 0.8 #     The weighting for how much the controller should attempt to reach its local goal, also controls speed  default 0.8
 
   heading_lookahead: 0.325  #How far to look ahead in meters when scoring different in-place-rotation trajectories
   heading_scoring: false  #Whether to score based on the robot's heading to the path or its distance from the path. default false
