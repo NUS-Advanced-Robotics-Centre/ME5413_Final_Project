@@ -15,7 +15,7 @@
     <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>
 
     <!--To mark the square as restricted area-->
-    <rosparam file="$(find navigation)/params/restricted_area.yaml" command="load" ns="global_costmap/costmap_prohibition_layer" />
+   <rosparam file="$(find navigation)/params/restricted_area.yaml" command="load" ns="global_costmap/costmap_prohibition_layer" />
     <rosparam file="$(find navigation)/params/restricted_area.yaml" command="load" ns="local_costmap/costmap_prohibition_layer" />
     
     <remap from="odom" to="odometry/filtered" />
