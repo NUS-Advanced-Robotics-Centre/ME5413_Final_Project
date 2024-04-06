@@ -45,3 +45,7 @@ add_dependencies(goal_publisher_node ${catkin_EXPORTED_TARGETS} ${${PROJECT_NAME
 
 add_library(object_spawner_gz_plugin SHARED src/object_spawner_gz_plugin.cpp)
 target_link_libraries(object_spawner_gz_plugin ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
+
+add_executable(box_explorer_node src/box_explorer_node.cpp)
+target_link_libraries(box_explorer_node ${catkin_LIBRARIES})
+add_dependencies(box_explorer_node ${catkin_EXPORTED_TARGETS} ${${PROJECT_NAME}_EXPORTED_TARGETS})
