@@ -11,3 +11,6 @@ oscillation_distance: 0.5
 
 recovery_behavior_enabled: true
 clearing_rotation_allowed: true
+
+#reduce the square of cost map clearing
+# conservative_reset_dist: 1.0

@@ -16,6 +16,7 @@ footprint_padding: 0.05
 plugins:
 - {name: obstacles_layer, type: "costmap_2d::ObstacleLayer"}
 - {name: inflater_layer, type: "costmap_2d::InflationLayer"}
+- {name: costmap_prohibition_layer, type: "costmap_prohibition_layer_namespace::CostmapProhibitionLayer"}
 
 obstacles_layer:
   observation_sources: scan
@@ -25,4 +26,4 @@ obstacles_layer:
 
 inflater_layer:
 #  inflation_radius: 0.50
- inflation_radius: 0.2
+ inflation_radius: 0.3
