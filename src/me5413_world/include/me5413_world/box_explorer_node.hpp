@@ -41,6 +41,7 @@ class BoxExplorerNode
   void goalPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& goal_pose);
   void boxMarkersCallback(const visualization_msgs::MarkerArray::ConstPtr& box_markers);
   void globalCostmapCallback(const nav_msgs::OccupancyGrid::ConstPtr& costmap);
+  void objectsCallback(const std_msgs::Float32MultiArray::ConstPtr& objects);
 
   std::vector<geometry_msgs::PoseStamped> createWaypoints();
   void updateCurrentWaypoint();
@@ -56,6 +57,7 @@ class BoxExplorerNode
   ros::Subscriber sub_goal_pose_;
   ros::Subscriber sub_box_markers_;
   ros::Subscriber sub_global_costmap_;
+  ros::Subscriber sub_objects_;
 
   tf2_ros::Buffer tf2_buffer_;
   tf2_ros::TransformListener tf2_listener_;
@@ -79,6 +81,9 @@ class BoxExplorerNode
   // Waypoints
   std::vector<geometry_msgs::PoseStamped> waypoints_;
   int current_waypoint_index_;
+
+  // Objects
+  std_msgs::Float32MultiArray objects_;
 };
 
 } // namespace me5413_world

@@ -18,6 +18,9 @@ BoxExplorerNode::BoxExplorerNode() : tf2_listener_(tf2_buffer_)
   this->sub_goal_name_ = nh_.subscribe("/rviz_panel/goal_name", 1, &BoxExplorerNode::goalNameCallback, this);
   this->sub_box_markers_ = nh_.subscribe("/gazebo/ground_truth/box_markers", 1, &BoxExplorerNode::boxMarkersCallback, this);
   this->sub_global_costmap_ = nh_.subscribe("/move_base/global_costmap/costmap", 1, &BoxExplorerNode::globalCostmapCallback, this);
+
+  // Subscribe the find_object_2d node to get the detected visual information
+  this->sub_objects_ = nh_.subscribe("/find_object_2d/objectsStamped", 1, &BoxExplorerNode::objectsCallback, this);
   
   // Initialization
   this->robot_frame_ = "base_link";
@@ -27,6 +30,7 @@ BoxExplorerNode::BoxExplorerNode() : tf2_listener_(tf2_buffer_)
   this->global_costmap_ = nav_msgs::OccupancyGrid();
   this->current_waypoint_index_ = 0;
   this->waypoints_ = createWaypoints();
+  this->objects_ = std_msgs::Float32MultiArray();
 };
 
 void BoxExplorerNode::goalNameCallback(const std_msgs::String::ConstPtr& name)
@@ -51,11 +55,11 @@ void BoxExplorerNode::goalNameCallback(const std_msgs::String::ConstPtr& name)
     }
     
     // P_world_goal = box_poses_[goal_box_id];
+    current_waypoint_index_ = rand() % waypoints_.size();
     P_world_goal = waypoints_[current_waypoint_index_];
   }
   else
   {
-    current_waypoint_index_++;
     return;
   }
 
@@ -106,6 +110,12 @@ void BoxExplorerNode::boxMarkersCallback(const visualization_msgs::MarkerArray::
 void BoxExplorerNode::globalCostmapCallback(const nav_msgs::OccupancyGrid::ConstPtr& costmap)
 {
   this->global_costmap_ = *costmap;
+  return;
+};
+
+void BoxExplorerNode::objectsCallback(const std_msgs::Float32MultiArray::ConstPtr& objects)
+{
+  this->objects_ = *objects;
   return;
 };
 
