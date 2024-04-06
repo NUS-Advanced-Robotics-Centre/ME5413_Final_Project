@@ -20,4 +20,8 @@
 
   <node ns="me5413_world" pkg="me5413_world" type="goal_publisher_node" name="goal_publisher_node" output="screen" />
 
+  <node ns="me5413_world" pkg="me5413_world" type="box_explorer_node" name="box_explorer_node" output="screen" />
+
+  <include file="$(find me5413_world)/launch/find_box.launch" />
+  
 </launch>

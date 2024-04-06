@@ -23,4 +23,4 @@ obstacles_layer:
   # observation_sources: point_cloud_sensor
   # point_cloud_sensor: {sensor_frame: odom, data_type: PointCloud2, topic: mid/points, marking: true, clearing: true, min_obstacle_height: 0.1, max_obstacle_height: 3, obstacle_range: 25, raytrace_range: 25,expected_update_rate: 0}
 inflater_layer:
- inflation_radius: 0.2
+ inflation_radius: 0.32

@@ -40,8 +40,8 @@ TebLocalPlannerROS:
     
  # Obstacles
     
- min_obstacle_dist: 0.1 # This value must also include our robot radius, since footprint_model is set to "point". 0.25
- inflation_dist: 0.1 #0.3
+ min_obstacle_dist: 0.25 # This value must also include our robot radius, since footprint_model is set to "point". 0.25
+ inflation_dist: 1 #0.3
  include_costmap_obstacles: True
  costmap_obstacles_behind_robot_dist: 0.5
  obstacle_poses_affected: 10
@@ -56,7 +56,7 @@ TebLocalPlannerROS:
  # Optimization
     
  no_inner_iterations: 6
- no_outer_iterations: 6
+ no_outer_iterations: 5
  optimization_activate: True
  optimization_verbose: False
  penalty_epsilon: 0.1
@@ -81,7 +81,7 @@ TebLocalPlannerROS:
 
  enable_homotopy_class_planning: True
  enable_multithreading: True
- max_number_classes: 2
+ max_number_classes: 4
  selection_cost_hysteresis: 1.0
  selection_prefer_initial_plan: 0.9
  selection_obst_cost_scale: 100.0

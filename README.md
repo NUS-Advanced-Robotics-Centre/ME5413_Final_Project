@@ -11,3 +11,17 @@ For the original project description and instructions, please refer to the [ORIG
 - [Addition 1]
 - [Modification 1]
 - ...
+
+## Installation
+
+### Teb Local Planner
+
+```bash
+sudo apt-get install ros-noetic-teb-local-planner
+```
+
+### find_object_2d
+
+```bash
+sudo apt-get install ros-noetic-find-object-2d
+```

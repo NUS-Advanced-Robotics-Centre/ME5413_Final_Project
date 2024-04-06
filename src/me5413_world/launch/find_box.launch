@@ -1,0 +1,9 @@
+<launch>
+    <!-- Nodes -->
+    <node name="find_object_2d" pkg="find_object_2d" type="find_object_2d" output="screen">
+        <remap from="image" to="/front/image_raw"/>
+        <param name="gui" value="true" type="bool"/>
+        <param name="objects_path" value="$(find me5413_world)/objects" type="str"/>
+        <param name="settings_path" value="~/.ros/find_object_2d.ini" type="str"/>
+    </node>
+</launch>
