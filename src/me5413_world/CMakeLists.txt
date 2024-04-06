@@ -59,3 +59,6 @@ add_dependencies(box_explorer_node ${catkin_EXPORTED_TARGETS} ${${PROJECT_NAME}_
 add_executable(template_matching_node src/template_matching_node.cpp)
 target_link_libraries(template_matching_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 add_dependencies(template_matching_node ${catkin_EXPORTED_TARGETS} ${${PROJECT_NAME}_EXPORTED_TARGETS})
+
+catkin_install_python(PROGRAMS scripts/template_matching_node_py.py
+                      DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

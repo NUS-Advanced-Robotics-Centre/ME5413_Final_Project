@@ -22,7 +22,7 @@
 
   <node ns="me5413_world" pkg="me5413_world" type="box_explorer_node" name="box_explorer_node" output="screen" />
 
-  <node ns="me5413_world" pkg="me5413_world" type="template_matching_node" name="template_matching_node" output= "screen">
+  <node ns="me5413_world" pkg="me5413_world" type="template_matching_node_py.py" name="template_matching_node_py" output= "screen">
     <param name="template_path" value="$(find me5413_world)/media/objects/number3.png"/>
   </node>
 
