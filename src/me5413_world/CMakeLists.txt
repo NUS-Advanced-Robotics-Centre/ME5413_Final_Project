@@ -18,8 +18,13 @@ find_package(catkin REQUIRED COMPONENTS
   tf2_ros
   tf2_eigen
   tf2_geometry_msgs
+  image_transport
+  tf
+  cv_bridge
 )
+
 find_package(gazebo REQUIRED)
+find_package(OpenCV REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
@@ -32,6 +37,7 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${GAZEBO_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
 
 link_directories(${GAZEBO_LIBRARY_DIRS})
@@ -49,3 +55,7 @@ target_link_libraries(object_spawner_gz_plugin ${catkin_LIBRARIES} ${GAZEBO_LIBR
 add_executable(box_explorer_node src/box_explorer_node.cpp)
 target_link_libraries(box_explorer_node ${catkin_LIBRARIES})
 add_dependencies(box_explorer_node ${catkin_EXPORTED_TARGETS} ${${PROJECT_NAME}_EXPORTED_TARGETS})
+
+add_executable(template_matching_node src/template_matching_node.cpp)
+target_link_libraries(template_matching_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+add_dependencies(template_matching_node ${catkin_EXPORTED_TARGETS} ${${PROJECT_NAME}_EXPORTED_TARGETS})

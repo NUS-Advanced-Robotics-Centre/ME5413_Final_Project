@@ -22,6 +22,10 @@
 
   <node ns="me5413_world" pkg="me5413_world" type="box_explorer_node" name="box_explorer_node" output="screen" />
 
-  <include file="$(find me5413_world)/launch/find_box.launch" />
+  <node ns="me5413_world" pkg="me5413_world" type="template_matching_node" name="template_matching_node" output= "screen">
+    <param name="template_path" value="$(find me5413_world)/media/objects/number3.png"/>
+  </node>
+
+  <!-- <include file="$(find me5413_world)/launch/find_box.launch" /> -->
   
 </launch>

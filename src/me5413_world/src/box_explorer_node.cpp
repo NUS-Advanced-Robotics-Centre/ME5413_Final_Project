@@ -19,18 +19,22 @@ BoxExplorerNode::BoxExplorerNode() : tf2_listener_(tf2_buffer_)
   this->sub_box_markers_ = nh_.subscribe("/gazebo/ground_truth/box_markers", 1, &BoxExplorerNode::boxMarkersCallback, this);
   this->sub_global_costmap_ = nh_.subscribe("/move_base/global_costmap/costmap", 1, &BoxExplorerNode::globalCostmapCallback, this);
 
-  // Subscribe the find_object_2d node to get the detected visual information
-  this->sub_objects_ = nh_.subscribe("/find_object_2d/objectsStamped", 1, &BoxExplorerNode::objectsCallback, this);
-  
+  // // Subscribe the find_object_2d node to get the detected visual information
+  // this->sub_objects_ = nh_.subscribe("/objects", 1, &BoxExplorerNode::objectsCallback, this);
+
+  // Subscribe the template matching node to get the position of the detected object
+  this->sub_goal_pose_detected_ = nh_.subscribe("/detected_goal_pose", 1, &BoxExplorerNode::goalPoseDetectedCallback, this);
+
   // Initialization
   this->robot_frame_ = "base_link";
   this->map_frame_ = "map";
   this->world_frame_ = "world";
+  this->goal_box_id_ = 0;
 
   this->global_costmap_ = nav_msgs::OccupancyGrid();
   this->current_waypoint_index_ = 0;
   this->waypoints_ = createWaypoints();
-  this->objects_ = std_msgs::Float32MultiArray();
+  // this->objects_ = std_msgs::Float32MultiArray();
 };
 
 void BoxExplorerNode::goalNameCallback(const std_msgs::String::ConstPtr& name)
@@ -53,13 +57,15 @@ void BoxExplorerNode::goalNameCallback(const std_msgs::String::ConstPtr& name)
       ROS_ERROR_STREAM("Box id is outside the available range, please select a smaller id!");
       return;
     }
-    
+
     // P_world_goal = box_poses_[goal_box_id];
-    current_waypoint_index_ = rand() % waypoints_.size();
-    P_world_goal = waypoints_[current_waypoint_index_];
+    // updateCurrentWaypoint();
+    this->current_waypoint_index_ = rand() % waypoints_.size();
+    P_world_goal = waypoints_[this->current_waypoint_index_];
   }
   else
   {
+    this->goal_box_id_ = 0;
     return;
   }
 
@@ -113,11 +119,17 @@ void BoxExplorerNode::globalCostmapCallback(const nav_msgs::OccupancyGrid::Const
   return;
 };
 
-void BoxExplorerNode::objectsCallback(const std_msgs::Float32MultiArray::ConstPtr& objects)
+void BoxExplorerNode::goalPoseDetectedCallback(const geometry_msgs::PoseStamped::ConstPtr& goal_pose)
 {
-  this->objects_ = *objects;
+  this->pose_world_goal_ = goal_pose->pose;
   return;
 };
+
+// void BoxExplorerNode::objectsCallback(const std_msgs::Float32MultiArray::ConstPtr& objects)
+// {
+//   this->objects_ = *objects;
+//   return;
+// };
 
 std::vector<geometry_msgs::PoseStamped> BoxExplorerNode::createWaypoints()
 {
@@ -159,8 +171,8 @@ void BoxExplorerNode::updateCurrentWaypoint()
   current_waypoint_index_ = rand() % waypoints_.size();
   if (this->current_waypoint_index_ < this->waypoints_.size()) {
     geometry_msgs::PoseStamped goal_pose = this->waypoints_[this->current_waypoint_index_];
-    if (!isPointInObstacle(goal_pose, this->global_costmap_)) {
-      this->current_waypoint_index_++;
+    while (!isPointInObstacle(goal_pose, this->global_costmap_)) {
+      this->current_waypoint_index_ = rand() % waypoints_.size();
     }
   }
 }

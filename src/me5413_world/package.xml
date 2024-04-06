@@ -60,7 +60,9 @@
   <depend>jackal_gazebo</depend>
   <depend>jackal_navigation</depend>
   <depend>teleop_twist_keyboard</depend>
-  <depend>velodyne_simulator</depend>
+  <!-- <depend>velodyne_simulator</depend> -->
+  <depend>velodyne_gazebo_plugins</depend>
+  <depend>velodyne_description</depend>
   
   <!-- The export tag contains other, unspecified, tags -->
   <export>
