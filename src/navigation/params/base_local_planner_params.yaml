@@ -21,7 +21,7 @@ TrajectoryPlannerROS:
 
   # Forward Simulation Parameters
   sim_time: 2.0
-  sim_granularity: 0.01
+  sim_granularity: 0.02
   angular_sim_granularity: 0.02
   vx_samples: 10
   vtheta_samples: 20
@@ -33,7 +33,7 @@ TrajectoryPlannerROS:
   # path_distance_bias: 0.75  #     The weighting for how much the controller should stay close to the path it was given . default 0.6
   # goal_distance_bias: 1.0 #     The weighting for how much the controller should attempt to reach its local goal, also controls speed  default 0.8
 
-  pdist_scale: 1.0  #     The weighting for how much the controller should stay close to the path it was given . default 0.6
+  pdist_scale: 0.8  #     The weighting for how much the controller should stay close to the path it was given . default 0.6
   gdist_scale: 0.8 #     The weighting for how much the controller should attempt to reach its local goal, also controls speed  default 0.8
 
   heading_lookahead: 0.325  #How far to look ahead in meters when scoring different in-place-rotation trajectories
