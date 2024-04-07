@@ -1,11 +1,3 @@
-/* goal_publisher_node.cpp
-
- * Copyright (C) 2023 SS47816
-
- * ROS Node for publishing goal poses 
- 
-**/
-
 #include "me5413_world/box_explorer_node.hpp"
 
 namespace me5413_world 
@@ -18,12 +10,8 @@ BoxExplorerNode::BoxExplorerNode() : tf2_listener_(tf2_buffer_)
   this->sub_goal_name_ = nh_.subscribe("/rviz_panel/goal_name", 1, &BoxExplorerNode::goalNameCallback, this);
   this->sub_box_markers_ = nh_.subscribe("/gazebo/ground_truth/box_markers", 1, &BoxExplorerNode::boxMarkersCallback, this);
   this->sub_global_costmap_ = nh_.subscribe("/move_base/global_costmap/costmap", 1, &BoxExplorerNode::globalCostmapCallback, this);
-
-  // // Subscribe the find_object_2d node to get the detected visual information
-  // this->sub_objects_ = nh_.subscribe("/objects", 1, &BoxExplorerNode::objectsCallback, this);
-
-  // Subscribe the template matching node to get the position of the detected object
   this->sub_goal_pose_detected_ = nh_.subscribe("/detected_goal_pose", 1, &BoxExplorerNode::goalPoseDetectedCallback, this);
+  this->sub_robot_odom_ = nh_.subscribe("/gazebo/ground_truth/state", 1, &BoxExplorerNode::robotOdomCallback, this);
 
   // Initialization
   this->robot_frame_ = "base_link";
@@ -34,7 +22,18 @@ BoxExplorerNode::BoxExplorerNode() : tf2_listener_(tf2_buffer_)
   this->global_costmap_ = nav_msgs::OccupancyGrid();
   this->current_waypoint_index_ = 0;
   this->waypoints_ = createWaypoints();
-  // this->objects_ = std_msgs::Float32MultiArray();
+
+  this->is_goal_detected_ = false;
+};
+
+void BoxExplorerNode::robotOdomCallback(const nav_msgs::Odometry::ConstPtr& odom)
+{
+  this->world_frame_ = odom->header.frame_id;
+  this->robot_frame_ = odom->child_frame_id;
+  this->pose_world_robot_ = odom->pose.pose;
+
+  updateGoalIfReached();
+  return;
 };
 
 void BoxExplorerNode::goalNameCallback(const std_msgs::String::ConstPtr& name)
@@ -121,6 +120,8 @@ void BoxExplorerNode::globalCostmapCallback(const nav_msgs::OccupancyGrid::Const
 
 void BoxExplorerNode::goalPoseDetectedCallback(const geometry_msgs::PoseStamped::ConstPtr& goal_pose)
 {
+  this->is_goal_detected_ = true;
+
   geometry_msgs::PoseStamped P_world_goal;
   if (this->goal_type_ == "box")
   {
@@ -239,6 +240,47 @@ bool BoxExplorerNode::isPointInObstacle(const geometry_msgs::PoseStamped& Point,
 
   // If no obstacles are found, return false
   return false;
+}
+
+void BoxExplorerNode::updateGoalIfReached()
+{
+  // Check if the robot has reached the current goal
+  double distance = std::sqrt(std::pow(this->pose_world_robot_.position.x - this->pose_world_goal_.position.x, 2) +
+                              std::pow(this->pose_world_robot_.position.y - this->pose_world_goal_.position.y, 2));
+
+  // If the robot is within a certain threshold of the goal and the goal is not detected
+  if (distance < 0.02 && !this->is_goal_detected_&& this->goal_type_ == "box")
+  {
+    ROS_INFO("Goal reached but not detected. Updating goal...");
+    
+    // Update the current waypoint index
+    this->current_waypoint_index_ = (this->current_waypoint_index_ + 1) % this->waypoints_.size();
+    
+    // Get the new goal pose
+    geometry_msgs::PoseStamped P_world_goal = this->waypoints_[this->current_waypoint_index_];
+    this->pose_world_goal_ = P_world_goal.pose;
+
+    // Get the Transform from world to map from the tf_listener
+    geometry_msgs::TransformStamped transform_map_world;
+    try
+    {
+      transform_map_world = this->tf2_buffer_.lookupTransform(this->map_frame_, this->world_frame_, ros::Time(0));
+    }
+    catch (tf2::TransformException& ex)
+    {
+      ROS_WARN("%s", ex.what());
+      return;
+    }
+
+    // Transform the goal pose to map frame
+    geometry_msgs::PoseStamped P_map_goal;
+    tf2::doTransform(P_world_goal, P_map_goal, transform_map_world);
+    P_map_goal.header.stamp = ros::Time::now();
+    P_map_goal.header.frame_id = map_frame_;
+
+    // Publish the new goal pose in map frame
+    this->pub_goal_.publish(P_map_goal);
+  }
 }
 
 } // namespace me5413_world
