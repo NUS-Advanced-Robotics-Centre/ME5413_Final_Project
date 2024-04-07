@@ -7,15 +7,23 @@ from cv_bridge import CvBridge
 import cv2
 import numpy as np
 import tf
+import os
+from tf.transformations import quaternion_from_euler
 
 class TemplateMatchingNode:
     def __init__(self):
         self.bridge = CvBridge()
-        self.template_path = rospy.get_param("~template_path", "")
-        if self.template_path:
-            self.template_image = cv2.imread(self.template_path, cv2.IMREAD_GRAYSCALE)
+        self.template_folder = rospy.get_param("~template_folder", "")
+        self.depth = rospy.get_param("~depth", 0.05)
+        if self.template_folder:
+            self.template_images = []
+            for filename in os.listdir(self.template_folder):
+                template_path = os.path.join(self.template_folder, filename)
+                template_image = cv2.imread(template_path, cv2.IMREAD_GRAYSCALE)
+                if template_image is not None:
+                    self.template_images.append(template_image)
         else:
-            rospy.logerr("Template path is empty!")
+            rospy.logerr("Template folder is empty!")
 
         self.camera_matrix = None
         self.dist_coeffs = None
@@ -44,26 +52,28 @@ class TemplateMatchingNode:
         self.dist_coeffs = np.array(msg.D)
 
     def template_matching(self, image):
-        # Build the image pyramid
-        pyramid = [image]
-        resized_image = image
-        scale_factor = 0.9
-        for _ in range(3):
-            resized_image = cv2.resize(resized_image, (0, 0), fx=scale_factor, fy=scale_factor)
-            pyramid.append(resized_image)
-
-        # Perform template matching
         best_score = 0
         best_bbox = None
-        for pyr_image in pyramid:
-            result = cv2.matchTemplate(pyr_image, self.template_image, cv2.TM_CCOEFF_NORMED)
-            _, max_val, _, max_loc = cv2.minMaxLoc(result)
-            if max_val > best_score:
-                best_score = max_val
-                best_bbox = (max_loc[0], max_loc[1], self.template_image.shape[1], self.template_image.shape[0])
+
+        for template_image in self.template_images:
+            # Build the template pyramid
+            template_pyramid = []
+            resized_template = template_image
+            scale_factor = [0.75, 1.0, 1.25, 1.5, 1.75]
+            for s in scale_factor:
+                resized_template = cv2.resize(resized_template, (0, 0), fx=s, fy=s)
+                template_pyramid.append(resized_template)
+
+            # Perform template matching
+            for pyr_template in template_pyramid:
+                result = cv2.matchTemplate(image, pyr_template, cv2.TM_CCOEFF_NORMED)
+                _, max_val, _, max_loc = cv2.minMaxLoc(result)
+                if max_val > best_score:
+                    best_score = max_val
+                    best_bbox = (max_loc[0], max_loc[1], pyr_template.shape[1], pyr_template.shape[0])
 
         # Confidence threshold
-        confidence_threshold = 0.5
+        confidence_threshold = 0.75
         if best_score >= confidence_threshold:
             return best_bbox
         else:
@@ -80,14 +90,14 @@ class TemplateMatchingNode:
     def calculate_target(self, bbox):
         if bbox is None:
             return
-
-        # Set a constant depth value
-        depth = 0.3
-
+        if self.camera_matrix is None:
+            rospy.logwarn("Camera matrix is not available!")
+            return
+        
         x, y, w, h = bbox
-        target_point = np.array([(x + w / 2 - self.camera_matrix[0, 2]) * depth / self.camera_matrix[0, 0],
-                                 (y + h / 2 - self.camera_matrix[1, 2]) * depth / self.camera_matrix[1, 1],
-                                 depth])
+        target_point = np.array([(x + w / 2 - self.camera_matrix[0, 2]) * self.depth / self.camera_matrix[0, 0],
+                                (y + h / 2 - self.camera_matrix[1, 2]) * self.depth / self.camera_matrix[1, 1],
+                                self.depth])
 
         target_point_camera = PointStamped()
         target_point_camera.header.stamp = rospy.Time.now()
@@ -103,11 +113,31 @@ class TemplateMatchingNode:
             rospy.logerr("Transform error: %s", e)
             return
 
+        # Get the current robot position in the map frame
+        try:
+            robot_pose = PoseStamped()
+            robot_pose.header.stamp = rospy.Time(0)
+            robot_pose.header.frame_id = "base_link"
+            self.tf_listener.waitForTransform("map", "base_link", rospy.Time(0), rospy.Duration(1.0))
+            robot_pose_map = self.tf_listener.transformPose("map", robot_pose)
+        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as e:
+            rospy.logerr("Transform error: %s", e)
+            return
+
+        # Calculate the direction from the robot to the target point
+        dx = target_point_map.point.x - robot_pose_map.pose.position.x
+        dy = target_point_map.point.y - robot_pose_map.pose.position.y
+        yaw = np.arctan2(dy, dx)
+
+        # Convert yaw to quaternion
+        quat = quaternion_from_euler(0, 0, yaw)
+
         goal_pose = PoseStamped()
         goal_pose.header.stamp = rospy.Time.now()
         goal_pose.header.frame_id = "map"
         goal_pose.pose.position = target_point_map.point
-        goal_pose.pose.orientation.w = 1.0
+        goal_pose.pose.orientation.w = quat[3]
+
         self.goal_pub.publish(goal_pose)
 
 def main():

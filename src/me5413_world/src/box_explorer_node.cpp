@@ -121,15 +121,37 @@ void BoxExplorerNode::globalCostmapCallback(const nav_msgs::OccupancyGrid::Const
 
 void BoxExplorerNode::goalPoseDetectedCallback(const geometry_msgs::PoseStamped::ConstPtr& goal_pose)
 {
-  this->pose_world_goal_ = goal_pose->pose;
+  geometry_msgs::PoseStamped P_world_goal;
+  if (this->goal_type_ == "box")
+  {
+    P_world_goal = *goal_pose;
+    this->pose_world_goal_ = P_world_goal.pose;
+    // Get the Transform from world to map from the tf_listener
+    geometry_msgs::TransformStamped transform_map_world;
+    try
+    {
+      transform_map_world = this->tf2_buffer_.lookupTransform(this->map_frame_, this->world_frame_, ros::Time(0));
+    }
+    catch (tf2::TransformException& ex)
+    {
+      ROS_WARN("%s", ex.what());
+      return;
+    }
+
+    // Transform the goal pose to map frame
+    geometry_msgs::PoseStamped P_map_goal;
+    tf2::doTransform(P_world_goal, P_map_goal, transform_map_world);
+    P_map_goal.header.stamp = ros::Time::now();
+    P_map_goal.header.frame_id = map_frame_;
+
+    // Transform the robot pose to map frame
+    tf2::doTransform(this->pose_world_robot_, this->pose_map_robot_, transform_map_world);
+
+    // Publish goal pose in map frame on it goal type is box
+    this->pub_goal_.publish(P_map_goal);
+  }
   return;
 };
-
-// void BoxExplorerNode::objectsCallback(const std_msgs::Float32MultiArray::ConstPtr& objects)
-// {
-//   this->objects_ = *objects;
-//   return;
-// };
 
 std::vector<geometry_msgs::PoseStamped> BoxExplorerNode::createWaypoints()
 {
@@ -187,8 +209,8 @@ bool BoxExplorerNode::isPointInObstacle(const geometry_msgs::PoseStamped& Point,
   int map_y = static_cast<int>((y - costmap.info.origin.position.y) / resolution);
 
   // Define the radius of the circle to check
-  double cheakRadius = 0.3;
-  int radiusCells = static_cast<int>(cheakRadius / resolution);
+  double checkRadius = 0.3;
+  int radiusCells = static_cast<int>(checkRadius / resolution);
 
   for (int dx = -radiusCells; dx <= radiusCells; ++dx) {
     for (int dy = -radiusCells; dy <= radiusCells; ++dy) {
@@ -214,6 +236,9 @@ bool BoxExplorerNode::isPointInObstacle(const geometry_msgs::PoseStamped& Point,
       }
     }
   }
+
+  // If no obstacles are found, return false
+  return false;
 }
 
 } // namespace me5413_world
