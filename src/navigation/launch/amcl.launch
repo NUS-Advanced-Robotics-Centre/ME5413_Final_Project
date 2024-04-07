@@ -12,13 +12,13 @@
     <param name="laser_max_beams" value="720"/>
     <param name="laser_min_range" value="0.1"/>
     <param name="laser_max_range" value="30.0"/>
-    <param name="min_particles" value="500"/>
+    <param name="min_particles" value="750"/>
     <param name="max_particles" value="2000"/>
     <!-- Maximum error between the true distribution and the estimated distribution. -->
     <param name="kld_err" value="0.05"/>
     <param name="kld_z" value="0.99"/>
-    <param name="odom_alpha1" value="0.2"/>
-    <param name="odom_alpha2" value="0.2"/>
+    <param name="odom_alpha1" value="0.35"/>
+    <param name="odom_alpha2" value="0.35"/>
     <!-- translation std dev, m -->
     <param name="odom_alpha3" value="0.2"/>
     <param name="odom_alpha4" value="0.2"/>
@@ -34,7 +34,7 @@
     <!-- Translational movement required before performing a filter update.  -->
     <param name="update_min_d" value="0.1"/>
     <!--Rotational movement required before performing a filter update. -->
-    <param name="update_min_a" value="0.314"/>
+    <param name="update_min_a" value="0.7"/>
     <param name="odom_frame_id" value="odom"/>
     <param name="base_frame_id" value="base_link"/>
     <param name="global_frame_id" value="map"/>
@@ -58,3 +58,6 @@
   </node>
 
 </launch>
+
+
+

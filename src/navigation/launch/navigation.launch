@@ -1,7 +1,7 @@
 <launch>
 
   <!-- Connect the robot to a keyboard teleop controller -->
-  <node name="teleop_twist_keyboard" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" respawn="true"/>
+  <!--<node name="teleop_twist_keyboard" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" respawn="true"/>-->
 
   <!-- Run the map server -->
   <arg name="map_file" default="$(find navigation)/maps/map_improve_3.yaml"/>
