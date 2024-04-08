@@ -87,13 +87,19 @@ The navigation process consists of two parts: global planning and local planning
 - **Global Planning:** The global planner used is `A*`. The `move_base` package is used to perform the global planning process. The global planner parameters can be tuned in the `jackal_navigation/params/global_planner_params.yaml` file.
 - **Local Planning:** The local planner used is `Teb`. The `move_base` package is used to perform the local planning process. The local planner parameters can be tuned in the `jackal_navigation/params/teb_local_planner_params.yaml` file.
 
+### Decision Making
+
+The decision making logic is shown in the flowchart below:
+
+![Implementation Logic](assets/logic_decision.png)
+
+We have mainly used three nodes to implement the decision (i.e. How to get to the desired goal) logic:
+
+- `gaol_publisher_node`: Publish the goal location (when the goal is not a box). The robot will navigate to the goal location directly.
+- `box_explorer_node`: Explore the box location (when the goal is a box). The robot will navigate to the parking area (where the boxes are spawned) and explore the box location randomly until the box is detected.
+- `template_matching_node`: Continuously detect the object (number 3 on the box) using the template matching method. If the object is detected, the robot will navigate to the object location.
+
 ## Project Structure
-
-### Implementation Logic
-
-The implementation logic of the project is shown in the flowchart below:
-
-![Implementation Logic](assets/implementation_logic.png)
 
 ### ROS Graph
 
@@ -261,6 +267,7 @@ We would like to express our gratitude to the teaching team of ME5413 for provid
 - [PythonRobotics](https://github.com/AtsushiSakai/PythonRobotics.git): A collection of robotics algorithms implemented in Python.
 - [Fast-LIO](https://github.com/hku-mars/FAST_LIO.git): A computationally efficient and robust LiDAR-inertial odometry package by hku-mars group.
 - [pcd2pgm_package](https://github.com/Hinson-A/pcd2pgm_package.git): A package for converting `.pcd` files to `.pgm` files.
+- [excalidraw](https://github.com/excalidraw/excalidraw.git): A whiteboard tool that lets you easily sketch diagrams that have a hand-drawn feel to them.
 
 ## License
 
