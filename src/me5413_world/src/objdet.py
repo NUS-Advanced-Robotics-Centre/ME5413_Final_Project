@@ -38,6 +38,17 @@ class DigitDetector:
     def img_cb(self, raw_img):
         self.raw_img = raw_img
         
+    @staticmethod
+    def get_twist_msg(vel_x, yaw_rate):
+        twist_msg = Twist()
+        twist_msg.linear.x = vel_x
+        twist_msg.linear.y = 0.0
+        twist_msg.linear.z = 0.0
+        twist_msg.angular.x = 0.0
+        twist_msg.angular.y = 0.0
+        twist_msg.angular.z = yaw_rate
+        return twist_msg
+        
     def run(self, mode : Mode = Mode.INFERENCE):
         template_id = 0
         while not rospy.is_shutdown():
@@ -91,31 +102,25 @@ class DigitDetector:
                 bottom_right = (top_left[0] + w, top_left[1] + h)
                 cv2.rectangle(display, top_left, bottom_right,(255,0,255), 2)
                 
-                if max_match_val <= self.CLOSE_TO_BOX_THRESHOLD:
-                    roi_center = (top_left[0] + w//2, top_left[1] + h//2)
-                    twist_msg = Twist()
-                    
-                    obs_center = (w_img // 2 , h_img // 2)
-                    
-                    vel_x = self.VEL_X
-                    yaw_rate = self.ANG_Z_KP * (-roi_center[0] + obs_center[0]) / (w_img//2)
-                    
-                    twist_msg.linear.x = vel_x
-                    twist_msg.linear.y = 0.0
-                    twist_msg.linear.z = 0.0
-                    twist_msg.angular.x = 0.0
-                    twist_msg.angular.y = 0.0
-                    twist_msg.angular.z = yaw_rate
-                    
-                    print(f"Moving to box {vel_x, yaw_rate}...")
-                    
-                    self.cmdvel_pub.publish(twist_msg)
+                if max_match_val >= self.CLOSE_TO_BOX_THRESHOLD:
+                    rospy.signal_shutdown("Close enough to the box!")
+                    break
+                
+                roi_center = (top_left[0] + w//2, top_left[1] + h//2)
+                obs_center = (w_img // 2 , h_img // 2)
+                
+                vel_x = self.VEL_X
+                yaw_rate = self.ANG_Z_KP * (-roi_center[0] + obs_center[0]) / (w_img//2)
+                print(f"Moving to box {vel_x, yaw_rate}...")
+                self.cmdvel_pub.publish(self.get_twist_msg(vel_x, yaw_rate))
                     
                 display_template = max_template
                 color = (0,255,0)
             else:
                 display_template = np.zeros(obs.shape)
                 color = (0,0,255)
+                print(f"No detections, rotating on the spot...")
+                self.cmdvel_pub.publish(self.get_twist_msg(0.0, self.ANG_Z_KP))
             cv2.imshow("template", display_template)
             
             # Write the maximum template match score on the img display
