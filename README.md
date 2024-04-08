@@ -93,7 +93,7 @@ The navigation process consists of two parts: global planning and local planning
 
 The implementation logic of the project is shown in the flowchart below:
 
-
+![Implementation Logic](assets/implementation_logic.png)
 
 ### ROS Graph
 
