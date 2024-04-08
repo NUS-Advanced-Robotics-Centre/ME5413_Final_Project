@@ -1,4 +1,5 @@
 <!-- markdownlint-disable MD024 -->
+<!-- markdownlint-disable MD033 -->
 
 # ME5413 Final Project Group 10
 
@@ -31,6 +32,13 @@ By integrating these components, the Jackal robot is capable of autonomously map
 ### Mapping
 
 The mapping process is performed using the `Fast-Lio` package. The `Fast-Lio` package is used as the primary mapping method in this project. After the mapping process, the map is saved as a `.pcd` file, which can be converted to a `.pgm` file for the further navigation process.
+
+The figures below show the mapping results of the `Fast-Lio` package (`.pcd` and `.pgm` files):
+
+<div align="center">
+  <img src="assets/mapping/fastlio_pcd.jpg" alt="Image 1" width="300" style="display: inline-block; margin: 0 10px;">
+  <img src="assets/mapping/fastlio_pgm.jpg" alt="Image 2" width="300" style="display: inline-block; margin: 0 10px;">
+</div>
 
 #### Global Costmap
 
@@ -79,7 +87,7 @@ The ROS graph of the project is shown below:
 ## Repo Structure
 
 ```plaintext
-
+ME5413_Final_Project_Group10
 ├── README.md
 ├── ORIGINAL_README.md
 ├── assets
@@ -202,8 +210,8 @@ roslaunch me5413_world main.launch
 - [x] Implement the template matching method for object detection.
 - [x] Implement the `ORB` or `SIFT` method for object detection. (`find_object_2d`)
 - [ ] Train a YOLO detctor for object detection. (may be trained from a small `mnist` dataset)
-- [ ] Attemp to use the RGB-D camera to detect the object.
-- [ ] Attemp to use the stereo camera to detect the object.
+- [ ] Attempt to use the RGB-D camera to detect the object.
+- [ ] Attempt to use the stereo camera to detect the object.
 - [ ] Capture the `cone` in the gazebo world from the camera.
 
 ### Localization
@@ -215,7 +223,7 @@ roslaunch me5413_world main.launch
 ### Planning
 
 - [x] Implement the `A*` global planner.
-- [x] Implement the `Teb` global planner.
+- [x] Implement the `Teb` local planner.
 - [x] Successfully navigate the robot to the goal location.
-- [ ] Change the global planner to other planner (`GBFS` or `RRT*`) and compare the performance.
-- [ ] Change the local planner to other planner (`DWA` or `EBand`) and compare the performance.
+- [ ] Change the global planner to other planners (`GBFS` or `RRT*`) and compare the performance.
+- [ ] Change the local planner to other planners (`DWA` or `EBand`) and compare the performance.
