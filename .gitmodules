@@ -1,6 +1,3 @@
-[submodule "costmap_prohibition_layer"]
-	path = costmap_prohibition_layer
-	url = https://github.com/rst-tu-dortmund/costmap_prohibition_layer.git
 [submodule "src/costmap_prohibition_layer"]
 	path = src/costmap_prohibition_layer
 	url = https://github.com/rst-tu-dortmund/costmap_prohibition_layer.git
