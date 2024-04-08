@@ -77,12 +77,7 @@ The planning process is based on the costmap information. The costmap consists o
 
 - **The local costmap** represents the robot's immediate surroundings and is used for local path planning and obstacle avoidance. It is dynamically updated based on sensor data, such as laser scans and point clouds, and is smaller in size and has a higher resolution compared to the global costmap.
 
-Besides, we are required to prohibit the robot from entering some specific areas.
-
-- Prohibition Layer
-  - Prohibits the robot from entering the area
-  - Implemented in the `costmap_prohibition_layer` package
-  - The prohibition area is defined in the `jackal_navigation/params/prohibition_layer.yaml` file
+Besides, we are required to prohibit the robot from entering some specific areas, which can be achieved by using the `costmap_prohibition_layer` package. The prohibition area is defined in the `jackal_navigation/params/prohibition_layer.yaml` file, which stands for the `Restricted Area`. We have also implemented a script `dynamic_obstacle_updater.py` which could subsribe `/gazebo/cone_position` and then update the prohibition area based on the position of the cone. (reason: the cone is randomly spawned in two posions, which means that there are two possibilities of the `Blockade` area)
 
 ### Decision Making
 
@@ -142,6 +137,7 @@ ME5413_Final_Project_Group10
 │   │   └── scripts -> Python scripts  
 │   │       ├── sift_detection_node_py.py -> SIFT method for object detection
 │   │       └── template_matching_node_py.py -> Template matching method for object detection
+│   |       └── dynamic_obstacle_updater.py -> Update the prohibition area based on the position of the cone
 ```
 
 Some other packages used in this project are not included in this repo. Please refer to the installation section for more information.
