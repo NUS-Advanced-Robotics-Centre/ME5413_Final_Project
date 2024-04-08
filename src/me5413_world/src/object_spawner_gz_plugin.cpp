@@ -45,7 +45,9 @@ void ObjectSpawner::spawnRandomCones()
   cone_msg.set_sdf_filename("model://construction_cone");
 
   std::srand(std::time(0));
-  if (std::rand() % 2 == 0)
+  int num = std::rand();
+  num = 3;
+  if ( num % 2 == 0)
   {
     msgs::Set(cone_msg.mutable_pose(), ignition::math::Pose3d(
                 ignition::math::Vector3d(12.7, 2.5, 0.1),

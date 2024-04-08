@@ -1,0 +1,5 @@
+<library path="lib/libcostmap_prohibition_layer">
+  <class type="costmap_prohibition_layer_namespace::CostmapProhibitionLayer" base_class_type="costmap_2d::Layer">
+    <description>ROS-Package that implements a costmap layer to add prohibited areas to the costmap-2D by a user configuration.</description>
+  </class>
+</library>

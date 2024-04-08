@@ -4,18 +4,40 @@
   <node name="teleop_twist_keyboard" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" respawn="true"/>
 
   <!-- Run the map server -->
-  <arg name="map_file" default="$(find me5413_world)/maps/my_map.yaml"/>
+  <arg name="map_file" default="$(find pcd_to_map)/map/map-test.yaml"/>
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
   
   <!-- Launch the AMCL Localizer -->
-  <include file="$(find jackal_navigation)/launch/include/amcl.launch" />
+  <include file="$(find me5413_world)/launch/amcl.launch" />
+  <!-- <include file="$(find me5413_world)/launch/ekf_template.launch" /> -->
+  <!-- <include file="$(find cartographer_ros)/launch/demo_backpack_3d_localization.launch" /> -->
+  <!-- <include file="$(find robot_pose_ekf)/robot_pose_ekf.launch" /> -->
 
   <!-- Launch Move Base -->
-  <include file="$(find jackal_navigation)/launch/include/move_base.launch" />
-
+  <include file="$(find me5413_world)/launch/move_base.launch" />
   <!-- Launch Rviz with our settings -->
   <node type="rviz" name="rviz" pkg="rviz" args="-d $(find me5413_world)/rviz/navigation.rviz" output="log" respawn="true"/>
 
   <node ns="me5413_world" pkg="me5413_world" type="goal_publisher_node" name="goal_publisher_node" output="screen" />
+
+  <node ns="me5413_world" pkg="me5413_world" type="box_explorer_node" name="box_explorer_node" output="screen" />
+
+  <node ns="me5413_world" pkg="me5413_world" type="template_matching_node_py.py" name="template_matching_node_py" output= "screen">
+    <param name="template_folder" value="$(find me5413_world)/media/objects"/>
+    <param name="depth" value="0.02"/>
+  </node>
+
+  <!-- <node ns="me5413_world" pkg="me5413_world" type="sift_detection_node_py.py" name="sift_detection_node_py" output="screen">
+    <param name="template_path" value="$(find me5413_world)/media/objects/3.png"/>
+  </node> -->
+
+  <!-- <node ns="me5413_world" name="find_2d_object_goal_publisher_node_py" pkg="me5413_world" type="find_2d_object_goal_publisher_node_py.py" output="screen" /> -->
+
+  <!-- <node name="find_object_2d" pkg="find_object_2d" type="find_object_2d" output="screen">
+    <remap from="image" to="/front/image_raw"/>
+    <param name="gui" value="true" type="bool"/>
+    <param name="objects_path" value="$(find me5413_world)/media/objects" type="str"/>
+    <param name="settings_path" value="~/.ros/find_object_2d.ini" type="str"/>
+  </node> -->
 
 </launch>
