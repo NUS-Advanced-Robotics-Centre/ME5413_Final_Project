@@ -37,7 +37,7 @@ The mapping process is performed using the `Fast-Lio` package. The `Fast-Lio` pa
 
 The figures below show the mapping results of the `Fast-Lio` package (`.pcd` and `.pgm` files):
 
-<div align="center">
+<div>
   <img src="assets/mapping/fastlio_pcd.jpg" alt="Image 1" width="300" style="display: inline-block; margin: 0 10px;">
   <img src="assets/mapping/fastlio_pgm.jpg" alt="Image 2" width="300" style="display: inline-block; margin: 0 10px;">
 </div>
@@ -48,6 +48,15 @@ Two methods are used to detect the object (number 3 on the box) using the camera
 
 - **Template Matching Method:** The template matching method is provided by the OpenCV library. The template image is pre-defined, and the object is detected by comparing the template image with the camera image. The implementation details can be found in the `template_matching_node_py.py` file. (`template_matching_node.cpp` as the C++ version)
 - **Feature-based Method:** The `find_object_2d` package is used to detect the object. The `ORB` (Oriented FAST and Rotated BRIEF) or `SIFT` method is used for object detection. We launch the `find_object_2d` package in the `find_box.launch` file. Another our own implementation of the `SIFT` method can be found in the `sift_detection_node_py.py` file.
+
+The following figures show the templates we used for the object detection:
+
+<div>
+  <img src="assets/object_detection/number3_1.png" alt="Image 1" width="100" style="display: inline-block; margin: 0 0;">
+  <img src="assets/object_detection/number3_2.png" alt="Image 1" width="100" style="display: inline-block; margin: 0 0;">
+  <img src="assets/object_detection/number3_3.png" alt="Image 1" width="100" style="display: inline-block; margin: 0 0;">
+  <img src="assets/object_detection/number3_4.png" alt="Image 1" width="100" style="display: inline-block; margin: 0 0;">
+</div>
 
 We have considered two approaches for navigating to the detected object:
 
