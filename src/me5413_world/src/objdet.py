@@ -7,6 +7,7 @@ import enum
 from skimage import filters
 import argparse
 from geometry_msgs.msg import Twist 
+import os
 
 class Mode(enum.Enum):
     INFERENCE=0
@@ -14,22 +15,19 @@ class Mode(enum.Enum):
 
 class DigitDetector:
     CORRECT_DIGIT_THRESHOLD = 0.3
-    CLOSE_TO_BOX_THRESHOLD = 0.6
+    CLOSE_TO_BOX_THRESHOLD = 0.7
+    X_CENTER_ERROR_UPPER_BOUND = 0.1
     VEL_X = 0.2
     ANG_Z_KP = 0.15
     def __init__(self, digit):
         rospy.init_node('listener')
         self.digit = digit
+        self.templates_folder = f'./digit_{self.digit}_templates/'
         self.img_topic = '/front/image_raw'
         self.cmdvel_topic = 'cmd_vel'
         self.bridge = CvBridge()
         
-        #self.templates = [f"template{i}.jpg" for i in range(5)]
         self.template_filename_fn = lambda id : f"digit_{self.digit}_template{id}.jpg"
-        
-        template_ids = [5,6,7,8]
-        self.templates = [ self.template_filename_fn(id) for id in template_ids]
-        
         
         self.img_sub = rospy.Subscriber(self.img_topic, Image, self.img_cb)
         self.cmdvel_pub = rospy.Publisher(self.cmdvel_topic, Twist, queue_size=1)
@@ -78,8 +76,8 @@ class DigitDetector:
             max_match_val = None
             max_match_loc = None
             max_template = None
-            for template_dir in self.templates:
-                template = cv2.imread(template_dir)
+            for template_dir in os.listdir(self.templates_folder):
+                template = cv2.imread(f'{self.templates_folder}{template_dir}')
                 
                 template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
                 thres_template = filters.threshold_otsu(template_gray)
@@ -102,15 +100,17 @@ class DigitDetector:
                 bottom_right = (top_left[0] + w, top_left[1] + h)
                 cv2.rectangle(display, top_left, bottom_right,(255,0,255), 2)
                 
-                if max_match_val >= self.CLOSE_TO_BOX_THRESHOLD:
-                    rospy.signal_shutdown("Close enough to the box!")
-                    break
-                
                 roi_center = (top_left[0] + w//2, top_left[1] + h//2)
                 obs_center = (w_img // 2 , h_img // 2)
                 
                 vel_x = self.VEL_X
-                yaw_rate = self.ANG_Z_KP * (-roi_center[0] + obs_center[0]) / (w_img//2)
+                x_center_error = (-roi_center[0] + obs_center[0]) / (w_img//2)
+                yaw_rate = self.ANG_Z_KP * x_center_error
+                
+                abs_yaw_error = abs(x_center_error) < self.X_CENTER_ERROR_UPPER_BOUND
+                if max_match_val >= self.CLOSE_TO_BOX_THRESHOLD:
+                    rospy.signal_shutdown("Close enough to the box!")
+                    break
                 print(f"Moving to box {vel_x, yaw_rate}...")
                 self.cmdvel_pub.publish(self.get_twist_msg(vel_x, yaw_rate))
                     
