@@ -13,4 +13,4 @@ recovery_behavior_enabled: true
 clearing_rotation_allowed: true
 
 #reduce the square of cost map clearing
-# conservative_reset_dist: 2.0
+conservative_reset_dist: 1.5

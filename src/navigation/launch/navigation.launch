@@ -9,6 +9,8 @@
   
   <!-- Launch the AMCL Localizer -->
   <include file="$(find navigation)/launch/amcl.launch" />
+  <!-- <node name="fake_localizer" pkg="fake_localization" type="fake_localization" /> -->
+  <!-- <node pkg="tf" type="static_transform_publisher" name="map_odom_broadcaster" args="0 0 0 0 0 0 /map /odom 100" /> -->
 
   <!-- Launch Move Base -->
   <include file="$(find navigation)/launch/move_base.launch" />

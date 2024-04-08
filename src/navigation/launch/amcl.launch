@@ -34,12 +34,12 @@
     <!-- Translational movement required before performing a filter update.  -->
     <param name="update_min_d" value="0.1"/>
     <!--Rotational movement required before performing a filter update. -->
-    <param name="update_min_a" value="0.7"/>
+    <param name="update_min_a" value="0.5"/>
     <param name="odom_frame_id" value="odom"/>
     <param name="base_frame_id" value="base_link"/>
     <param name="global_frame_id" value="map"/>
     <!-- Number of filter updates required before resampling. -->
-    <param name="resample_interval" value="1"/>
+    <param name="resample_interval" value="2"/>
     <!-- Increase tolerance because the computer can get quite busy -->
     <param name="transform_tolerance" value="1.0"/>
     <!-- Exponential decay rate for the slow average weight filter, used in deciding when to recover by adding random poses. A good value might be 0.001. -->
