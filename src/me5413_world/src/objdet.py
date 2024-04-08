@@ -14,16 +14,17 @@ class Mode(enum.Enum):
     INFERENCE=0
     DATA_COLLECTION=1
 
+class DetectionStrategy(enum.Enum):
+    HISTOGRAM_TEMPLATE_MATCHING=0
 class DigitDetector:
     CORRECT_DIGIT_THRESHOLD = 0.3
-    CLOSE_TO_BOX_THRESHOLD = 0.7
     STOP_DISTANCE_M = 1.0
     FRONT_MAX_ANGLE_RAD = 7.5 * np.pi / 180
     MAX_LIN_VEL = 1.0
     ANG_Z_KP = 0.5
     ETA = 1e-1
     MAX_LASER_DISTANCE_M = 10.0
-    def __init__(self, digit):
+    def __init__(self, digit : int, strategy : DetectionStrategy):
         rospy.init_node('listener')
         self.digit = digit
         self.templates_folder = f'./digit_{self.digit}_templates/'
@@ -31,6 +32,7 @@ class DigitDetector:
         self.laser_topic = '/front/scan'
         self.cmdvel_topic = 'cmd_vel'
         self.bridge = CvBridge()
+        self.get_detections = self.get_detection_fn(strategy)
         
         self.template_filename_fn = lambda id : f"digit_{self.digit}_template{id}.jpg"
         
@@ -82,6 +84,33 @@ class DigitDetector:
         twist_msg.angular.y = 0.0
         twist_msg.angular.z = yaw_rate
         return twist_msg
+    
+    @staticmethod
+    def get_roi_template_matching(obs, templates_folder):
+        thres_candidate = filters.threshold_otsu(obs)
+        _,candidate_bin= cv2.threshold(obs,thres_candidate,255,cv2.THRESH_BINARY)
+        
+        max_match_val = None
+        max_match_loc = None
+        max_template = None
+        for template_dir in os.listdir(templates_folder):
+            template = cv2.imread(f'{templates_folder}{template_dir}')
+            
+            template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
+            thres_template = filters.threshold_otsu(template_gray)
+            _,template_bin = cv2.threshold(template_gray,thres_template,255,cv2.THRESH_BINARY)
+
+            result = cv2.matchTemplate(candidate_bin, template_bin, cv2.TM_CCOEFF_NORMED)
+            _, max_val, _, max_loc = cv2.minMaxLoc(result)
+            if (max_match_val is None or max_val > max_match_val):
+                max_match_val = max_val
+                max_match_loc = max_loc
+                max_template = template_gray
+        return max_match_val, max_match_loc, max_template
+    
+    def get_detection_fn(self, strategy : DetectionStrategy):
+        if strategy == DetectionStrategy.HISTOGRAM_TEMPLATE_MATCHING:
+            return lambda obs : DigitDetector.get_roi_template_matching(obs, self.templates_folder)
         
     def run(self, mode : Mode = Mode.INFERENCE):
         template_id = 0
@@ -91,10 +120,6 @@ class DigitDetector:
             obs = self.bridge.imgmsg_to_cv2(self.raw_img, desired_encoding='passthrough')
             display = cv2.cvtColor(obs, cv2.COLOR_BGR2RGB)
             obs = cv2.cvtColor(obs, cv2.COLOR_BGR2GRAY)
-            # obs = cv2.threshold(obs, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
-            thresh = obs.copy()
-            # obs = 255 - obs
-            invert = obs.copy()
             
             if mode == Mode.DATA_COLLECTION:
                 print(f'Current front dist {self.front_distance}')
@@ -111,26 +136,8 @@ class DigitDetector:
                     template_id +=1
                 continue
             
-            thres_candidate = filters.threshold_otsu(obs)
-            _,candidate_bin= cv2.threshold(obs,thres_candidate,255,cv2.THRESH_BINARY)
+            max_match_val, max_match_loc, max_template = self.get_detections(obs)
             
-            max_match_val = None
-            max_match_loc = None
-            max_template = None
-            for template_dir in os.listdir(self.templates_folder):
-                template = cv2.imread(f'{self.templates_folder}{template_dir}')
-                
-                template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
-                thres_template = filters.threshold_otsu(template_gray)
-                _,template_bin = cv2.threshold(template_gray,thres_template,255,cv2.THRESH_BINARY)
-
-                result = cv2.matchTemplate(candidate_bin, template_bin, cv2.TM_CCOEFF_NORMED)
-                _, max_val, _, max_loc = cv2.minMaxLoc(result)
-                if (max_match_val is None or max_val > max_match_val):
-                    max_match_val = max_val
-                    max_match_loc = max_loc
-                    max_template = template_gray
-
             print("Maximum value detected ", max_match_val)
             if max_match_val >= self.CORRECT_DIGIT_THRESHOLD:
                 print("Successful detection with score ", max_match_val)
@@ -178,14 +185,12 @@ class DigitDetector:
                    1, color, 2, cv2.LINE_AA) 
             
             cv2.imshow("obs", display)
-            cv2.imshow("thresh", thresh)
-            cv2.imshow("invert", invert)
             cv2.waitKey(1) 
         cv2.destroyAllWindows()
         
 
 def main():
-    detector = DigitDetector(3)
+    detector = DigitDetector(3, DetectionStrategy.HISTOGRAM_TEMPLATE_MATCHING)
     parser = argparse.ArgumentParser("simple_example")
     parser.add_argument("--mode", help="1 for data collection", type=int, default=0)
     args = parser.parse_args()
