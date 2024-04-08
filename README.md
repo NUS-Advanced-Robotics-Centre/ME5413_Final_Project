@@ -87,19 +87,33 @@ The navigation process consists of two parts: global planning and local planning
 - **Global Planning:** The global planner used is `A*`. The `move_base` package is used to perform the global planning process. The global planner parameters can be tuned in the `jackal_navigation/params/global_planner_params.yaml` file.
 - **Local Planning:** The local planner used is `Teb`. The `move_base` package is used to perform the local planning process. The local planner parameters can be tuned in the `jackal_navigation/params/teb_local_planner_params.yaml` file.
 
-## ROS Graph
+## Project Structure
+
+### Implementation Logic
+
+The implementation logic of the project is shown in the flowchart below:
+
+
+
+### ROS Graph
 
 The ROS graph of the project is shown below:
 
 ![ROS Graph](assets/rosgraph.png)
 
-## Repo Structure
+### TF Tree
+
+The TF tree of the project is shown below:
+
+![TF Tree](assets/frames.png)
+
+### Repo Tree
 
 ```plaintext
 ME5413_Final_Project_Group10
 ├── README.md
 ├── ORIGINAL_README.md
-├── assets
+├── assets -> Images and figures used in the README
 ├── src
 │   ├── costmap_prohibition_layer -> Prohibit the robot from entering the area
 │   ├── pcd_to_map -> Convert pcd file to map 
@@ -124,7 +138,7 @@ ME5413_Final_Project_Group10
 │   │   │   ├── navigation.launch
 │   │   │   └── world.launch  
 │   │   ├── src -> C++ scripts
-│   │   │   ├── object_spawner_gz_plugin.cpp -> Gazebo plugin for spawning the object (Boxes)
+│   │   │   ├── object_spawner_gz_plugin.cpp -> Gazebo plugin for spawning the object (boxes and cones)
 │   │   │   ├── goal_publisher_node.cpp -> Publish the goal location (when goal is not box)
 │   │   │   ├── box_explore_node.cpp -> Explore the box location (when goal is box)
 │   │   │   └── template_matching.cpp -> Template matching method for object detection
@@ -233,6 +247,21 @@ roslaunch me5413_world main.launch
 
 - [x] Implement the `A*` global planner.
 - [x] Implement the `Teb` local planner.
+  - [x] Tune the parameters of the `Teb` local planner to get better navigation results.
+  - [x] Avoid the dynamic object when navigating to the goal location. (boxes and cones)
 - [x] Successfully navigate the robot to the goal location.
 - [ ] Change the global planner to other planners (`GBFS` or `RRT*`) and compare the performance.
 - [ ] Change the local planner to other planners (`DWA` or `EBand`) and compare the performance.
+
+## Acknowledgements
+
+We would like to express our gratitude to the teaching team of ME5413 for providing us with the opportunity to work on this project!!! :kissing_heart:
+
+- [CppRobotics](https://github.com/onlytailei/CppRobotics.git): A collection of robotics algorithms implemented in C++.
+- [PythonRobotics](https://github.com/AtsushiSakai/PythonRobotics.git): A collection of robotics algorithms implemented in Python.
+- [Fast-LIO](https://github.com/hku-mars/FAST_LIO.git): A computationally efficient and robust LiDAR-inertial odometry package by hku-mars group.
+- [pcd2pgm_package](https://github.com/Hinson-A/pcd2pgm_package.git): A package for converting `.pcd` files to `.pgm` files.
+
+## License
+
+This project is licensed under the MIT License. For more information, please refer to the [LICENSE](LICENSE) file.
