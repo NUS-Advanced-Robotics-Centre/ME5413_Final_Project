@@ -7,6 +7,7 @@ import enum
 from skimage import filters
 import argparse
 from geometry_msgs.msg import Twist 
+from sensor_msgs.msg import LaserScan
 import os
 
 class Mode(enum.Enum):
@@ -16,25 +17,60 @@ class Mode(enum.Enum):
 class DigitDetector:
     CORRECT_DIGIT_THRESHOLD = 0.3
     CLOSE_TO_BOX_THRESHOLD = 0.7
-    X_CENTER_ERROR_UPPER_BOUND = 0.1
-    VEL_X = 0.2
-    ANG_Z_KP = 0.15
+    STOP_DISTANCE_M = 1.0
+    FRONT_MAX_ANGLE_RAD = 7.5 * np.pi / 180
+    MAX_LIN_VEL = 1.0
+    ANG_Z_KP = 0.5
+    ETA = 1e-1
+    MAX_LASER_DISTANCE_M = 10.0
     def __init__(self, digit):
         rospy.init_node('listener')
         self.digit = digit
         self.templates_folder = f'./digit_{self.digit}_templates/'
         self.img_topic = '/front/image_raw'
+        self.laser_topic = '/front/scan'
         self.cmdvel_topic = 'cmd_vel'
         self.bridge = CvBridge()
         
         self.template_filename_fn = lambda id : f"digit_{self.digit}_template{id}.jpg"
         
         self.img_sub = rospy.Subscriber(self.img_topic, Image, self.img_cb)
+        self.laser_sub = rospy.Subscriber(self.laser_topic, LaserScan, self.laser_cb)
         self.cmdvel_pub = rospy.Publisher(self.cmdvel_topic, Twist, queue_size=1)
         self.raw_img = None
+        self.front_distance = None
         
     def img_cb(self, raw_img):
         self.raw_img = raw_img
+        
+    def laser_cb(self, laser_msg):
+        self.front_distance = self.get_front_distance(laser_msg, self.FRONT_MAX_ANGLE_RAD)
+        
+    @staticmethod
+    def get_front_distance(laser_msg, max_angle_rad):
+        max_angle_id = max_angle_rad / laser_msg.angle_increment
+        middle_scan_id = len(laser_msg.ranges) // 2
+        
+        start_scan_id = max(0, middle_scan_id - int(max_angle_id))
+        end_scan_id = min(len(laser_msg.ranges) - 1 , middle_scan_id + int(max_angle_id))
+        
+        for i in range(middle_scan_id, start_scan_id, -1):
+            distance = laser_msg.ranges[i]
+            if distance == np.inf:
+                start_scan_id = i+1
+                break
+            
+        for i in range(middle_scan_id, end_scan_id):
+            distance = laser_msg.ranges[i]
+            if distance == np.inf:
+                end_scan_id = i-1
+                break
+        
+        ranges_array = np.array(laser_msg.ranges)
+        middle_laser_ranges = ranges_array[start_scan_id:end_scan_id]
+        if len(middle_laser_ranges) == 0:
+            return DigitDetector.MAX_LASER_DISTANCE_M
+        return np.mean(middle_laser_ranges)
         
     @staticmethod
     def get_twist_msg(vel_x, yaw_rate):
@@ -55,8 +91,13 @@ class DigitDetector:
             obs = self.bridge.imgmsg_to_cv2(self.raw_img, desired_encoding='passthrough')
             display = cv2.cvtColor(obs, cv2.COLOR_BGR2RGB)
             obs = cv2.cvtColor(obs, cv2.COLOR_BGR2GRAY)
+            # obs = cv2.threshold(obs, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+            thresh = obs.copy()
+            # obs = 255 - obs
+            invert = obs.copy()
             
             if mode == Mode.DATA_COLLECTION:
+                print(f'Current front dist {self.front_distance}')
                 cv2.imshow("obs", obs)
                 key_pressed = cv2.waitKey(1) 
                 if key_pressed & 0xFF == ord('q'):
@@ -103,14 +144,23 @@ class DigitDetector:
                 roi_center = (top_left[0] + w//2, top_left[1] + h//2)
                 obs_center = (w_img // 2 , h_img // 2)
                 
-                vel_x = self.VEL_X
-                x_center_error = (-roi_center[0] + obs_center[0]) / (w_img//2)
-                yaw_rate = self.ANG_Z_KP * x_center_error
+                front_distance_error = self.front_distance - self.STOP_DISTANCE_M
+                vel_x = min(front_distance_error, 1.0) * self.MAX_LIN_VEL
                 
-                abs_yaw_error = abs(x_center_error) < self.X_CENTER_ERROR_UPPER_BOUND
-                if max_match_val >= self.CLOSE_TO_BOX_THRESHOLD:
-                    rospy.signal_shutdown("Close enough to the box!")
+                x_center_error = (obs_center[0] - roi_center[0]) / (w_img//2)
+                yaw_rate = x_center_error * self.ANG_Z_KP
+                
+                still_need_rotate = abs(x_center_error) > self.ETA
+                if still_need_rotate:
+                    vel_x = 0.0
+                    
+                still_move_forward = abs(vel_x) > self.ETA
+                if not still_need_rotate and not still_move_forward:
+                    status = f"Close enough to the box, front distance {self.front_distance} yaw_error {x_center_error}"
+                    print(status)
+                    rospy.signal_shutdown(status)
                     break
+                
                 print(f"Moving to box {vel_x, yaw_rate}...")
                 self.cmdvel_pub.publish(self.get_twist_msg(vel_x, yaw_rate))
                     
@@ -128,6 +178,8 @@ class DigitDetector:
                    1, color, 2, cv2.LINE_AA) 
             
             cv2.imshow("obs", display)
+            cv2.imshow("thresh", thresh)
+            cv2.imshow("invert", invert)
             cv2.waitKey(1) 
         cv2.destroyAllWindows()
         
