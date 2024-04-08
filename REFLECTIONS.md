@@ -34,3 +34,19 @@ I found that there is no ground truth to compare the SLAM performance. So, how d
 - Strengths and weaknesses based on analysis
 - Challenges encountered and proposed solutions
 - Evaluation methodology, assumptions, and limitations
+
+## How can I navigate to the dynamic goal?
+
+I have considered two methods to detect the dynamic goal (number 3 on the box) using the camera information:
+
+- Template matching method provided by the OpenCV library.
+- The `find_object_2d` package
+
+I found that both the methods required a depth information to publish the detected object's position, but the original given camera is only a RGB non-depth camera, which means that I can not accuire the depth information from the original camera. So I come up with two ideas:
+
+- Replace the original camera with a depth camera
+  - When we detect the object, we can get the bounding box and depth information of the detected object, then we can use some camera calibration methods to get the 3D position of the detected object. Then we only need to publish the positions to the `/move_base_simple/goal` topic, and the robot would navigate to the goal.
+- Give a dummy depth information to the detected object
+  - If the detection accuracy is high enough, then we can always navigate to the right direction of the detected object, which means that we can reach the goal only by a set of 2D images.
+  - But if there is some obstacles between the robot and the detected object, then the robot may collide with the obstacles.
+  - Sometimes the robot may lose the detected object, which means that the robot may stay still in the path.
