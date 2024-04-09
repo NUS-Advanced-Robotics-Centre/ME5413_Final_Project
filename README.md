@@ -97,7 +97,7 @@ The decision making logic is shown in the flowchart below:
 We have mainly used three nodes to implement the decision (i.e. How to get to the desired goal) logic:
 
 - `goal_publisher_node`: Publish the goal location (when the goal is not a box). The robot will navigate to the goal location directly.
-- `box_explorer_node`: Explore the box location (when the goal is a box). The robot will navigate to the parking area (where the boxes are spawned) and explore the box location randomly until the box is detected.
+- `box_explorer_node`: Explore the box location (when the goal is a box). The robot will navigate to the boxes area (where the boxes are spawned) and explore the box location randomly until the box is detected.
 - `template_matching_node`: Continuously detect the object (number 3 on the box) using the template matching method. If the object is detected, the robot will navigate to the object location.
 
 #### Random Exploration Policy

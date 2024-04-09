@@ -58,8 +58,8 @@ void BoxExplorerNode::goalNameCallback(const std_msgs::String::ConstPtr& name)
     }
 
     // P_world_goal = box_poses_[goal_box_id];
-    // updateCurrentWaypoint();
-    this->current_waypoint_index_ = rand() % waypoints_.size();
+    updateCurrentWaypoint();
+    // this->current_waypoint_index_ = rand() % waypoints_.size();
     P_world_goal = waypoints_[this->current_waypoint_index_];
   }
   else
@@ -102,6 +102,8 @@ void BoxExplorerNode::goalNameCallback(const std_msgs::String::ConstPtr& name)
 void BoxExplorerNode::boxMarkersCallback(const visualization_msgs::MarkerArray::ConstPtr& box_markers)
 {
   this->box_poses_.clear();
+  this->is_goal_detected_ = false;
+
   for (const auto& box : box_markers->markers)
   {
     geometry_msgs::PoseStamped pose;
@@ -192,53 +194,70 @@ void BoxExplorerNode::updateCurrentWaypoint()
 {
   // randomly select a waypoint
   this->current_waypoint_index_ = rand() % this->waypoints_.size();
-  if (this->current_waypoint_index_ < this->waypoints_.size()) {
-    geometry_msgs::PoseStamped goal_pose = this->waypoints_[this->current_waypoint_index_];
-    while (!isPointInObstacle(goal_pose, this->global_costmap_)) {
-      this->current_waypoint_index_ = rand() % this->waypoints_.size();
-    }
-  }
+  geometry_msgs::PoseStamped goal_pose = this->waypoints_[this->current_waypoint_index_];
+  while (isPointInObstacle(goal_pose)) {
+    this->current_waypoint_index_ = rand() % this->waypoints_.size();
+    goal_pose = this->waypoints_[this->current_waypoint_index_];
+  } // until a valid waypoint is found
 }
 
-bool BoxExplorerNode::isPointInObstacle(const geometry_msgs::PoseStamped& Point, const nav_msgs::OccupancyGrid& costmap)
-{
-  float resolution = costmap.info.resolution;
-  double x = Point.pose.position.x;
-  double y = Point.pose.position.y;
+// bool BoxExplorerNode::isPointInObstacle(const geometry_msgs::PoseStamped& Point, const nav_msgs::OccupancyGrid& costmap)
+// {
+//   float resolution = costmap.info.resolution;
+//   double x = Point.pose.position.x;
+//   double y = Point.pose.position.y;
 
-  int map_x = static_cast<int>((x - costmap.info.origin.position.x) / resolution);
-  int map_y = static_cast<int>((y - costmap.info.origin.position.y) / resolution);
+//   int map_x = static_cast<int>((x - costmap.info.origin.position.x) / resolution);
+//   int map_y = static_cast<int>((y - costmap.info.origin.position.y) / resolution);
 
-  // Define the radius of the circle to check
-  double checkRadius = 0.3;
-  int radiusCells = static_cast<int>(checkRadius / resolution);
+//   // Define the radius of the circle to check
+//   double checkRadius = 0.3;
+//   int radiusCells = static_cast<int>(checkRadius / resolution);
 
-  for (int dx = -radiusCells; dx <= radiusCells; ++dx) {
-    for (int dy = -radiusCells; dy <= radiusCells; ++dy) {
-      int check_x = map_x + dx;
-      int check_y = map_y + dy;
+//   for (int dx = -radiusCells; dx <= radiusCells; ++dx) {
+//     for (int dy = -radiusCells; dy <= radiusCells; ++dy) {
+//       int check_x = map_x + dx;
+//       int check_y = map_y + dy;
 
-      // Ensure the point is within the circle
-      if (dx*dx + dy*dy <= radiusCells*radiusCells) {
-        // Ignore points outside the map
-        if (check_x < 0 || check_x >= costmap.info.width ||
-            check_y < 0 || check_y >= costmap.info.height) {
-          continue;
-        }
+//       // Ensure the point is within the circle
+//       if (dx*dx + dy*dy <= radiusCells*radiusCells) {
+//         // Ignore points outside the map
+//         if (check_x < 0 || check_x >= costmap.info.width ||
+//             check_y < 0 || check_y >= costmap.info.height) {
+//           continue;
+//         }
 
-        // Get the index of the point in the costmap
-        int index = check_y * costmap.info.width + check_x;
+//         // Get the index of the point in the costmap
+//         int index = check_y * costmap.info.width + check_x;
 
-        // If the map data is greater than or equal to 50, it is an obstacle
-        if (costmap.data[index] >= 50) {
-          ROS_INFO("Point is in obstacle...");
-          return true;
-        }
-      }
+//         // If the map data is greater than or equal to 50, it is an obstacle
+//         if (costmap.data[index] >= 50) {
+//           ROS_INFO("Point is in obstacle...");
+//           return true;
+//         }
+//       }
+//     }
+//   }
+
+//   // If no obstacles are found, return false
+//   return false;
+// }
+
+bool BoxExplorerNode::isPointInObstacle(const geometry_msgs::PoseStamped& point) {
+  double threshold = 0.5;
+
+  for (const auto& box_pose: box_poses_) {
+    double dx = point.pose.position.x - box_pose.pose.position.x;
+    double dy = point.pose.position.y - box_pose.pose.position.y;
+    double distance = std::sqrt(dx*dx + dy*dy);
+
+    if (distance < threshold) {
+      ROS_INFO("Point is in obstacle...");
+      return true;
     }
   }
 
-  // If no obstacles are found, return false
+  // If no obstacles are found nearby, return false
   return false;
 }
 

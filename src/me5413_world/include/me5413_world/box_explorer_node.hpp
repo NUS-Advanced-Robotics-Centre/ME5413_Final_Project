@@ -47,7 +47,8 @@ class BoxExplorerNode
   std::vector<geometry_msgs::PoseStamped> createWaypoints();
   void updateCurrentWaypoint();
   void updateGoalIfReached();
-  bool isPointInObstacle(const geometry_msgs::PoseStamped& Point, const nav_msgs::OccupancyGrid& costmap);
+  // bool isPointInObstacle(const geometry_msgs::PoseStamped& Point, const nav_msgs::OccupancyGrid& costmap);
+  bool isPointInObstacle(const geometry_msgs::PoseStamped& Point);  
   tf2::Transform convertPoseToTransform(const geometry_msgs::Pose& pose);
 
   // ROS declaration
