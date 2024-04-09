@@ -198,23 +198,21 @@ This bag file is then used for the Absolute Pose Error (APE) analysis by executi
 evo_ape bag output.bag /gazebo/ground_truth/state /Odometry -r full -va --plot --plot_mode xy
 ```
 
+This assessment provides quantitative insights into the FAST-LIO algorithm's positional accuracy by comparing the estimated trajectory with the ground truth using visual plots. Such rigorous analysis is essential for verifying the algorithm's performance and ensuring that it meets the navigational requirements of the project's mini-factory environment.
+
 #figure(
 image("assets/mapping/fastlio_evo1.png", width: 100%),
 caption: [FAST-LIO APE Analysis],
 ) <fig:fastlio_evo1>
+
+@fig:fastlio_evo1 presents the APE results as a time series, allowing us to observe the deviation of the algorithm's estimated poses from the ground truth over the duration of its operation. The plot reveals that the FAST-LIO algorithm largely maintains a low APE, with the majority of the data points clustering around the lower end of the error spectrum.
 
 #figure(
 image("assets/mapping/fastlio_evo2.png", width: 100%),
 caption: [FAST-LIO APE Analysis],
 ) <fig:fastlio_evo2>
 
-This assessment provides quantitative insights into the FAST-LIO algorithm's positional accuracy, using visual plots to compare the estimated trajectory with the ground truth. Such rigorous analysis is essential for verifying the algorithm's performance and ensuring that it meets the navigational requirements of the project's mini-factory environment.
-
-@fig:fastlio_evo1 presents the APE results as a time series, allowing us to observe the deviation of the algorithm's estimated poses from the ground truth over the duration of its operation. This temporal perspective of APE values is instrumental in understanding the consistency of the algorithm's performance under varying conditions. The plot reveals that while there are peaks suggesting moments of higher positional error, the FAST-LIO algorithm largely maintains a low APE, with the majority of the data points clustering around the lower end of the error spectrum. The standard deviation (std) line serves as a statistical measure of the spread of the APE values around the mean, indicating the variability in the algorithm's pose estimation accuracy.
-
-@fig:fastlio_evo2 complements this analysis by plotting the APE across the XY plane, providing a spatial representation of the pose errors. The color gradient denotes the magnitude of the error, with cooler colors representing lower errors and warmer colors indicating higher discrepancies. The overlay of the FAST-LIO trajectory over the ground truth highlights the algorithm's precision in tracing the actual path taken by the robotic platform. The close alignment of the estimated trajectory with the ground truth, except for some areas where the trajectory deviates, underscores FAST-LIO's navigational accuracy.
-
-FAST-LOAM, while efficient in feature extraction and pose estimation, falls short in the real-time adaptation that FAST-LIO excels at, particularly in environments with rapid changes. A-LOAM, despite its advanced odometry and mapping precision, is constrained by its lack of native loop closure capabilities, potentially leading to cumulative errors over time.
+@fig:fastlio_evo2 complements this analysis by plotting the APE across the XY plane, providing a spatial representation of the pose errors. The overlay of the FAST-LIO trajectory over the ground truth highlights the algorithm's precision in tracing the actual path taken by the robotic platform.
 
 Upon meticulous evaluation, FAST-LIO emerges as the superior algorithm among its counterparts, FAST-LOAM and A-LOAM, for the project at hand. FAST-LIO's integration of LiDAR and IMU data facilitates a higher resolution and fidelity in environmental mapping, allowing for more accurate and consistent pose estimation.
 
