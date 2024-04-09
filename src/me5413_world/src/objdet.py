@@ -16,12 +16,13 @@ class Mode(enum.Enum):
 
 class DetectionStrategy(enum.Enum):
     HISTOGRAM_TEMPLATE_MATCHING=0
+    KNN_OCR=1
 class DigitDetector:
     CORRECT_DIGIT_THRESHOLD = 0.3
     STOP_DISTANCE_M = 1.0
     FRONT_MAX_ANGLE_RAD = 7.5 * np.pi / 180
     MAX_LIN_VEL = 1.0
-    ANG_Z_KP = 0.5
+    MAX_YAW_RATE = 0.5
     ETA = 1e-1
     MAX_LASER_DISTANCE_M = 10.0
     def __init__(self, digit : int, strategy : DetectionStrategy):
@@ -108,9 +109,15 @@ class DigitDetector:
                 max_template = template_gray
         return max_match_val, max_match_loc, max_template
     
+    @staticmethod
+    def get_roi_knn_ocr(obs):
+        return []*3
+    
     def get_detection_fn(self, strategy : DetectionStrategy):
         if strategy == DetectionStrategy.HISTOGRAM_TEMPLATE_MATCHING:
             return lambda obs : DigitDetector.get_roi_template_matching(obs, self.templates_folder)
+        elif strategy == DetectionStrategy.KNN_OCR:
+            return lambda obs : DigitDetector.get_roi_knn_ocr(obs)
         
     def run(self, mode : Mode = Mode.INFERENCE):
         template_id = 0
@@ -151,15 +158,16 @@ class DigitDetector:
                 roi_center = (top_left[0] + w//2, top_left[1] + h//2)
                 obs_center = (w_img // 2 , h_img // 2)
                 
-                front_distance_error = self.front_distance - self.STOP_DISTANCE_M
-                vel_x = min(front_distance_error, 1.0) * self.MAX_LIN_VEL
-                
                 x_center_error = (obs_center[0] - roi_center[0]) / (w_img//2)
-                yaw_rate = x_center_error * self.ANG_Z_KP
+                yaw_rate = x_center_error * self.MAX_YAW_RATE
                 
                 still_need_rotate = abs(x_center_error) > self.ETA
                 if still_need_rotate:
                     vel_x = 0.0
+                    
+                front_distance_error = self.front_distance - self.STOP_DISTANCE_M
+                vel_x = min(front_distance_error, 1.0) * self.MAX_LIN_VEL
+                vel_x *= max(0, 1 - (yaw_rate/self.MAX_YAW_RATE))
                     
                 still_move_forward = abs(vel_x) > self.ETA
                 if not still_need_rotate and not still_move_forward:
