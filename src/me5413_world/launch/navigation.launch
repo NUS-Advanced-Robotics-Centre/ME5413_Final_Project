@@ -24,7 +24,7 @@
 
   <node ns="me5413_world" pkg="me5413_world" type="template_matching_node_py.py" name="template_matching_node_py" output= "screen">
     <param name="template_folder" value="$(find me5413_world)/media/objects"/>
-    <param name="depth" value="0.01"/>
+    <param name="depth" value="0.05"/>
   </node>
 
   <!-- <node ns="me5413_world" name="find_2d_box_node_py" pkg="me5413_world" type="find_2d_box_node_py.py" output="screen">
