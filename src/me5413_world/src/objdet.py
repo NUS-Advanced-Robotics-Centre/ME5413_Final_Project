@@ -36,7 +36,7 @@ class DigitDetector:
     FRONT_MAX_ANGLE_RAD = 7.5 * np.pi / 180
     MAX_LIN_VEL = 1.0
     MAX_YAW_RATE = 0.5
-    MAX_LATERAL_ERROR = 0.2
+    MAX_LATERAL_ERROR = 0.4
     ETA = 1e-1
     SPOT_TURNING_YAW_RATE = 0.1
     MAX_LASER_DISTANCE_M = 10.0
