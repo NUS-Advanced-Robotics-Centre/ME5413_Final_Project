@@ -67,6 +67,12 @@ The following figure shows the basic process of our second approch:
 
 ![Object Detection](assets/object_detection/detection_method.png)
 
+#### Camera Calibration Policy
+
+After detecting the object, we need to calculate the distance between the robot and the object and estimate the pose of the object in the map frame. The camera calibration process is achived in the `calculate_target()` function, once the robot captures a bounding box, the function will be called to calculate the distance and pose of the object. A basic process is shown in the figure below:
+
+![Camera Calibration Policy](assets/object_detection/camera_calibration.png)
+
 ### Localization
 
 The localization process is performed using the `AMCL` (Adaptive Monte Carlo Localization) method. The `AMCL` package is used to localize the robot in the map. The `AMCL` node is launched in the `amcl.launch` file, and the parameters of the `AMCL` package can be tuned in the `jackal_navigation/params/amcl_params.yaml` file.
