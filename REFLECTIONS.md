@@ -58,3 +58,12 @@ Initially, we adapted a method which is shown in the `dynamic_obstacle_updater.p
 ## How to check collision while set a random goal in the boxes area?
 
 Initially, we implemented a function `isPointInObstacle()` in the `box_explorer_node.cpp` script, where the `box_explorer_node` subsribe and update the `global_costmap` to check whether the randomly generated goal is in the obstacle area. (i.e. has collision with the boxes) But we then found that this function didn't work, and we realized that the `global_costmap` did not conclude the information of the boxes.
+
+We then updated our policy to subscribe the `gazebo/ground_truth/box_markers` topic to get the true position of the spawned boxes, and then we can check whether the randomly generated goal is in the obstacle area.
+
+## Reflections about the object detection Accuracy?
+
+Both the template matching approach and the `find_2d_object` approch can not detect the object accurately. The template matching approach is sensitive to the object's size and the background, and the `find_2d_object` approach is sensitive to the object's color and the background. So we need to consider the following factors to improve the detection accuracy:
+
+- **Capturing a set of template images from the scene:** By using multiple template images that match the object in different orientations and positions relative to the camera, we can significantly improve the accuracy of the detection. This approach ensures that the object can be detected regardless of its direction relative to the camera.
+- **Scaling the template image (for the template matching approach):** To enhance the robustness of the detection, we scale the template image to different sizes. This allows us to match the object in the scene accurately, regardless of whether the object is far from or near the camera. By considering various scales, we can accommodate changes in the object's apparent size due to its distance from the camera.
