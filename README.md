@@ -63,9 +63,13 @@ We have considered two approaches for navigating to the detected object:
 - The first one is **to use a RGB-D camera instead of the original non-depth camera**, which we can directly get the depth information of the object. Then we can use the depth information to calculate the distance between the robot and the object. This method is more accurate and efficient.
 - The second one is **to keep the original non-depth camera and give a dummy depth information** to the detected object (a very small distance). Then we can navigate to the detected object by only using the 2D image information. This method is less accurate and may cause the robot to collide with obstacles.
 
-The following figure shows the basic process of our second approch:
+The figure below shows the basic process of our first approch (RGB-D approach):
 
-![Object Detection](assets/object_detection/detection_method.png)
+![Object Detection](assets/object_detection/detection_method_1.png)
+
+The figure below shows the basic process of our second approch (non-depth approach):
+
+![Object Detection](assets/object_detection/detection_method_2.png)
 
 #### Camera Calibration Policy
 
