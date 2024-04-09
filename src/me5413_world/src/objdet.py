@@ -31,7 +31,7 @@ class Goal(int, enum.Enum):
     DELIVERY_VEHICLE_1=3
     
 class DigitDetector:
-    CORRECT_DIGIT_THRESHOLD = 0.3
+    CORRECT_DIGIT_THRESHOLD = 0.5
     STOP_DISTANCE_M = 1.0
     FRONT_MAX_ANGLE_RAD = 7.5 * np.pi / 180
     MAX_LIN_VEL = 1.0
@@ -63,13 +63,13 @@ class DigitDetector:
         
         self.img_sub = rospy.Subscriber(self.img_topic, Image, self.img_cb)
         self.laser_sub = rospy.Subscriber(self.laser_topic, LaserScan, self.laser_cb)
-        self.odom_sub = rospy.Subscriber(self.ODOM_TOPIC, Odometry, self.odom_cb)
         self.cmdvel_pub = rospy.Publisher(self.cmdvel_topic, Twist, queue_size=1)
         self.detection_pub = rospy.Publisher(self.detection_topic, Image)
-        self.goal_pub = rospy.Publisher(self.goal_topic, PoseStamped)
-        
-        self.tfBuffer = tf2_ros.Buffer()
-        self.listener = tf2_ros.TransformListener(self.tfBuffer)
+
+        # self.odom_sub = rospy.Subscriber(self.ODOM_TOPIC, Odometry, self.odom_cb)
+        # self.goal_pub = rospy.Publisher(self.goal_topic, PoseStamped)
+        # self.tfBuffer = tf2_ros.Buffer()
+        # self.listener = tf2_ros.TransformListener(self.tfBuffer)
         
         self.cur_goal_id = 0
         
@@ -224,16 +224,16 @@ class DigitDetector:
     def run(self, mode : Mode = Mode.INFERENCE):
         template_id = 0
         while not rospy.is_shutdown():
-            if self.cur_goal_id == len(self.GOALS):
-                rospy.signal_shutdown("Finished navigation")
-                break
-            if self.cur_goal_id != int(Goal.ROOM_BOX_3):
-                if not self.first_goal_published and self.publish_goal():
-                    self.first_goal_published = True
-                if self.is_goal():
-                    self.cur_goal_id +=1    
-                    self.publish_goal()
-                continue
+            # if self.cur_goal_id == len(self.GOALS):
+            #     rospy.signal_shutdown("Finished navigation")
+            #     break
+            # if self.cur_goal_id != int(Goal.ROOM_BOX_3):
+            #     if not self.first_goal_published and self.publish_goal():
+            #         self.first_goal_published = True
+            #     if self.is_goal():
+            #         self.cur_goal_id +=1    
+            #         self.publish_goal()
+            #     continue
                 
             if self.raw_img is None:
                 continue
@@ -302,8 +302,9 @@ class DigitDetector:
                 still_move_forward = abs(vel_x) > self.ETA
                 if not still_need_rotate and not still_move_forward:
                     print(f"Close enough to the box, front distance {self.front_distance} yaw_error {lateral_error}")
-                    self.cur_goal_id +=1     
-                    continue
+                    #self.cur_goal_id +=1     
+                    rospy.signal_shutdown("Finished navigation")
+                    break
                 print(f"Moving to box...")
                 display_template = max_template
                 color = (0,255,0)
