@@ -42,7 +42,7 @@ I have considered two methods to detect the dynamic goal (number 3 on the box) u
 - Template matching method provided by the OpenCV library.
 - The `find_object_2d` package
 
-I found that both the methods required a depth information to publish the detected object's position, but the original given camera is only a RGB non-depth camera, which means that I can not accuire the depth information from the original camera. So I come up with two ideas:
+I found that both the methods required a depth information to publish the detected object's position, but the original given camera is only a RGB non-depth camera, which means that I can not obtain the depth information from the original camera. So I come up with two ideas:
 
 - Replace the original camera with a depth camera
   - When we detect the object, we can get the bounding box and depth information of the detected object, then we can use some camera calibration methods to get the 3D position of the detected object. Then we only need to publish the positions to the `/move_base_simple/goal` topic, and the robot would navigate to the goal.
@@ -50,3 +50,11 @@ I found that both the methods required a depth information to publish the detect
   - If the detection accuracy is high enough, then we can always navigate to the right direction of the detected object, which means that we can reach the goal only by a set of 2D images.
   - But if there is some obstacles between the robot and the detected object, then the robot may collide with the obstacles.
   - Sometimes the robot may lose the detected object, which means that the robot may stay still in the path.
+
+## How can I set a dynamic prohibition area for the randomly spawned cone?
+
+Initially, we adapted a method which is shown in the `dynamic_obstacle_updater.py` script. The basic idea is to subscribe the `/gazebo/cone_position` topic, and then we can update the location of the prohibition area (by updating the rosparam `prohibition_area`) based on the subscribed message. But we found that this `prohibition_area` has been loaded and reflected in the `costmap_common_params.yaml` file, which means that we can not update the `prohibition_area` dynamically.
+
+## How to check collision while set a random goal in the boxes area?
+
+Initially, we implemented a function `isPointInObstacle()` in the `box_explorer_node.cpp` script, where the `box_explorer_node` subsribe and update the `global_costmap` to check whether the randomly generated goal is in the obstacle area. (i.e. has collision with the boxes) But we then found that this function didn't work, and we realized that the `global_costmap` did not conclude the information of the boxes.
