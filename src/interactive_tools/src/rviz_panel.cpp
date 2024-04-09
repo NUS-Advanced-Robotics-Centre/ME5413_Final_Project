@@ -2,8 +2,8 @@
 
  * Copyright (C) 2023 SS47816
 
- * Rviz Panel for controling goal poses 
- 
+ * Rviz Panel for controling goal poses
+
 **/
 
 #include <pluginlib/class_list_macros.hpp>

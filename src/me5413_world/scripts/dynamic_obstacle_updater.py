@@ -1,15 +1,13 @@
-#!/usr/bin/env python
-
 import rospy
 from geometry_msgs.msg import PointStamped
 from dynamic_reconfigure.client import Client
+import uuid
 
 def update_prohibition_area(x, y):
     new_area = [
         [x - 1, y],
         [x + 1, y]
     ]
-
 
     global_param_name = '/move_base/global_costmap/costmap_prohibition_layer/prohibition_areas'
     global_areas = rospy.get_param(global_param_name, [])
@@ -38,13 +36,17 @@ def update_prohibition_area(x, y):
     reload_params()
 
 def reload_params():
+    # 生成一个唯一的触发器值
+    trigger_value = str(uuid.uuid4())
+
+    # 更新全局和局部代价地图的触发器参数
     move_base_client = Client("/move_base/global_costmap/costmap_prohibition_layer")
-    move_base_client.update_configuration({})
+    move_base_client.update_configuration({"prohibition_areas_reload_trigger": trigger_value})
 
     move_base_client = Client("/move_base/local_costmap/costmap_prohibition_layer")
-    move_base_client.update_configuration({})
+    move_base_client.update_configuration({"prohibition_areas_reload_trigger": trigger_value})
 
-    rospy.loginfo("Successfully triggered move_base to reload prohibition area parameters.")
+    rospy.loginfo("Successfully triggered move_base to reload prohibition area parameters with trigger value: %s", trigger_value)
 
 def cone_position_callback(msg):
     x, y = msg.point.x, msg.point.y

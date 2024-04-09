@@ -23,6 +23,7 @@
 #include <gazebo/common/common.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo_msgs/DeleteModel.h>
+#include <geometry_msgs/PointStamped.h>
 
 namespace gazebo
 {
@@ -45,6 +46,7 @@ class ObjectSpawner : public WorldPlugin
   ros::ServiceClient clt_delete_objects_;
   ros::Subscriber sub_respawn_objects_;
   ros::Publisher pub_rviz_markers_;
+  ros::Publisher pub_cone_position_;
 
   visualization_msgs::MarkerArray box_markers_msg_;
   

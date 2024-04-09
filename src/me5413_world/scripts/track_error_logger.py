@@ -1,49 +1,58 @@
 #!/usr/bin/env python
+
 import rospy
+import rospkg
 import os
-import sys
 from std_msgs.msg import Float32
 
-class TrackErrorLogger:
-    def __init__(self, csv_file_path):
-        self.csv_file_path = csv_file_path
-        self.position_error = None
-        self.heading_error = None
-        self.speed_error = None
+position_error = None
+heading_error = None
+relative_position_error = None
+relative_heading_error = None
 
-        rospy.init_node('track_error_logger')
-        rospy.Subscriber('/me5413_world/planning/rms_position_error', Float32, self.position_callback)
-        rospy.Subscriber('/me5413_world/planning/rms_heading_error', Float32, self.heading_callback)
-        rospy.Subscriber('/me5413_world/planning/rms_speed_error', Float32, self.speed_callback)
+def position_callback(msg):
+    global position_error
+    position_error = msg.data
 
-    def position_callback(self, msg):
-        self.position_error = msg.data
+def heading_callback(msg):
+    global heading_error
+    heading_error = msg.data
 
-    def heading_callback(self, msg):
-        self.heading_error = msg.data
+def relative_position_callback(msg):
+    global relative_position_error
+    relative_position_error = msg.data
 
-    def speed_callback(self, msg):
-        self.speed_error = msg.data
+def relative_heading_callback(msg):
+    global relative_heading_error
+    relative_heading_error = msg.data
 
-    def run(self):
-        rate = rospy.Rate(10)  # 10hz
-        with open(self.csv_file_path, 'w') as f:
-            while not rospy.is_shutdown():
-                data = "{},{},{}\n".format(self.position_error, self.heading_error, self.speed_error)
-                f.write(data)
-                rate.sleep()
+def track_error_logger(bag_file_path):
+    rospy.init_node('track_error_logger')
+    rospy.Subscriber("/me5413_world/absolute/position_error", Float32, position_callback)
+    rospy.Subscriber("/me5413_world/absolute/heading_error", Float32, heading_callback)
+    rospy.Subscriber("/me5413_world/relative/position_error", Float32, relative_position_callback)
+    rospy.Subscriber("/me5413_world/relative/heading_error", Float32, relative_heading_callback)
 
-def main(csv_file_path):
-    try:
-        logger = TrackErrorLogger(csv_file_path)
-        logger.run()
-    except rospy.ROSInterruptException:
-        pass
+    rate = rospy.Rate(10)  # 10hz
+    with open(bag_file_path, 'w') as f:
+        while not rospy.is_shutdown():
+            data = "{},{},{},{}\n".format(position_error, heading_error, relative_position_error, relative_heading_error)
+            f.write(data)
+            rate.sleep()
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print("Please provide the CSV file path as a command-line argument.")
-        sys.exit(1)
+    rospack = rospkg.RosPack()
+    package_path = rospack.get_path('me5413_world')
+    data_path = os.path.join(package_path, 'outputs/teb')
+    # data_path = os.path.join(package_path, 'outputs/dwa')
+    absolute_data_path = os.path.abspath(data_path)
 
-    csv_file_path = sys.argv[1]
-    main(csv_file_path)
+    bag_file_path = os.path.join(absolute_data_path, 'teb_errors.csv')
+
+    # bag_file_path = os.path.join(absolute_data_path, 'dwa_errors.csv')
+
+
+    try:
+        track_error_logger(bag_file_path)
+    except rospy.ROSInterruptException:
+        pass

@@ -1,8 +1,6 @@
 <launch>
-
   <arg name="use_map_topic" default="false"/>
   <arg name="scan_topic" default="$(eval optenv('JACKAL_LASER_TOPIC', 'front/scan'))" />
-
   <node pkg="amcl" type="amcl" name="amcl">
     <param name="use_map_topic" value="$(arg use_map_topic)"/>
     <!-- Publish scans from best pose at a max of 10 Hz -->
@@ -29,22 +27,21 @@
     <param name="laser_sigma_hit" value="0.2"/>
     <param name="laser_lambda_short" value="0.1"/>
     <param name="laser_model_type" value="likelihood_field"/>
-
     <!-- Maximum distance to do obstacle inflation on map, for use in likelihood_field model. -->
     <param name="laser_likelihood_max_dist" value="2.0"/>
     <!-- Translational movement required before performing a filter update.  -->
-    <param name="update_min_d" value="0.2"/>
+    <param name="update_min_d" value="0.1"/>
     <!--Rotational movement required before performing a filter update. -->
-    <param name="update_min_a" value="0.2"/>
+    <param name="update_min_a" value="0.1"/>
     <param name="odom_frame_id" value="odom"/>
     <param name="base_frame_id" value="base_link"/>
     <param name="global_frame_id" value="map"/>
     <!-- Number of filter updates required before resampling. -->
     <param name="resample_interval" value="1"/>
     <!-- Increase tolerance because the computer can get quite busy -->
-    <param name="transform_tolerance" value="0.2"/>
+    <param name="transform_tolerance" value="1.0"/>
     <!-- Exponential decay rate for the slow average weight filter, used in deciding when to recover by adding random poses. A good value might be 0.001. -->
-    <param name="recovery_alpha_slow" value="0.001"/>
+    <param name="recovery_alpha_slow" value="0.0"/>
     <!--Exponential decay rate for the fast average weight filter, used in deciding when to recover by adding random poses. A good value might be 0.1. -->
     <param name="recovery_alpha_fast" value="0.1"/>
     <!-- <param name = "tf_broadcast" value="true"/> -->
@@ -68,3 +65,16 @@
   </node>
 
 </launch>
+
+
+
+
+
+
+
+
+
+
+
+
+

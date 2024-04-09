@@ -10,27 +10,29 @@
 
     <rosparam file="$(find jackal_navigation)/params/prohibition_areas.yaml" command="load" ns="global_costmap/costmap_prohibition_layer" />
     <rosparam file="$(find jackal_navigation)/params/prohibition_areas.yaml" command="load" ns="local_costmap/costmap_prohibition_layer" />
-    
-    <!-- <rosparam file="$(find jackal_navigation)/params/dwa_local_planner_params.yaml" command="load" /> -->
+
+
+
+<!--     <rosparam file="$(find jackal_navigation)/params/dwa_local_planner_params.yaml" command="load" /> -->
     <!-- <rosparam file="$(find jackal_navigation)/params/base_local_planner_params.yaml" command="load" /> -->
     <rosparam file="$(find jackal_navigation)/params/teb_local_planner_params.yaml" command="load" />
-    
 
-    <!--<rosparam file="$(find rrt-global-planner)/params/rrt_global_planner.yaml" command="load" />-->
-    <!-- <rosparam file="$(find segment_global_planner)/param/segment_global_planner_params.yaml" command="load" /> -->
-    <!-- <rosparam file="$(find jackal_navigation)/params/global_planner_params.yaml" command="load" /> -->
-    <!-- <rosparam file="$(find jackal_navigation)/params/move_base_params.yaml" command="load" /> -->
 
-    
-    <!--<param name="base_global_planner" value="global_planner/RRTGlobalPlanner"/> -->
-    <!-- <param name="base_global_planner" value="segment_global_planner/SegmentGlobalPlanner"/> -->
+    <rosparam file="$(find jackal_navigation)/params/costmap_converter_params.yaml" command="load" />
+
+<!--     <rosparam file="$(find jackal_navigation)/params/global_planner_params.yaml" command="load" /> -->
+<!--     <rosparam file="$(find jackal_navigation)/params/move_base_params.yaml" command="load" /> -->
+
+
     <!-- <param name="base_global_planner" value="Astar_planner/AstarPlannerROS"/> -->
-    <param name="base_global_planner" value="global_planner/GlobalPlanner"/>
+    <param name="base_global_planner" value="global_planner/GlobalPlanner" />
+    <param name="planner_frequency" value="1.0" />
     <!-- <param name="base_global_planner" type="string" value="navfn/NavfnROS" /> -->
-    <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS"/>
+    <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+    <param name="controller_frequency" value="10.0" />
+<!--     <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" /> -->
+<!--     <param name="controller_frequency" value="10.0" /> -->
     <!-- <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/> -->
-    <!-- <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" /> -->
-    
 
     <remap from="odom" to="odometry/filtered" />
   </node>

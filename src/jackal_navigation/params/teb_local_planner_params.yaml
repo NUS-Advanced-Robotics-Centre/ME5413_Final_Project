@@ -1,52 +1,60 @@
 TebLocalPlannerROS:
 
  odom_topic: odom
-# map_frame: odom
     
  # Trajectory
   
  teb_autosize: True
  dt_ref: 0.5
  dt_hysteresis: 0.1
- max_samples: 100
+ max_samples: 300
  global_plan_overwrite_orientation: True
  allow_init_with_backwards_motion: False
- max_global_plan_lookahead_dist: 7
- global_plan_viapoint_sep: 0.3
- global_plan_prune_distance: 0.8
+ max_global_plan_lookahead_dist: 5.0
+ global_plan_viapoint_sep: 0.5
+ global_plan_prune_distance: 0.01
  exact_arc_length: False
  feasibility_check_no_poses: 4
  publish_feedback: False
     
  # Robot
          
- max_vel_x: 0.6 #0.2
+ max_vel_x: 0.7 #0.2
  max_vel_x_backwards: 0.2
  max_vel_y: 0.0
  max_vel_theta: 0.6 #0.25
- acc_lim_x: 3
- acc_lim_theta: 3
+ acc_lim_x: 0.8
+ acc_lim_theta: 1.0
  min_turning_radius: 0 # diff-drive robot (can turn on place!)0.25
 
- footprint_model:
-  type: "polygon"
-  vertices: [[-0.21, -0.165], [-0.21, 0.165], [0.21, 0.165], [0.21, -0.165]]
+ footprint_model: # types: "point", "circular", "two_circles", "line", "polygon"
+  type: "line"
+  radius: 0.5 # for type "circular"
+  line_start: [-0.0, 0.0] # for type "line"
+  line_end: [0.5, 0.0] # for type "line"
+  front_offset: 0.2 # for type "two_circles"
+  front_radius: 0.4 # for type "two_circles"
+  rear_offset: 0.1 # for type "two_circles"
+  rear_radius: 0.4 # for type "two_circles"
+  vertices: [[-0.44,-0.3],[-0.44,0.30],[0.2,0.32],[0.47,0.3],[0.47,-0.3],[0.2,-0.32]] # for type "polygon"
+
+
+
  # GoalTolerance
     
  xy_goal_tolerance: 0.3
- yaw_goal_tolerance: 0.3
+ yaw_goal_tolerance: 0.2
  free_goal_vel: False
  complete_global_plan: True
     
  # Obstacles
-    
- min_obstacle_dist: 0.25 # This value must also include our robot radius, since footprint_model is set to "point". 0.25
- inflation_dist: 0.25 #0.3
+ min_obstacle_dist: 0.35 # This value must also include our robot radius, since footprint_model is set to "point". 0.25
+ inflation_dist: 0.5 #0.3
  include_costmap_obstacles: True
- costmap_obstacles_behind_robot_dist: 0.5
- obstacle_poses_affected: 10
+ costmap_obstacles_behind_robot_dist: 1.0
+ obstacle_poses_affected: 15
 
- dynamic_obstacle_inflation_dist: 0.05
+ dynamic_obstacle_inflation_dist: 0.3
  include_dynamic_obstacles: True
 
  costmap_converter_plugin: ""
@@ -54,25 +62,24 @@ TebLocalPlannerROS:
  costmap_converter_rate: 5
 
  # Optimization
-    
- no_inner_iterations: 6
- no_outer_iterations: 5
+ no_inner_iterations: 5
+ no_outer_iterations: 4
  optimization_activate: True
  optimization_verbose: False
  penalty_epsilon: 0.1
- obstacle_cost_exponent: 4
- weight_max_vel_x: 2
- weight_max_vel_theta: 1
+# obstacle_cost_exponent: 4
+ weight_max_vel_x: 4
+ weight_max_vel_theta: 3
  weight_acc_lim_x: 1
  weight_acc_lim_theta: 10
  weight_kinematics_nh: 1000
- weight_kinematics_forward_drive: 30
+ weight_kinematics_forward_drive: 50
  weight_kinematics_turning_radius: 1
- weight_optimaltime: 1.5
+ weight_optimaltime: 1.0
  weight_shortest_path: 0
  weight_obstacle: 50
  weight_inflation: 0.2
- weight_dynamic_obstacle: 10
+ weight_dynamic_obstacle: 20
  weight_dynamic_obstacle_inflation: 0.2
  weight_viapoint: 3
  weight_adapt_factor: 2

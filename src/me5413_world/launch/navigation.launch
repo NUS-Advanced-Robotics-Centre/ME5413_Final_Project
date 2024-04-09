@@ -1,17 +1,15 @@
 <launch>
 
   <!-- Connect the robot to a keyboard teleop controller -->
-  <node name="teleop_twist_keyboard" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" respawn="true"/>
+<!--   <node name="teleop_twist_keyboard" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" respawn="true"/> -->
+
 
   <!-- Run the map server -->
-  <arg name="map_file" default="$(find pcd_to_map)/map/map-test.yaml"/>
+  <arg name="map_file" default="$(find me5413_world)/maps/map-test.yaml"/>
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
   
   <!-- Launch the AMCL Localizer -->
   <include file="$(find me5413_world)/launch/amcl.launch" />
-  <!-- <include file="$(find me5413_world)/launch/ekf_template.launch" /> -->
-  <!-- <include file="$(find cartographer_ros)/launch/demo_backpack_3d_localization.launch" /> -->
-  <!-- <include file="$(find robot_pose_ekf)/robot_pose_ekf.launch" /> -->
 
   <!-- Launch Move Base -->
   <include file="$(find me5413_world)/launch/move_base.launch" />
@@ -20,32 +18,27 @@
 
   <node ns="me5413_world" pkg="me5413_world" type="goal_publisher_node" name="goal_publisher_node" output="screen" />
 
-  <node ns="me5413_world" pkg="me5413_world" type="box_explorer_node" name="box_explorer_node" output="screen" />
-
-  <node ns="me5413_world" pkg="me5413_world" type="template_matching_node_py.py" name="template_matching_node_py" output= "screen">
-    <param name="template_folder" value="$(find me5413_world)/media/objects"/>
-    <param name="depth" value="0.05"/>
-  </node>
-
-  <!-- <node ns="me5413_world" name="find_2d_box_node_py" pkg="me5413_world" type="find_2d_box_node_py.py" output="screen">
-    <param name="depth" value="0.02"/>
-  </node>
-
-  <node name="find_object_2d" pkg="find_object_2d" type="find_object_2d" output="screen">
-    <remap from="image" to="/front/image_raw"/>
+  <node name="find_object_3d" pkg="find_object_2d" type="find_object_2d" output="screen">
     <param name="gui" value="true" type="bool"/>
-    <param name="objects_path" value="$(find me5413_world)/media/objects" type="str"/>
     <param name="settings_path" value="~/.ros/find_object_2d.ini" type="str"/>
-  </node> -->
+    <param name="subscribe_depth" value="true" type="bool"/>
+    <param name="objects_path" value="$(find me5413_world)/pictures" type="str"/>
+    <param name="object_prefix" value="object" type="str"/>
+    <remap from="rgb/image_rect_color" to="/front/rgb/image_raw"/>
+    <remap from="/depth_registered/camera_info" to="/front/depth/camera_info"/>
+    <remap from="/depth_registered/image_raw" to="/front/depth/image_raw"/>
+  </node>
 
-  <!-- Conditionally launch the Track Error Logger Node -->
-  <arg name="log_error" default="true" />
-  <arg name="csv_file_path" default="$(find me5413_world)/outputs/errors.csv" />
 
-  <group if="$(arg log_error)">
-    <node pkg="me5413_world" type="track_error_logger.py" name="track_error_logger" output="screen">
-      <param name="csv_file_path" value="$(arg csv_file_path)" />
-    </node>
-  </group>
+<!--    --><!-- Add the DynamicObstacleUpdater node -->
+  <node ns="me5413_world" pkg="me5413_world" type="dynamic_obstacle_updater.py" name="dynamic_obstacle_updater" output="screen"/>
+
+<!--    --><!-- Add the BoxListener node -->
+<!--   <node ns="me5413_world" name="listener" pkg="me5413_world" type="listens.py" output="screen"/> -->
+
+  <node pkg="me5413_world" type="cal_target_point.py" name="target_calculator" output="screen" />
+
+  <node pkg="me5413_world" type="track_error_logger.py" name="track_error_logger" output="screen" />
+
 
 </launch>

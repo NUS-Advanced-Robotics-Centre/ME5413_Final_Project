@@ -25,6 +25,8 @@ void ObjectSpawner::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf)
   this->pub_factory_ = node->Advertise<msgs::Factory>("~/factory");
   this->sub_respawn_objects_ = nh_.subscribe("/rviz_panel/respawn_objects", 1, &ObjectSpawner::respawnCmdCallback, this);
   this->pub_rviz_markers_ = nh_.advertise<visualization_msgs::MarkerArray>("/gazebo/ground_truth/box_markers", 0);
+
+  this->pub_cone_position_ = nh_.advertise<geometry_msgs::PointStamped>("/gazebo/cone_position", 10);
   
   return;
 };
@@ -37,31 +39,63 @@ void ObjectSpawner::timerCallback(const ros::TimerEvent&)
   return;
 };
 
+//void ObjectSpawner::spawnRandomCones()
+//{
+//  this->cone_name = "Construction Cone_0";
+//
+//  msgs::Factory cone_msg;
+//  cone_msg.set_sdf_filename("model://construction_cone");
+//
+//  std::srand(std::time(0));
+//  if ( std::rand() % 2 == 0)
+//  {
+//    msgs::Set(cone_msg.mutable_pose(), ignition::math::Pose3d(
+//                ignition::math::Vector3d(12.7, 2.5, 0.1),
+//                ignition::math::Quaterniond(0, 0, 0)));
+//  }
+//  else
+//  {
+//    msgs::Set(cone_msg.mutable_pose(), ignition::math::Pose3d(
+//                ignition::math::Vector3d(16.9, 2.5, 0.1),
+//                ignition::math::Quaterniond(0, 0, 0)));
+//  }
+//  this->pub_factory_->Publish(cone_msg);
+//
+//  return;
+//};
+
+
 void ObjectSpawner::spawnRandomCones()
 {
-  this->cone_name = "Construction Cone_0";
+    this->cone_name = "Construction Cone_0";
 
-  msgs::Factory cone_msg;
-  cone_msg.set_sdf_filename("model://construction_cone");
+    msgs::Factory cone_msg;
+    cone_msg.set_sdf_filename("model://construction_cone");
 
-  std::srand(std::time(0));
-  int num = std::rand();
-  num = 3;
-  if ( num % 2 == 0)
-  {
-    msgs::Set(cone_msg.mutable_pose(), ignition::math::Pose3d(
-                ignition::math::Vector3d(12.7, 2.5, 0.1),
-                ignition::math::Quaterniond(0, 0, 0)));
-  }
-  else
-  {
-    msgs::Set(cone_msg.mutable_pose(), ignition::math::Pose3d(
-                ignition::math::Vector3d(16.9, 2.5, 0.1),
-                ignition::math::Quaterniond(0, 0, 0)));
-  }
-  this->pub_factory_->Publish(cone_msg);
-  
-  return;
+    ignition::math::Vector3d cone_position;
+    std::srand(std::time(0));
+    if (std::rand() % 2 == 0)
+   {
+        cone_position = ignition::math::Vector3d(12.7, 2.5, 0.1);
+        msgs::Set(cone_msg.mutable_pose(), ignition::math::Pose3d(cone_position, ignition::math::Quaterniond(0, 0, 0)));
+    }
+    else
+    {
+        cone_position = ignition::math::Vector3d(16.9, 2.5, 0.1);
+        msgs::Set(cone_msg.mutable_pose(), ignition::math::Pose3d(cone_position, ignition::math::Quaterniond(0, 0, 0)));
+    }
+    this->pub_factory_->Publish(cone_msg);
+
+    geometry_msgs::PointStamped cone_position_msg;
+    cone_position_msg.header.stamp = ros::Time::now();
+    cone_position_msg.header.frame_id = "world";
+    cone_position_msg.point.x = cone_position.X();
+    cone_position_msg.point.y = cone_position.Y();
+    cone_position_msg.point.z = cone_position.Z();
+
+    this->pub_cone_position_.publish(cone_position_msg);
+
+    return;
 };
 
 void ObjectSpawner::spawnRandomBoxes(const int num)
@@ -98,7 +132,7 @@ void ObjectSpawner::spawnRandomBoxes(const int num)
           break;
         }
       }
-    } 
+    }
 
     // Add this box to the list
     this->box_points.push_back(point);
@@ -156,7 +190,6 @@ void ObjectSpawner::spawnRandomBoxes(const int num)
 
   return;
 };
-
 void ObjectSpawner::deleteObject(const std::string& object_name)
 {
   gazebo_msgs::DeleteModel delete_model_srv;

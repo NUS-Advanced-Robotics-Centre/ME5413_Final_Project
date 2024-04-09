@@ -268,6 +268,7 @@
     - JACKAL_FLEA3
     - JACKAL_STEREO_FLEA3
     - JACKAL_BB2
+    - Kinect
   -->
 
   <!-- Common camera mounts and accessory URDFs. -->
@@ -275,7 +276,7 @@
   <xacro:include filename="$(find pointgrey_camera_description)/urdf/pointgrey_flea3.urdf.xacro" />
 
   <!-- If enabled, generate the flea3 camera payload with a tilt of 30 degrees. -->
-  <xacro:if value="$(optenv JACKAL_FLEA3 1)">
+  <xacro:if value="$(optenv JACKAL_FLEA3 0)">
     <xacro:property name="name" value="$(optenv JACKAL_FLEA3_NAME front)" />
     <xacro:property name="tilt" value="$(optenv JACKAL_FLEA3_TILT 0.)" />
     <xacro:property name="tower" value="$(optenv JACKAL_FLEA3_TOWER 1)" />
@@ -407,6 +408,53 @@
         <origin xyz="0 0 0.018" rpy="0 0 0" />
         <parent link="${prefix}_camera_base" />
         <child link="${prefix}_camera" />
+      </joint>
+    </xacro:unless>
+  </xacro:if>
+
+  <xacro:if value="$(optenv KINECT 1)">
+    <xacro:property name="name" value="$(optenv KINECT_NAME front)" />
+    <xacro:property name="tilt" value="$(optenv KINECT_TILT 0.)" />
+    <xacro:property name="tower" value="$(optenv KINECT_TOWER 1)" />
+    <xacro:property name="mount" value="$(optenv KINECT_MOUNT front)" />
+    <xacro:property name="prefix" value="$(optenv KINECT_PREFIX ${mount})" />
+    <xacro:property name="parent" value="$(optenv KINECT_PARENT ${mount}_mount)" />
+
+    <xacro:include filename="$(find jackal_description)/urdf/accessories/kinect.urdf.xacro"/>
+    <xacro:kinect_camera prefix="front"/>
+
+    <!-- Mount Enabled -->
+    <xacro:if value="${tower}">
+      <xacro:camera_mount prefix="${prefix}" tilt="${tilt}"/>
+
+      <joint name="${prefix}_camera_mount_joint" type="fixed">
+        <origin xyz="$(optenv JACKAL_KINECT_OFFSET 0 0 0)"
+                rpy="$(optenv JACKAL_KINECT_RPY 0 0 0)" />
+        <parent link="${parent}" />
+        <child link="${prefix}_camera_mount" />
+      </joint>
+
+      <joint name="${prefix}_camera_bracket_joint" type="fixed">
+        <origin xyz="0.020 0 -0.0245" rpy="0 0 0" />
+        <parent link="${prefix}_camera_beam" />
+        <child link="${prefix}_kinect" />
+      </joint>
+    </xacro:if>
+
+    <!-- Mount Disabled -->
+    <xacro:unless value="${tower}">
+      <link name="${prefix}_camera_base"/>
+      <joint name="${prefix}_camera_base_joint" type="fixed">
+        <origin xyz="$(optenv JACKAL_KINECT_OFFSET 0 0 0)"
+                rpy="$(optenv JACKAL_KINECT_RPY 0 0 0)" />
+        <parent link="${parent}" />
+        <child link="${prefix}_camera_base" />
+      </joint>
+      <joint name="${prefix}_camera_joint" type="fixed">
+        <origin xyz="0 0 0.0145"
+                rpy="0 0 0" />
+        <parent link="${prefix}_camera_base" />
+        <child link="${prefix}_kinect" />
       </joint>
     </xacro:unless>
   </xacro:if>
