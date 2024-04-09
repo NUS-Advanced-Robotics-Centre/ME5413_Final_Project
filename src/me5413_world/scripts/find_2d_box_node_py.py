@@ -8,9 +8,11 @@ from cv_bridge import CvBridge
 import cv2
 import numpy as np
 import tf
+from tf.transformations import quaternion_from_euler
 
 class Find2DObjectGoalPublisherNode:
     def __init__(self):
+        self.depth = rospy.get_param("~depth", 0.05)
         self.objects_sub = rospy.Subscriber("/objects", Float32MultiArray, self.objects_callback)
         self.camera_info_sub = rospy.Subscriber("/front/camera_info", CameraInfo, self.camera_info_callback)
         
@@ -40,14 +42,8 @@ class Find2DObjectGoalPublisherNode:
         # Set a constant depth value
         depth = 0.2
 
-        object_id = int(data[0])
-        object_width = data[1]
-        object_height = data[2]
-        h31 = data[9]
-        h32 = data[10]
-
-        center_x = h31 + object_width/2
-        center_y = h32 + object_height/2
+        center_x = data[6]
+        center_y = data[7]
 
         target_point = np.array([(center_x - self.camera_matrix[0, 2]) * depth / self.camera_matrix[0, 0],
                                  (center_y - self.camera_matrix[1, 2]) * depth / self.camera_matrix[1, 1],
@@ -66,16 +62,36 @@ class Find2DObjectGoalPublisherNode:
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as e:
             rospy.logerr("Transform error: %s", e)
             return
+        
+        # Get the current robot position in the map frame
+        try:
+            robot_pose = PoseStamped()
+            robot_pose.header.stamp = rospy.Time(0)
+            robot_pose.header.frame_id = "base_link"
+            self.tf_listener.waitForTransform("map", "base_link", rospy.Time(0), rospy.Duration(1.0))
+            robot_pose_map = self.tf_listener.transformPose("map", robot_pose)
+        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as e:
+            rospy.logerr("Transform error: %s", e)
+            return
+
+        # Calculate the direction from the robot to the target point
+        dx = target_point_map.point.x - robot_pose_map.pose.position.x
+        dy = target_point_map.point.y - robot_pose_map.pose.position.y
+        yaw = np.arctan2(dy, dx)
+
+        # Convert yaw to quaternion
+        quat = quaternion_from_euler(0, 0, yaw)
 
         goal_pose = PoseStamped()
         goal_pose.header.stamp = rospy.Time.now()
         goal_pose.header.frame_id = "map"
         goal_pose.pose.position = target_point_map.point
-        goal_pose.pose.orientation.w = 1.0
+        goal_pose.pose.orientation.w = quat[3]
+
         self.goal_pub.publish(goal_pose)
 
 def main():
-    rospy.init_node("find_2d_object_goal_publisher_node_py")
+    rospy.init_node("find_2d_box_node_py")
     template_matching_node = Find2DObjectGoalPublisherNode()
     rospy.spin()
 

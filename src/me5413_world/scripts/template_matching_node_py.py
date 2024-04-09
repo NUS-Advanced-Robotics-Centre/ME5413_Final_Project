@@ -127,7 +127,7 @@ class TemplateMatchingNode:
         # Calculate the direction from the robot to the target point
         dx = target_point_map.point.x - robot_pose_map.pose.position.x
         dy = target_point_map.point.y - robot_pose_map.pose.position.y
-        yaw = np.arctan2(dy, dx)
+        yaw = np.arctan2(dy, dx) + 3.14159
 
         # Convert yaw to quaternion
         quat = quaternion_from_euler(0, 0, yaw)

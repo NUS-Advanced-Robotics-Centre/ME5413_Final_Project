@@ -249,13 +249,13 @@ void BoxExplorerNode::updateGoalIfReached()
                               std::pow(this->pose_world_robot_.position.y - this->pose_world_goal_.position.y, 2));
 
   // If the robot is within a certain threshold of the goal and the goal is not detected
-  if (distance < 0.001 && !this->is_goal_detected_&& this->goal_type_ == "box")
+  if (distance < 0.01 && !this->is_goal_detected_ && this->goal_type_ == "box")
   {
     ROS_INFO("Goal reached but not detected. Updating goal...");
-    
+
     // Update the current waypoint index
     this->current_waypoint_index_ = rand() % this->waypoints_.size();
-    
+
     // Get the new goal pose
     geometry_msgs::PoseStamped P_world_goal = this->waypoints_[this->current_waypoint_index_];
     this->pose_world_goal_ = P_world_goal.pose;

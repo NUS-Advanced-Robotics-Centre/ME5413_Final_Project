@@ -66,5 +66,5 @@ catkin_install_python(PROGRAMS scripts/template_matching_node_py.py
 catkin_install_python(PROGRAMS scripts/sift_detection_node_py.py
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
-catkin_install_python(PROGRAMS scripts/find_2d_object_goal_publisher_node_py.py
+catkin_install_python(PROGRAMS scripts/find_2d_box_node_py.py
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
