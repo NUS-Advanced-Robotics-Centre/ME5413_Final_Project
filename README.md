@@ -75,8 +75,8 @@ The localization process is performed using the `AMCL` (Adaptive Monte Carlo Loc
 
 The planning process consists of two parts: global planning and local planning.
 
-- **Global Planning:** The global planner used is `A*`. The `move_base` package is used to perform the global planning process. The global planner parameters can be tuned in the `jackal_navigation/params/global_planner_params.yaml` file.
-- **Local Planning:** The local planner used is `Teb`. The `move_base` package is used to perform the local planning process. The local planner parameters can be tuned in the `jackal_navigation/params/teb_local_planner_params.yaml` file.
+- **Global Planning:** The global planner used is `A*`. The global planner parameters can be tuned in the `jackal_navigation/params/global_planner_params.yaml` file.
+- **Local Planning:** The local planner used is `Teb`. The local planner parameters can be tuned in the `jackal_navigation/params/teb_local_planner_params.yaml` file.
 
 #### Costmap
 
