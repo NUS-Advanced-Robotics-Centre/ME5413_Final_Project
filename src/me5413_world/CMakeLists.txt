@@ -68,3 +68,6 @@ catkin_install_python(PROGRAMS scripts/sift_detection_node_py.py
 
 catkin_install_python(PROGRAMS scripts/find_2d_box_node_py.py
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+catkin_install_python(PROGRAMS scripts/track_error_logger.py
+                      DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

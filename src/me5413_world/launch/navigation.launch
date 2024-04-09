@@ -38,4 +38,14 @@
     <param name="settings_path" value="~/.ros/find_object_2d.ini" type="str"/>
   </node> -->
 
+  <!-- Conditionally launch the Track Error Logger Node -->
+  <arg name="log_error" default="true" />
+  <arg name="csv_file_path" default="$(find me5413_world)/outputs/errors.csv" />
+
+  <group if="$(arg log_error)">
+    <node pkg="me5413_world" type="track_error_logger.py" name="track_error_logger" output="screen">
+      <param name="csv_file_path" value="$(arg csv_file_path)" />
+    </node>
+  </group>
+
 </launch>
