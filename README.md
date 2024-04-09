@@ -73,6 +73,55 @@ After detecting the object, we need to calculate the distance between the robot 
 
 ![Camera Calibration Policy](assets/object_detection/camera_calibration.png)
 
+First, we obtain the coordinates $(u, v)$ of the target in the image, which are the center coordinates of the bounding box:
+
+$$
+u = \text{bbox.x} + \frac{\text{bbox.width}}{2}
+$$
+
+$$
+v = \text{bbox.y} + \frac{\text{bbox.height}}{2}
+$$
+
+Next, we retrieve the depth value $Z$ at that point by accessing the corresponding pixel in the depth image:
+
+$$
+Z = \text{cv\_depth\_image\_.at<float>}(v, u)
+$$
+
+Then, we use the camera intrinsic matrix $K$ to convert the image coordinates $(u, v)$ and depth value $Z$ to the 3D point $(X, Y, Z)$ in the camera coordinate system. The camera intrinsic matrix $K$ is defined as follows:
+
+$$
+\mathbf{K} = \begin{bmatrix}
+f_x & 0 & c_x \\
+0 & f_y & c_y \\
+0 & 0 & 1
+\end{bmatrix}
+$$
+
+Using the camera intrinsic matrix, we can calculate the 3D point $(X, Y, Z)$ in the camera coordinate system using the following formulas:
+
+$$
+X = \frac{(u - c_x) \cdot Z}{f_x}
+$$
+
+$$
+Y = \frac{(v - c_y) \cdot Z}{f_y}
+$$
+
+In the code, this step corresponds to the following part:
+
+```cpp
+cv::Point3f target_point;
+target_point.x = (bbox.x + bbox.width / 2 - camera_matrix_.at<double>(0, 2)) * depth / camera_matrix_.at<double>(0, 0);
+target_point.y = (bbox.y + bbox.height / 2 - camera_matrix_.at<double>(1, 2)) * depth / camera_matrix_.at<double>(1, 1);
+target_point.z = depth;
+```
+
+Finally, we use the tf library to transform the 3D point $(X, Y, Z)$ from the camera coordinate system to the map coordinate system and publish it as the target location.
+
+Through these steps, we utilize the camera calibration parameters to convert the target location in the image to a 3D point in the camera coordinate system and further transform it to the target location in the map coordinate system, enabling the robot to navigate to that location.
+
 ### Localization
 
 The localization process is performed using the `AMCL` (Adaptive Monte Carlo Localization) method. The `AMCL` package is used to localize the robot in the map. The `AMCL` node is launched in the `amcl.launch` file, and the parameters of the `AMCL` package can be tuned in the `jackal_navigation/params/amcl_params.yaml` file.
@@ -139,17 +188,17 @@ ME5413_Final_Project_Group10
 │   │   ├── include -> Header files
 │   │   │   ├── me5413_world -> Header files for the main implementations
 │   │   ├── launch -> Launch files
-│   │   │   ├── amcl.launch
-│   │   │   ├── fast_lio.launch
-│   │   │   ├── find_box.launch
+│   │   │   ├── amcl.launch -> Launch the AMCL node
+│   │   │   ├── fast_lio.launch -> Launch the Fast-Lio mapping
+│   │   │   ├── find_box.launch -> Launch the find_object_2d package
 │   │   │   ├── include
 │   │   │   │   └── spawn_jackal.launch
-│   │   │   ├── main.launch
-│   │   │   ├── manual.launch
-│   │   │   ├── mapping.launch
-│   │   │   ├── move_base.launch
-│   │   │   ├── navigation.launch
-│   │   │   └── world.launch  
+│   │   │   ├── main.launch -> Main launch file
+│   │   │   ├── manual.launch -> Manually control the robot in the Gazebo world
+│   │   │   ├── mapping.launch -> Launch the mapping process
+│   │   │   ├── move_base.launch -> Launch the global and local planner
+│   │   │   ├── navigation.launch -> Launch the navigation process
+│   │   │   └── world.launch -> Launch the Gazebo world
 │   │   ├── src -> C++ scripts
 │   │   │   ├── object_spawner_gz_plugin.cpp -> Gazebo plugin for spawning the object (boxes and cones)
 │   │   │   ├── goal_publisher_node.cpp -> Publish the goal location (when goal is not box)
