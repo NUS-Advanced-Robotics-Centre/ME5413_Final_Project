@@ -13,6 +13,7 @@ import os
 class Mode(enum.Enum):
     INFERENCE=0
     DATA_COLLECTION=1
+    TESTING=2
 
 class DetectionStrategy(enum.Enum):
     HISTOGRAM_TEMPLATE_MATCHING=0
@@ -23,7 +24,9 @@ class DigitDetector:
     FRONT_MAX_ANGLE_RAD = 7.5 * np.pi / 180
     MAX_LIN_VEL = 1.0
     MAX_YAW_RATE = 0.5
+    MAX_LATERAL_ERROR = 0.2
     ETA = 1e-1
+    SPOT_TURNING_YAW_RATE = 0.1
     MAX_LASER_DISTANCE_M = 10.0
     def __init__(self, digit : int, strategy : DetectionStrategy):
         rospy.init_node('listener')
@@ -32,6 +35,7 @@ class DigitDetector:
         self.img_topic = '/front/image_raw'
         self.laser_topic = '/front/scan'
         self.cmdvel_topic = 'cmd_vel'
+        self.detection_topic = '/digitdetection'
         self.bridge = CvBridge()
         self.get_detections = self.get_detection_fn(strategy)
         
@@ -40,6 +44,7 @@ class DigitDetector:
         self.img_sub = rospy.Subscriber(self.img_topic, Image, self.img_cb)
         self.laser_sub = rospy.Subscriber(self.laser_topic, LaserScan, self.laser_cb)
         self.cmdvel_pub = rospy.Publisher(self.cmdvel_topic, Twist, queue_size=1)
+        self.detection_pub = rospy.Publisher(self.detection_topic, Image)
         self.raw_img = None
         self.front_distance = None
         
@@ -146,6 +151,7 @@ class DigitDetector:
             max_match_val, max_match_loc, max_template = self.get_detections(obs)
             
             print("Maximum value detected ", max_match_val)
+            vel_x, yaw_rate = 0.0, 0.0
             if max_match_val >= self.CORRECT_DIGIT_THRESHOLD:
                 print("Successful detection with score ", max_match_val)
                 h,w = max_template.shape
@@ -158,42 +164,43 @@ class DigitDetector:
                 roi_center = (top_left[0] + w//2, top_left[1] + h//2)
                 obs_center = (w_img // 2 , h_img // 2)
                 
-                x_center_error = (obs_center[0] - roi_center[0]) / (w_img//2)
-                yaw_rate = x_center_error * self.MAX_YAW_RATE
-                
-                still_need_rotate = abs(x_center_error) > self.ETA
-                if still_need_rotate:
-                    vel_x = 0.0
+                lateral_error = (obs_center[0] - roi_center[0]) / (w_img//2)
+                yaw_rate = lateral_error * self.MAX_YAW_RATE
                     
                 front_distance_error = self.front_distance - self.STOP_DISTANCE_M
                 vel_x = min(front_distance_error, 1.0) * self.MAX_LIN_VEL
-                vel_x *= max(0, 1 - (yaw_rate/self.MAX_YAW_RATE))
-                    
+                vel_x *= max(0, 1 - (abs(lateral_error)/self.MAX_LATERAL_ERROR))
+                
+                print("Front dist error, lateral error, ", front_distance_error, lateral_error, vel_x, yaw_rate)
+                
+                still_need_rotate = abs(lateral_error) > self.ETA
                 still_move_forward = abs(vel_x) > self.ETA
                 if not still_need_rotate and not still_move_forward:
-                    status = f"Close enough to the box, front distance {self.front_distance} yaw_error {x_center_error}"
+                    status = f"Close enough to the box, front distance {self.front_distance} yaw_error {lateral_error}"
                     print(status)
                     rospy.signal_shutdown(status)
                     break
-                
-                print(f"Moving to box {vel_x, yaw_rate}...")
-                self.cmdvel_pub.publish(self.get_twist_msg(vel_x, yaw_rate))
-                    
+                print(f"Moving to box...")
                 display_template = max_template
                 color = (0,255,0)
             else:
                 display_template = np.zeros(obs.shape)
                 color = (0,0,255)
                 print(f"No detections, rotating on the spot...")
-                self.cmdvel_pub.publish(self.get_twist_msg(0.0, self.ANG_Z_KP))
-            cv2.imshow("template", display_template)
+                yaw_rate = self.SPOT_TURNING_YAW_RATE
+            
+            if mode == Mode.TESTING:
+                vel_x, yaw_rate = 0.0, 0.0                
+            self.cmdvel_pub.publish(self.get_twist_msg(vel_x, yaw_rate))
             
             # Write the maximum template match score on the img display
             display = cv2.putText(display, str(round(max_match_val,2)), (50,50), cv2.FONT_HERSHEY_SIMPLEX,  
                    1, color, 2, cv2.LINE_AA) 
             
-            cv2.imshow("obs", display)
-            cv2.waitKey(1) 
+            self.detection_pub.publish(self.bridge.cv2_to_imgmsg(display, encoding="passthrough"))
+            # cv2.imshow("template", display_template)
+            # cv2.imshow("obs", display)
+            # cv2.waitKey(1) 
         cv2.destroyAllWindows()
         
 
