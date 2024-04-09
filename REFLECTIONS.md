@@ -35,6 +35,10 @@ I found that there is no ground truth to compare the SLAM performance. So, how d
 - Challenges encountered and proposed solutions
 - Evaluation methodology, assumptions, and limitations
 
+## Effect of the costmap params on the robot's navigation
+
+I have considered the effect of the costmap params on the robot's navigation. The costmap params are defined in the `costmap_common_params.yaml` file. The costmap params include the following:
+
 ## How can I navigate to the dynamic goal?
 
 I have considered two methods to detect the dynamic goal (number 3 on the box) using the camera information:
