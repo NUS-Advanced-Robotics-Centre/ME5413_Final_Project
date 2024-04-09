@@ -368,11 +368,20 @@ In this section, we adapt the position error, heading error, relative position e
 
 === Object Detection
 
-=== Object Detection
-
 ==== Visual Identification of Box3
 
 After generating random objects (boxes 1-9 and a cone), setting the box1, box2, box3, or box4 buttons on the simple panel will generate a random target point in the box room area. The random target point subscribes to `box_markers` to load the box's position and size (0.8, 0.8, 0.8) for detecting the box's area. The target point is generated 1 unit away from the `box_marker` to ensure it doesn't appear inside the box. When the Jackal vehicle moves towards the random target, if box3 is not detected, another random target point will be generated in the box room, allowing the Jackal to roam the area.
+
+#figure(
+  grid(
+    columns: 1,
+    image("assets/random_point.png"),
+  ),
+  caption: [rondom point in box room],
+) <fig:rondom_point>
+
+
+
 
 We employed the `find_object_2d` package, which uses the SIFT feature detection algorithm for image matching. The find object node is added to the `navigation.launch` file and remaps and subscribes to the following topics:
 
@@ -390,7 +399,13 @@ We employed the `find_object_2d` package, which uses the SIFT feature detection 
 ```
 
 The package loads images of numbers on box3 from different angles as a dataset.
-
+#figure(
+  grid(
+    columns: 1,
+    image("assets/box3_detection.png"),
+  ),
+  caption: [box3_detection],
+) <fig:box3_detection>
 When box3 is detected, the `/objects` topic is published, including the detected target ID, width, height, and a 3x3 homography matrix containing the image's location and pose.
 
 To calculate the distance from the Jackal to the target box, depth information is needed. We modified the vehicle's camera to a Kinect depth camera with a 60-degree field of view, a minimum measurement distance of 0.05 meters, and a maximum of 8 meters. The camera publishes:
@@ -426,6 +441,13 @@ $ Z = "depth" $
 To transform the target point from the camera coordinate system to the map coordinate system, the `tf` library is used. A `PointStamped` message containing the 3D coordinates and reference frame (`front_frame_optical`) is created. The `waitForTransform` method is used to wait for the transformation from camera to map coordinate system, and the `transformPoint` method performs the transformation.
 
 Finally, a `PoseStamped` message is constructed with the transformed point's position and default orientation (upwards) and published to `/move_base_simple/goal` to direct the navigation system to move the robot to the target position.
+#figure(
+  grid(
+    columns: 1,
+    image("assets/box3_identification.png"),
+  ),
+  caption: [box3_identification],
+) <fig:box3_identification>
 
 ==== Two Methods for Object Detection
 
@@ -486,5 +508,47 @@ $ Y = ((v - c_y) dot Z) / f_y $
 
 pagebreak()
 
+=== Decision making
+
+The decision making logic is shown in the flowchart below:
+
+#figure(
+image("assets/decision_making/flowchart_decision_making.png"),
+caption: [Flowchart of decision making],
+) <fig:flowchar_decision_making>
+
+We have mainly used three nodes to implement the decision (i.e. How to get to the desired goal) logic:
+
+- `goal_publisher_node`: Publish the goal location (when the goal is not a box). The robot will navigate to the goal location directly.
+- `box_explorer_node`: Explore the box location (when the goal is a box). The robot will navigate to the boxes area (where the boxes are spawned) and explore the box location randomly until the box is detected.
+- `template_matching_node`: Continuously detect the object (number 3 on the box) using the template matching method. If the object is detected, the robot will navigate to the object location.
+
+==== Random Exploration Policy
+The random exploration policy is implemented in the `box_explorer_node.cpp` file. A basic process is shown in the figure below:
+
+#figure(
+image("assets/decision_making/random_exploration_policy.png"),
+caption: [Flowchart of decision making],
+) <fig:random_exploration_policy>
+
+First, we need to randomly select a `goal_pose` in the boxes are, which is implemented in the `createWaypoints()` and `updateCurrentWaypoint()`. Then we need to check where the selected `goal_pose` has collides with the obstacles, which is implemented in the `isPointInObstacle` function. If the `goal_pose` is not in the obstacles, we can navigate to the `goal_pose` directly, if not we need to select another `goal_pose`. The robot will keep exploring the box location until the object is detected.
+
+==== Collision Checking Policy
+In the random exploration process, we need to check whether the selected `goal_pose` is in the obstacles. Initially, we had an idea to subsribe the `/gazebo/global_costmap` and use a circular collision checking method to to check whether the `goal_pose` is in the obstacles. However, we found that the global costmap does not contain the information of the spawned boxes, so the method can not work properly.
+
+Then we implemented the function by subscribing the `box_markers` topic and decided whether the random selected `goal_pose` is near these `box_poses` location. The function is implemented in the `isPointInObstacle()` function (in `box_explorer_node.cpp`).
+
 = Appendix
+
+#figure(
+image("assets/appendix/rosgraph.png", width: 100%),
+caption: [rosgraph],
+) <fig:rosgraph>
+
+#figure(
+  image("assets/appendix/frames.png", width: 100%),
+  caption: [rosgraph],
+) <fig:rosgraph>
+
+
 
