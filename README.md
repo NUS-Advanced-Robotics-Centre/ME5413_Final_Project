@@ -83,11 +83,7 @@ $$
 v = \text{bbox.y} + \frac{\text{bbox.height}}{2}
 $$
 
-Next, we retrieve the depth value $Z$ at that point by accessing the corresponding pixel in the depth image:
-
-$$
-Z = \text{cv\_depth\_image\_.at<float>}(v, u)
-$$
+Next, we retrieve the depth value $Z$ at that point by accessing the corresponding pixel in the depth image.
 
 Then, we use the camera intrinsic matrix $K$ to convert the image coordinates $(u, v)$ and depth value $Z$ to the 3D point $(X, Y, Z)$ in the camera coordinate system. The camera intrinsic matrix $K$ is defined as follows:
 
