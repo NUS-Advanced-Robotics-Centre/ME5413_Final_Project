@@ -176,6 +176,57 @@ roslaunch me5413_world navigation.launch
   * `/me5413_world/relative/heading_error` (in degrees, wrt `map` frame, `std_msgs::Float32`)
   * `/me5413_world/relative/position_error` (in meters wrt `map` frame, `std_msgs::Float32`)
 
+## Docker Support
+
+This repository provides Docker support for setting up and managing a ROS Noetic environment with GPU acceleration. The `docker` folder contains the following `Dockerfiles`
+that can be used to build the container images.
+
+1. `nvidia-ros-noetic.Dockerfile`: Builds a ROS Noetic image using an NVIDIA CUDA-based Ubuntu base image and includes GPU support for ROS applications.
+
+```bash
+  # From the root of the repository build the GPU accelerated ROS Noetic image
+  docker build -f docker/nvidia-ros-noetic.Dockerfile -t nvidia-ros-noetic .
+```
+
+1. `dev-overlay.Dockerfile`: Builds on the ROS Noetic base image to create a container environment with volume-mounted `src` folder for development.
+
+```bash
+  # From the root of the repository build the development image
+  docker build -f docker/dev-overlay.Dockerfile -t dev-overlay .
+```
+
+The root of the repository contains a `docker-compose.yaml` that can be used to launch the development environment using the following command,
+
+```bash
+  # Disable access control to X11 server
+  xhost +
+
+  # Launch the docker environment
+  docker compose up
+```
+
+The development environment can be accessed using the following command,
+
+```bash
+  # With appuser privilages
+  docker exec -it dev-overlay bash
+
+  # With root privilages
+  docker exec -it -u 0 dev-overlay bash
+```
+
+The development environment can be modified by adding commands in `docker/dev-overlay.Dockerfile` in the following section.
+
+```
+  # Put your code here to run additional commands
+  #######################################################################
+
+
+
+
+  #######################################################################
+```
+
 ## Contribution
 
 You are welcome contributing to this repo by opening a pull-request
