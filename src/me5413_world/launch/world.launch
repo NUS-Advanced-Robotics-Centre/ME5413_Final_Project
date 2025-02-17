@@ -4,7 +4,7 @@
 
     <!-- Load the project world into Gazebo -->
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <arg name="world_name" value="$(find me5413_world)/worlds/me5413_project.world"/>
+        <arg name="world_name" value="$(find me5413_world)/worlds/me5413_project_2425.world"/>
         <arg name="debug" value="false" />
         <arg name="gui" value="true" />
         <arg name="paused" value="false"/>

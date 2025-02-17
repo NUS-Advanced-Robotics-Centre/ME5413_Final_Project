@@ -1494,5 +1494,7 @@
         <projection_type>perspective</projection_type>
       </camera>
     </gui>
+
+    <plugin name="object_spawner_gz_plugin" filename="libobject_spawner_gz_plugin.so"/>
   </world>
 </sdf>
