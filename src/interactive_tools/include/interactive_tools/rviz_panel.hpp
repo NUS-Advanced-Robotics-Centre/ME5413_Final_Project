@@ -23,7 +23,7 @@
 
 namespace rviz_panel
 {
-class simplePanel : public rviz::Panel
+class ME5413ControlPanel : public rviz::Panel
 {
   Q_OBJECT
 
@@ -40,7 +40,7 @@ class simplePanel : public rviz::Panel
    *  someone using the class for something else to pass in a parent
    *  widget as they normally would with Qt.
    */
-  simplePanel(QWidget *parent = 0);
+  ME5413ControlPanel(QWidget *parent = 0);
 
   /**
    *  Now we declare overrides of rviz::Panel functions for saving and
@@ -54,18 +54,18 @@ class simplePanel : public rviz::Panel
    *  Here we declare some internal slots.
    */
   private Q_SLOTS:
-    // Assembly Line buttons
-    void on_button_1_1_clicked();
-    void on_button_1_2_clicked();
-    // Packaging Area buttons
-    void on_button_2_1_clicked();
-    void on_button_2_2_clicked();
-    void on_button_2_3_clicked();
-    void on_button_2_4_clicked();
-    // Delivery Vehicle buttons
-    void on_button_3_1_clicked();
-    void on_button_3_2_clicked();
-    void on_button_3_3_clicked();
+    // // Assembly Line buttons
+    // void on_button_1_1_clicked();
+    // void on_button_1_2_clicked();
+    // // Packaging Area buttons
+    // void on_button_2_1_clicked();
+    // void on_button_2_2_clicked();
+    // void on_button_2_3_clicked();
+    // void on_button_2_4_clicked();
+    // // Delivery Vehicle buttons
+    // void on_button_3_1_clicked();
+    // void on_button_3_2_clicked();
+    // void on_button_3_3_clicked();
     // Contorl Buttons
     void on_button_regen_clicked();
     void on_button_clear_clicked();

@@ -30,8 +30,8 @@ Panels:
     Name: Time
     SyncMode: 0
     SyncSource: PointCloud2
-  - Class: rviz_panel::simplePanel
-    Name: simplePanel
+  - Class: rviz_panel::ME5413ControlPanel
+    Name: ME5413ControlPanel
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -780,5 +780,5 @@ Window Geometry:
   Width: 1920
   X: 0
   Y: 0
-  simplePanel:
+  ME5413ControlPanel:
     collapsed: false
