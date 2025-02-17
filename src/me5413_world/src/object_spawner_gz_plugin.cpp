@@ -24,8 +24,6 @@ ObjectSpawner::~ObjectSpawner() {};
   
 void ObjectSpawner::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf)
 {
-  // Create a new transport node
-  // gazebo::client::setup();
   transport::NodePtr node(new transport::Node());
   node->Init(_world->Name());
   clt_delete_objects_ = nh_.serviceClient<gazebo_msgs::DeleteModel>("/gazebo/delete_model");
@@ -45,27 +43,17 @@ void ObjectSpawner::timerCallback(const ros::TimerEvent&)
   return;
 };
 
-void ObjectSpawner::spawnRandomCones()
+void ObjectSpawner::spawnRandomBridge()
 {
-  this->cone_name = "Construction Cone_0";
-
-  msgs::Factory cone_msg;
-  cone_msg.set_sdf_filename("model://construction_cone");
-
+  msgs::Factory bridge_msg;
+  this->bridge_name = "Construction Cone"; // TODO: change this to bridge
+  bridge_msg.set_sdf_filename("model://construction_cone"); // TODO: change this to bridge
+  // bridge_msg.set_sdf_filename("model://bridge");
   std::srand(std::time(0));
-  if (std::rand() % 2 == 0)
-  {
-    msgs::Set(cone_msg.mutable_pose(), ignition::math::Pose3d(
-                ignition::math::Vector3d(12.7, 2.5, 0.1),
-                ignition::math::Quaterniond(0, 0, 0)));
-  }
-  else
-  {
-    msgs::Set(cone_msg.mutable_pose(), ignition::math::Pose3d(
-                ignition::math::Vector3d(16.9, 2.5, 0.1),
-                ignition::math::Quaterniond(0, 0, 0)));
-  }
-  this->pub_factory_->Publish(cone_msg);
+  msgs::Set(bridge_msg.mutable_pose(), ignition::math::Pose3d(
+    ignition::math::Vector3d((static_cast<double>(std::rand()) / RAND_MAX * 0.5 + 0.25) * (MAX_X_COORD - MIN_X_COORD) + MIN_X_COORD, 7.3, 3.0), 
+    ignition::math::Quaterniond(0, 0, 0)));
+  this->pub_factory_->Publish(bridge_msg);
   
   return;
 };
@@ -108,14 +96,14 @@ void ObjectSpawner::spawnRandomBoxes()
   for (int i = 0; i < box_labels.size(); i++)
   {
     const ignition::math::Vector3d point = ignition::math::Vector3d(spacing*(i + 1) + MIN_X_COORD, 0.0, Z_COORD);
-    gazebo::msgs::Factory box_msg;
+    msgs::Factory box_msg;
     const std::string box_name = "number" + std::to_string(box_labels[i]);
     this->box_names.push_back(box_name);
     box_msg.set_sdf_filename("model://" + box_name);
     msgs::Set(box_msg.mutable_pose(), ignition::math::Pose3d(point, ignition::math::Quaterniond(0, 0, 0)));
     this->pub_factory_->Publish(box_msg);
     ROS_DEBUG_STREAM("Generated " << box_name << " at " << point);
-    gazebo::common::Time::MSleep(500);
+    common::Time::MSleep(500);
   }
 
   // Generate random box points
@@ -146,14 +134,14 @@ void ObjectSpawner::spawnRandomBoxes()
     this->box_points.push_back(point);
     
     // Publish gazebo model for this box
-    gazebo::msgs::Factory box_msg;
+    msgs::Factory box_msg;
     const std::string box_name = "number" + std::to_string(boxes[i][0]);
     box_msg.set_sdf_filename("model://" + box_name);
     this->box_names.push_back("number" + std::to_string(boxes[i][0]) + "_" + std::to_string(boxes[i][1]));
     msgs::Set(box_msg.mutable_pose(), ignition::math::Pose3d(point, ignition::math::Quaterniond(0, 0, 0)));
     this->pub_factory_->Publish(box_msg);
     ROS_DEBUG_STREAM("Generated " << box_name << " at " << point);
-    gazebo::common::Time::MSleep(500);
+    common::Time::MSleep(500);
 
     // // Publish rviz marker for this box
     // visualization_msgs::Marker box_marker;
@@ -217,11 +205,11 @@ void ObjectSpawner::deleteObject(const std::string& object_name)
   return;
 };
 
-void ObjectSpawner::deleteCone()
+void ObjectSpawner::deleteBridge()
 {
-  deleteObject(this->cone_name);
-  this->cone_name = "";
-  this->cone_point = ignition::math::Vector3d();
+  deleteObject(this->bridge_name);
+  this->bridge_name = "";
+  this->bridge_point = ignition::math::Vector3d();
 
   return;
 };
@@ -246,15 +234,15 @@ void ObjectSpawner::respawnCmdCallback(const std_msgs::Int16::ConstPtr& respawn_
   const int cmd = respawn_msg->data;
   if (cmd == 0)
   {
-    deleteCone();
+    deleteBridge();
     deleteBoxs();
     ROS_INFO_STREAM("Random Objects Cleared!");
   }
   else if (cmd == 1)
   {
-    deleteCone();
+    deleteBridge();
     deleteBoxs();
-    spawnRandomCones();
+    spawnRandomBridge();
     spawnRandomBoxes();
     ROS_INFO_STREAM("Random Objects Respawned!");
   }

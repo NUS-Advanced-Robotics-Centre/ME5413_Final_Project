@@ -33,8 +33,8 @@ namespace gazebo
 class ObjectSpawner : public WorldPlugin
 {
  public:
-  std::string cone_name;
-  ignition::math::Vector3d cone_point;
+  std::string bridge_name;
+  ignition::math::Vector3d bridge_point;
   std::vector<std::string> box_names;
   std::vector<ignition::math::Vector3d> box_points;
 
@@ -53,10 +53,10 @@ class ObjectSpawner : public WorldPlugin
   visualization_msgs::MarkerArray box_markers_msg_;
   
   void timerCallback(const ros::TimerEvent&);
-  void spawnRandomCones();
+  void spawnRandomBridge();
   void spawnRandomBoxes();
   void deleteObject(const std::string& object_name);
-  void deleteCone();
+  void deleteBridge();
   void deleteBoxs();
   void respawnCmdCallback(const std_msgs::Int16::ConstPtr& respawn_msg);
 };
