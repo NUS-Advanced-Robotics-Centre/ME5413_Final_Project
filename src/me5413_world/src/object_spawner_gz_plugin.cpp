@@ -11,7 +11,7 @@
 namespace gazebo
 {
 
-const int MAX_NUM_BOXES = 10;
+const int NUM_BOX_TYPES = 4;
 const int MIN_X_COORD = 2.0;
 const int MIN_Y_COORD = 11.0;
 const int MAX_X_COORD = 22.0;
@@ -78,14 +78,9 @@ void ObjectSpawner::spawnRandomBoxes()
   this->box_markers_msg_.markers.clear();
   
   // The following two vectors should have the same size:
-  std::vector<int> box_labels = {6, 7, 8, 9}; // can be any number between 1 and 9
-  std::vector<int> box_nums = {1, 2, 3, 4}; // can be any number, but don't go too far
-  if(box_labels.size() != box_nums.size())
-  {
-    ROS_ERROR("The box_labels and box_nums should be of the same size! Stoppping the spawning process");
-    return;
-  }
-  else if (box_labels.size() < 1 || box_nums.size() < 1)
+  std::vector<int> box_labels = {1, 2, 3, 4, 5, 6, 7, 8, 9}; // all possible box labels, between 1 and 9
+  std::vector<int> box_nums = {1, 2, 3, 4, 5}; // can contain any positive number, but maek sure there's only one solution
+  if (box_labels.size() < 1 || box_nums.size() < 1)
   {
     ROS_ERROR("The box_labels and box_nums should not be empty! Stoppping the spawning process");
     return;
@@ -96,6 +91,8 @@ void ObjectSpawner::spawnRandomBoxes()
   std::mt19937 g(rd());
   std::shuffle(box_nums.begin(), box_nums.end(), g);
   std::shuffle(box_labels.begin(), box_labels.end(), g);
+  box_nums = std::vector<int>(box_nums.begin(), box_nums.begin() + NUM_BOX_TYPES);
+  box_labels = std::vector<int>(box_labels.begin(), box_labels.begin() + NUM_BOX_TYPES);
   
   std::vector<std::vector<int>> boxes;
   for (int i = 0; i < box_nums.size(); i++)
