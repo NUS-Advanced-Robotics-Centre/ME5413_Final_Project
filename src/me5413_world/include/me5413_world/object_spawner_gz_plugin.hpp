@@ -11,6 +11,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <random>
+#include <algorithm>
 
 #include <ros/ros.h>
 #include <ros/console.h>
@@ -20,6 +22,8 @@
 #include <ignition/math/Vector3.hh>
 #include <ignition/math/Pose3.hh>
 #include <gazebo/gazebo.hh>
+#include <gazebo/gazebo_client.hh>
+#include <gazebo/transport/transport.hh>
 #include <gazebo/common/common.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo_msgs/DeleteModel.h>
@@ -50,7 +54,7 @@ class ObjectSpawner : public WorldPlugin
   
   void timerCallback(const ros::TimerEvent&);
   void spawnRandomCones();
-  void spawnRandomBoxes(const int num);
+  void spawnRandomBoxes();
   void deleteObject(const std::string& object_name);
   void deleteCone();
   void deleteBoxs();
