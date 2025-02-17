@@ -13,7 +13,7 @@ namespace gazebo
 
 const int MAX_NUM_BOXES = 10;
 const int MIN_X_COORD = 2.0;
-const int MIN_Y_COORD = 9.0;
+const int MIN_Y_COORD = 11.0;
 const int MAX_X_COORD = 22.0;
 const int MAX_Y_COORD = 19.0;
 const int Z_COORD = 3.0;
@@ -77,20 +77,25 @@ void ObjectSpawner::spawnRandomBoxes()
   this->box_points.clear();
   this->box_markers_msg_.markers.clear();
   
-  // if (num > MAX_NUM_BOXES)
-  // {
-  //   ROS_WARN_STREAM("Maximum " << MAX_NUM_BOXES << " boxes allowed!, Spawning " << MAX_NUM_BOXES << " boxes instead");
-  //   num = std::min(num, MAX_NUM_BOXES);
-  // }
+  // The following two vectors should have the same size:
+  std::vector<int> box_labels = {6, 7, 8, 9}; // can be any number between 1 and 9
+  std::vector<int> box_nums = {1, 2, 3, 4}; // can be any number, but don't go too far
+  if(box_labels.size() != box_nums.size())
+  {
+    ROS_ERROR("The box_labels and box_nums should be of the same size! Stoppping the spawning process");
+    return;
+  }
+  else if (box_labels.size() < 1 || box_nums.size() < 1)
+  {
+    ROS_ERROR("The box_labels and box_nums should not be empty! Stoppping the spawning process");
+    return;
+  }
 
-  visualization_msgs::MarkerArray text_markers_msg;
-
-  // Randomise the number of boxes labelled with number 1, 2, 3, 4
-  std::vector<int> box_labels = {1, 2, 3, 4};
-  std::vector<int> box_nums = {1, 2, 3, 4};
+  // Randomise the number of boxes
   std::random_device rd;
   std::mt19937 g(rd());
   std::shuffle(box_nums.begin(), box_nums.end(), g);
+  std::shuffle(box_labels.begin(), box_labels.end(), g);
   
   std::vector<std::vector<int>> boxes;
   for (int i = 0; i < box_nums.size(); i++)
@@ -101,7 +106,23 @@ void ObjectSpawner::spawnRandomBoxes()
     }
   }
 
-  // Generate random box point
+  // Generate destination box points
+  const double spacing = (MAX_X_COORD - MIN_X_COORD)/(box_labels.size() + 1);
+  for (int i = 0; i < box_labels.size(); i++)
+  {
+    const ignition::math::Vector3d point = ignition::math::Vector3d(spacing*(i + 1) + MIN_X_COORD, 0.0, Z_COORD);
+    gazebo::msgs::Factory box_msg;
+    const std::string box_name = "number" + std::to_string(box_labels[i]);
+    this->box_names.push_back(box_name);
+    box_msg.set_sdf_filename("model://" + box_name);
+    msgs::Set(box_msg.mutable_pose(), ignition::math::Pose3d(point, ignition::math::Quaterniond(0, 0, 0)));
+    this->pub_factory_->Publish(box_msg);
+    ROS_DEBUG_STREAM("Generated " << box_name << " at " << point);
+    gazebo::common::Time::MSleep(500);
+  }
+
+  // Generate random box points
+  // visualization_msgs::MarkerArray text_markers_msg;
   for (int i = 0; i < boxes.size(); i++)
   {
     ignition::math::Vector3d point;
@@ -131,62 +152,53 @@ void ObjectSpawner::spawnRandomBoxes()
     gazebo::msgs::Factory box_msg;
     const std::string box_name = "number" + std::to_string(boxes[i][0]);
     box_msg.set_sdf_filename("model://" + box_name);
-    
-    const int box_duplicate_count = boxes[i][1];
-    if (box_duplicate_count == 0)
-    {
-      this->box_names.push_back("number" + std::to_string(boxes[i][0]));
-    }
-    else
-    {
-      this->box_names.push_back("number" + std::to_string(boxes[i][0]) + "_" + std::to_string(boxes[i][1] - 1));
-    }
+    this->box_names.push_back("number" + std::to_string(boxes[i][0]) + "_" + std::to_string(boxes[i][1]));
     msgs::Set(box_msg.mutable_pose(), ignition::math::Pose3d(point, ignition::math::Quaterniond(0, 0, 0)));
     this->pub_factory_->Publish(box_msg);
-    ROS_INFO_STREAM("Generated " << box_name << " at " << point);
+    ROS_DEBUG_STREAM("Generated " << box_name << " at " << point);
     gazebo::common::Time::MSleep(500);
 
-    // Publish rviz marker for this box
-    visualization_msgs::Marker box_marker;
-    box_marker.header.frame_id = "world";
-    box_marker.header.stamp = ros::Time();
-    box_marker.ns = "gazebo";
-    box_marker.id = 2*i;
-    box_marker.type = visualization_msgs::Marker::CUBE;
-    box_marker.action = visualization_msgs::Marker::ADD;
-    box_marker.frame_locked = true;
-    box_marker.lifetime = ros::Duration(0.2);
-    box_marker.pose.position.x = point.X();
-    box_marker.pose.position.y = point.Y();
-    box_marker.pose.position.z = point.Z();
-    box_marker.pose.orientation.x = 0.0;
-    box_marker.pose.orientation.y = 0.0;
-    box_marker.pose.orientation.z = 0.0;
-    box_marker.pose.orientation.w = 1.0;
-    box_marker.scale.x = 0.8;
-    box_marker.scale.y = 0.8;
-    box_marker.scale.z = 0.8;
-    box_marker.color.a = 0.7;
-    box_marker.color.r = static_cast<double>(std::rand()) / RAND_MAX * 0.5 + 0.25;
-    box_marker.color.g = static_cast<double>(std::rand()) / RAND_MAX * 0.5 + 0.25;
-    box_marker.color.b = static_cast<double>(std::rand()) / RAND_MAX * 0.5 + 0.25;
-    this->box_markers_msg_.markers.emplace_back(box_marker);
+    // // Publish rviz marker for this box
+    // visualization_msgs::Marker box_marker;
+    // box_marker.header.frame_id = "world";
+    // box_marker.header.stamp = ros::Time();
+    // box_marker.ns = "gazebo";
+    // box_marker.id = 2*i;
+    // box_marker.type = visualization_msgs::Marker::CUBE;
+    // box_marker.action = visualization_msgs::Marker::ADD;
+    // box_marker.frame_locked = true;
+    // box_marker.lifetime = ros::Duration(0.2);
+    // box_marker.pose.position.x = point.X();
+    // box_marker.pose.position.y = point.Y();
+    // box_marker.pose.position.z = point.Z();
+    // box_marker.pose.orientation.x = 0.0;
+    // box_marker.pose.orientation.y = 0.0;
+    // box_marker.pose.orientation.z = 0.0;
+    // box_marker.pose.orientation.w = 1.0;
+    // box_marker.scale.x = 0.8;
+    // box_marker.scale.y = 0.8;
+    // box_marker.scale.z = 0.8;
+    // box_marker.color.a = 0.7;
+    // box_marker.color.r = static_cast<double>(std::rand()) / RAND_MAX * 0.5 + 0.25;
+    // box_marker.color.g = static_cast<double>(std::rand()) / RAND_MAX * 0.5 + 0.25;
+    // box_marker.color.b = static_cast<double>(std::rand()) / RAND_MAX * 0.5 + 0.25;
+    // this->box_markers_msg_.markers.emplace_back(box_marker);
 
-    visualization_msgs::Marker text_marker = box_marker;
-    text_marker.id = 2*i + 1;
-    text_marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
-    text_marker.text = std::to_string(boxes[i][0]);
-    text_marker.pose.position.z += 0.5;
-    text_marker.scale.z = 0.5;
-    text_marker.color.a = 0.8;
-    text_marker.color.r = 0.0;
-    text_marker.color.g = 0.0;
-    text_marker.color.b = 0.0;
-    text_markers_msg.markers.emplace_back(text_marker);
+    // visualization_msgs::Marker text_marker = box_marker;
+    // text_marker.id = 2*i + 1;
+    // text_marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
+    // text_marker.text = std::to_string(boxes[i][0]);
+    // text_marker.pose.position.z += 0.5;
+    // text_marker.scale.z = 0.5;
+    // text_marker.color.a = 0.8;
+    // text_marker.color.r = 0.0;
+    // text_marker.color.g = 0.0;
+    // text_marker.color.b = 0.0;
+    // text_markers_msg.markers.emplace_back(text_marker);
   }
 
-  // merge the two marker arrays
-  this->box_markers_msg_.markers.insert(this->box_markers_msg_.markers.end(), text_markers_msg.markers.begin(), text_markers_msg.markers.end());
+  // // merge the two marker arrays
+  // this->box_markers_msg_.markers.insert(this->box_markers_msg_.markers.end(), text_markers_msg.markers.begin(), text_markers_msg.markers.end());
 
   return;
 };
