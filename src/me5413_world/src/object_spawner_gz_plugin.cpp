@@ -46,13 +46,14 @@ void ObjectSpawner::timerCallback(const ros::TimerEvent&)
 void ObjectSpawner::spawnRandomBridge()
 {
   msgs::Factory bridge_msg;
-  this->bridge_name = "Construction Cone"; // TODO: change this to bridge
-  bridge_msg.set_sdf_filename("model://construction_cone"); // TODO: change this to bridge
-  // bridge_msg.set_sdf_filename("model://bridge");
+  // this->bridge_name = "Construction Cone"; // TODO: change this to bridge
+  // bridge_msg.set_sdf_filename("model://construction_cone"); // TODO: change this to bridge
+  this->bridge_name = "bridge";
+  bridge_msg.set_sdf_filename("model://bridge");
   std::srand(std::time(0));
   msgs::Set(bridge_msg.mutable_pose(), ignition::math::Pose3d(
-    ignition::math::Vector3d((static_cast<double>(std::rand()) / RAND_MAX * 0.5 + 0.25) * (MAX_X_COORD - MIN_X_COORD) + MIN_X_COORD, 7.3, 3.0), 
-    ignition::math::Quaterniond(0, 0, 0)));
+    ignition::math::Vector3d((static_cast<double>(std::rand()) / RAND_MAX * 0.5 + 0.25) * (MAX_X_COORD - MIN_X_COORD) + MIN_X_COORD, 9.0, 2.6), 
+    ignition::math::Quaterniond(1.57, 0, 0)));
   this->pub_factory_->Publish(bridge_msg);
   
   return;
