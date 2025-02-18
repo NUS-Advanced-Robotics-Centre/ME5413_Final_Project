@@ -1,7 +1,7 @@
 # ME5413_Final_Project
 
 NUS ME5413 Autonomous Mobile Robotics Final Project
-> Authors: [Christina](https://github.com/ldaowen), [Yuhang](https://github.com/yuhang1008), [Dongen](https://github.com/nuslde), and [Shuo](https://github.com/SS47816)
+> Authors: [Christina](https://github.com/ldaowen), [Ziggy](https://github.com/ziggyhuang), [Dongen](https://github.com/nuslde), and [Shuo](https://github.com/SS47816)
 
 ![Ubuntu 20.04](https://img.shields.io/badge/OS-Ubuntu_20.04-informational?style=flat&logo=ubuntu&logoColor=white&color=2bbc8a)
 ![ROS Noetic](https://img.shields.io/badge/Tools-ROS_Noetic-informational?style=flat&logo=ROS&logoColor=white&color=2bbc8a)
@@ -10,7 +10,7 @@ NUS ME5413 Autonomous Mobile Robotics Final Project
 ![GitHub Repo stars](https://img.shields.io/github/stars/NUS-Advanced-Robotics-Centre/ME5413_Final_Project?color=FFE333)
 ![GitHub Repo forks](https://img.shields.io/github/forks/NUS-Advanced-Robotics-Centre/ME5413_Final_Project?color=FFE333)
 
-![cover_image](src/me5413_world/media/gazebo_world.png)
+![cover_image](src/me5413_world/media/gz_world.png)
 
 ## Dependencies
 
@@ -162,19 +162,14 @@ roslaunch me5413_world navigation.launch
 
 ### 2. Using your own map, navigate your robot
 
-* From the starting point, move to the given pose within each area in sequence
-  * Assembly Line 1, 2
-  * Random Box 1, 2, 3, 4
-  * Delivery Vehicle 1, 2, 3
-* We have provided you a GUI in RVIZ that allows you to click and publish these given goal poses to the `/move_base_simple/goal` topic:
+* We have provided you a GUI in RVIZ that allows you to click and generate/clear the random objects in the gazebo world:
   
-  ![rviz_panel_image](src/me5413_world/media/rviz_panel.png)
+  ![rviz_panel_image](src/me5413_world/media/control_panel.png)
 
-* We also provides you four topics (and visualized in RVIZ) that computes the real-time pose error between your robot and the selelcted goal pose:
-  * `/me5413_world/absolute/heading_error` (in degrees, wrt `world` frame, `std_msgs::Float32`)
-  * `/me5413_world/absolute/position_error` (in meters, wrt `world` frame, `std_msgs::Float32`)
-  * `/me5413_world/relative/heading_error` (in degrees, wrt `map` frame, `std_msgs::Float32`)
-  * `/me5413_world/relative/position_error` (in meters wrt `map` frame, `std_msgs::Float32`)
+* From the starting point, move to one of the four given destination boxes at the end of the map:
+  * Count the number of occurance of each type of box (e.g. box 1, 2, 3, 4, the box numbers are randomly generated)
+  * Cross the bridge (the location of the bridge is randomly generated)
+  * Dock at the destination box with the least number of occurance
 
 ## Contribution
 
