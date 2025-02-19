@@ -30,8 +30,9 @@ void ObjectSpawner::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf)
   this->timer_ = nh_.createTimer(ros::Duration(0.1), &ObjectSpawner::timerCallback, this);
   this->pub_factory_ = node->Advertise<msgs::Factory>("~/factory");
   this->sub_respawn_objects_ = nh_.subscribe("/rviz_panel/respawn_objects", 1, &ObjectSpawner::respawnCmdCallback, this);
+  this->sub_cmd_open_bridge_ = nh_.subscribe("/cmd_open_bridge", 1, &ObjectSpawner::openBridgeCallback, this);
   this->pub_rviz_markers_ = nh_.advertise<visualization_msgs::MarkerArray>("/gazebo/ground_truth/box_markers", 0);
-  
+  bridge_open_called_ = false;
   return;
 };
 
@@ -43,19 +44,19 @@ void ObjectSpawner::timerCallback(const ros::TimerEvent&)
   return;
 };
 
+
 void ObjectSpawner::spawnRandomBridge()
 {
   msgs::Factory bridge_msg;
-  // this->bridge_name = "Construction Cone"; // TODO: change this to bridge
-  // bridge_msg.set_sdf_filename("model://construction_cone"); // TODO: change this to bridge
   this->bridge_name = "bridge";
   bridge_msg.set_sdf_filename("model://bridge");
+
   std::srand(std::time(0));
+  bridge_position_ = (static_cast<double>(std::rand()) / RAND_MAX * 0.5 + 0.25) * (MAX_X_COORD - MIN_X_COORD) + MIN_X_COORD;
   msgs::Set(bridge_msg.mutable_pose(), ignition::math::Pose3d(
-    ignition::math::Vector3d((static_cast<double>(std::rand()) / RAND_MAX * 0.5 + 0.25) * (MAX_X_COORD - MIN_X_COORD) + MIN_X_COORD, 9.0, 2.6), 
-    ignition::math::Quaterniond(1.57, 0, 0)));
+    ignition::math::Vector3d(bridge_position_, 9.0, 2.6), 
+    ignition::math::Quaterniond(1.57079632679, 0, 0)));
   this->pub_factory_->Publish(bridge_msg);
-  
   return;
 };
 
@@ -143,7 +144,6 @@ void ObjectSpawner::spawnRandomBoxes()
     this->pub_factory_->Publish(box_msg);
     ROS_DEBUG_STREAM("Generated " << box_name << " at " << point);
     common::Time::MSleep(500);
-
     // // Publish rviz marker for this box
     // visualization_msgs::Marker box_marker;
     // box_marker.header.frame_id = "world";
@@ -215,7 +215,30 @@ void ObjectSpawner::deleteBridge()
   return;
 };
 
-void ObjectSpawner::deleteBoxs()
+void ObjectSpawner::spawnCone()
+{
+  msgs::Factory cone_msg;
+  this->cone_name = "Construction Cone";
+  cone_msg.set_sdf_filename("model://construction_cone");
+
+  msgs::Set(cone_msg.mutable_pose(), ignition::math::Pose3d(
+    ignition::math::Vector3d(bridge_position_ + 0.8, 7.0, 3.0), //centre of bridge
+    ignition::math::Quaterniond(0, 0, 0)));
+  this->pub_factory_->Publish(cone_msg);
+
+  return;
+};
+
+void ObjectSpawner::deleteCone()
+{
+  deleteObject(this->cone_name);
+  this->cone_name = "";
+
+  return;
+};
+
+
+void ObjectSpawner::deleteBoxes()
 {
   this->box_markers_msg_.markers.clear();
   this->pub_rviz_markers_.publish(this->box_markers_msg_);
@@ -236,16 +259,20 @@ void ObjectSpawner::respawnCmdCallback(const std_msgs::Int16::ConstPtr& respawn_
   if (cmd == 0)
   {
     deleteBridge();
-    deleteBoxs();
+    deleteCone();
+    deleteBoxes();
     ROS_INFO_STREAM("Random Objects Cleared!");
   }
   else if (cmd == 1)
   {
+    deleteCone();
     deleteBridge();
-    deleteBoxs();
+    deleteBoxes();
     spawnRandomBridge();
     spawnRandomBoxes();
+    spawnCone();
     ROS_INFO_STREAM("Random Objects Respawned!");
+    bridge_open_called_ = false;
   }
   else
   {
@@ -254,5 +281,30 @@ void ObjectSpawner::respawnCmdCallback(const std_msgs::Int16::ConstPtr& respawn_
 
   return;
 };
+
+void ObjectSpawner::openBridgeCallback(const std_msgs::Bool::ConstPtr& open_bridge_msg)
+{
+  const bool open_bridge = open_bridge_msg->data;
+  if (open_bridge == true)
+  {
+    if (bridge_open_called_ == false)
+    {
+      bridge_open_called_ = true;
+      deleteCone();
+      ROS_INFO_STREAM("Bridge will now open for 10s");
+      common::Time::Sleep(10);
+      spawnCone();
+      ROS_INFO_STREAM("Bridge is now closed, cannot be opened again");
+    }
+    else
+    {
+      ROS_INFO_STREAM("Bridge has been opened before, cannot be opened again");
+    }
+  }
+  else
+  {
+    ROS_INFO_STREAM("Bridge open command is false, nothing to be done");
+  }
+}
 
 } // namespace gazebo
