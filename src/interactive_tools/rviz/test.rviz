@@ -5,7 +5,6 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /LaserScan1
       Splitter Ratio: 0.5
     Tree Height: 844
   - Class: rviz/Selection
@@ -62,6 +61,158 @@ Visualization Manager:
       Namespaces:
         {}
       Queue Size: 100
+      Value: true
+    - Alpha: 1
+      Class: rviz/RobotModel
+      Collision Enabled: false
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        chassis_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_camera:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_camera_beam:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_camera_mount:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_camera_optical:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        front_fender_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_left_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_mount:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        front_right_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        imu_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        mid_mount:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        mid_vlp16_leg1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        mid_vlp16_leg2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        mid_vlp16_leg3:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        mid_vlp16_leg4:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        mid_vlp16_mount:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        mid_vlp16_plate:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        navsat_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rear_fender_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rear_left_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rear_mount:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        rear_right_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        tim551:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        tim551_mount_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        velodyne:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        velodyne_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+      Name: RobotModel
+      Robot Description: robot_description
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
+    - Class: rviz/InteractiveMarkers
+      Enable Transparency: true
+      Enabled: true
+      Name: InteractiveMarkers
+      Show Axes: false
+      Show Descriptions: true
+      Show Visual Aids: false
+      Update Topic: /twist_marker_server/update
       Value: true
     - Class: rviz/Image
       Enabled: true
@@ -131,15 +282,6 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
-    - Class: rviz/InteractiveMarkers
-      Enable Transparency: true
-      Enabled: true
-      Name: InteractiveMarkers
-      Show Axes: false
-      Show Descriptions: true
-      Show Visual Aids: false
-      Update Topic: /twist_marker_server/update
-      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -168,25 +310,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 5.547295570373535
+      Distance: 10
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
-      Field of View: 0.7853981852531433
+      Field of View: 0.6000000238418579
       Focal Point:
-        X: -0.02537125162780285
-        Y: 0.12319156527519226
-        Z: -1.21660315990448
-      Focal Shape Fixed Size: true
+        X: 0
+        Y: 0
+        Z: 0
+      Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.149796724319458
-      Target Frame: <Fixed Frame>
-      Yaw: 3.148566722869873
+      Pitch: 0.699999988079071
+      Target Frame: base_link
+      Yaw: 3.140000104904175
     Saved: ~
 Window Geometry:
   Displays:
@@ -198,7 +340,7 @@ Window Geometry:
     collapsed: false
   ME5413ControlPanel:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd000000040000000000000156000003d7fc020000000afb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d000003d7000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000001600730069006d0070006c006500500061006e0065006c00000001a6000000610000000000000000fb00000024004d004500350034003100330043006f006e00740072006f006c00500061006e0065006c00000003b3000000610000006100000061000000010000012c000003d7fc0200000006fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a0049006d006100670065010000003d000001040000001600fffffffb0000000a00560069006500770073010000014700000266000000a400fffffffb00000024004d004500350034003100330043006f006e00740072006f006c00500061006e0065006c01000003b3000000610000006100000061fb0000001600730069006d0070006c006500500061006e0065006c01000000e7000000610000000000000000fb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000078000000039fc0100000002fb0000000800540069006d0065010000000000000780000003bc00fffffffb0000000800540069006d00650100000000000004500000000000000000000004f2000003d700000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd000000040000000000000156000003d7fc020000000afb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d000003d7000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000001600730069006d0070006c006500500061006e0065006c00000001a6000000610000000000000000fb00000024004d004500350034003100330043006f006e00740072006f006c00500061006e0065006c00000003b3000000610000006100000061000000010000012c000003d7fc0200000006fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a0049006d006100670065010000003d000001450000001600fffffffb0000000a00560069006500770073010000018800000225000000a400fffffffb00000024004d004500350034003100330043006f006e00740072006f006c00500061006e0065006c01000003b3000000610000006100000061fb0000001600730069006d0070006c006500500061006e0065006c01000000e7000000610000000000000000fb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000078000000039fc0100000002fb0000000800540069006d0065010000000000000780000003bc00fffffffb0000000800540069006d00650100000000000004500000000000000000000004f2000003d700000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
