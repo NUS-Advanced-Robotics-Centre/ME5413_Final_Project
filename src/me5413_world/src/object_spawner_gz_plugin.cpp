@@ -218,8 +218,8 @@ void ObjectSpawner::deleteBridge()
 void ObjectSpawner::spawnCone()
 {
   msgs::Factory cone_msg;
-  this->cone_name = "Construction Cone";
-  cone_msg.set_sdf_filename("model://construction_cone");
+  this->cone_name = "Construction Barrel";
+  cone_msg.set_sdf_filename("model://construction_barrel");
 
   msgs::Set(cone_msg.mutable_pose(), ignition::math::Pose3d(
     ignition::math::Vector3d(bridge_position_ + 0.8, 7.0, 3.0), //centre of bridge
