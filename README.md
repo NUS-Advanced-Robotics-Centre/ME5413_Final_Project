@@ -169,6 +169,7 @@ roslaunch me5413_world navigation.launch
 * From the starting point, move to one of the four given destination boxes at the end of the map:
   * Count the number of occurance of each type of box (e.g. box 1, 2, 3, 4, the box numbers are randomly generated)
   * Cross the bridge (the location of the bridge is randomly generated)
+  * Unlock the blockade on the bridge by publishing a `true` message (`std_msgs/Bool`) to the `/cmd_open_bridge` topic
   * Dock at the destination box with the least number of occurance
 
 ## Contribution
