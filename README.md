@@ -148,6 +148,75 @@ roslaunch me5413_world navigation.launch
 
 ![rviz_navigation_image](src/me5413_world/media/rviz_navigation.png)
 
+## Docker Support
+This repository provides Docker support for setting up and managing a ROS Noetic environment with GPU acceleration.
+The docker folder includes the following Dockerfiles to build container images:
+
+#### 1. `nvidia-ros-noetic.Dockerfile`
+This file creates a ROS Noetic image using an NVIDIA CUDA-based Ubuntu base image, providing GPU support for ROS applications.
+
+To build the image,
+
+```bash
+  # From the root of the repository build the GPU accelerated ROS Noetic image
+  docker build -f docker/nvidia-ros-noetic.Dockerfile -t nvidia-ros-noetic .
+```
+
+#### 2. `dev-overlay.Dockerfile`
+
+This file extends the ROS Noetic base image, setting up a development container with the volume-mounted `src` folder
+containing all the packages. Any new packages created in the `src` folder will automatically appear inside the running container.
+
+To build the development image,
+
+```bash
+  # From the root of the repository build the development image
+  docker build -f docker/dev-overlay.Dockerfile -t dev-overlay .
+```
+### Launching the development environment
+The repository includes a `docker-compose.yaml` file in the root directory to simplify launching the development environment. Use the following steps:
+
+1. Allow X11 access for Gazebo
+
+```bash
+  xhost +
+```
+
+2. Start the development environment
+
+```bash
+  docker compose up
+```
+
+### Accessing the development environment
+
+Once the container is running, you can access it using the following commands:
+
+- With `appuser` privilages
+
+```bash
+  docker exec -it dev-overlay bash
+```
+- With `root` privilages
+
+```bash
+  docker exec -it -u 0 dev-overlay bash
+```
+
+### Customizing the development environment
+
+The development environment can be extended by adding custom commands to `docker/dev-overlay.Dockerfile` in the designated section:
+
+```
+  # Put your code here to run additional commands
+  #######################################################################
+
+
+
+
+  #######################################################################
+```
+
 ## Student Tasks
 
 ### 1. Map the environment
