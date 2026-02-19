@@ -14,6 +14,17 @@
 
     <!-- Add our jackal robot into the simulation -->
     <include file="$(find me5413_world)/launch/include/spawn_jackal.launch"/>
+
+
+    <param name="planar_box_description" 
+            command="$(find xacro)/xacro --inorder '$(find me5413_world)/launch/include/planar_box.urdf.xacro'" />
+    
+    <!-- comment the following out if you do not want the big red obstacle for mapping etc-->
+    <node name="spawn_box" pkg="gazebo_ros" type="spawn_model" output="screen"
+            args="-urdf 
+                -param planar_box_description 
+                -model planar_box 
+                -x 6.0 -y 0.0 -z 3.5" />
     
     <!-- Load the destination configuration -->
     <rosparam command="load" file="$(find me5413_world)/config/config.yaml" />

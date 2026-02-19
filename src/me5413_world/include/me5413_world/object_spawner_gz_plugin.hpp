@@ -19,6 +19,8 @@
 #include <std_msgs/Int16.h>
 #include <std_msgs/Bool.h>
 #include <visualization_msgs/MarkerArray.h>
+#include <geometry_msgs/Twist.h>
+#include <nav_msgs/Odometry.h>
 
 #include <ignition/math/Vector3.hh>
 #include <ignition/math/Pose3.hh>
@@ -53,6 +55,8 @@ class ObjectSpawner : public WorldPlugin
   ros::Subscriber sub_respawn_objects_;
   ros::Subscriber sub_cmd_open_bridge_;
   ros::Publisher pub_rviz_markers_;
+  ros::Publisher pub_box_cmd_vel_;
+  ros::Subscriber sub_box_odom_;
 
   visualization_msgs::MarkerArray box_markers_msg_;
 
@@ -71,6 +75,7 @@ class ObjectSpawner : public WorldPlugin
   void deleteBoxes();
   void respawnCmdCallback(const std_msgs::Int16::ConstPtr& respawn_msg);
   void openBridgeCallback(const std_msgs::Bool::ConstPtr& open_bridge_msg);
+  void boxOdomCallback(const nav_msgs::Odometry::ConstPtr& msg);
 };
 
 // Register this plugin with the simulator

@@ -36,7 +36,9 @@ void ObjectSpawner::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf)
   this->timer_ = nh_.createTimer(ros::Duration(0.1), &ObjectSpawner::timerCallback, this);
   this->pub_factory_ = node->Advertise<msgs::Factory>("~/factory");
   this->sub_respawn_objects_ = nh_.subscribe("/rviz_panel/respawn_objects", 1, &ObjectSpawner::respawnCmdCallback, this);
-  this->sub_cmd_open_bridge_ = nh_.subscribe("/cmd_open_bridge", 1, &ObjectSpawner::openBridgeCallback, this);
+  this->sub_cmd_open_bridge_ = nh_.subscribe("/cmd_unblock", 1, &ObjectSpawner::openBridgeCallback, this);
+  this->pub_box_cmd_vel_ = nh_.advertise<geometry_msgs::Twist>("/box_cmd_vel", 10);
+  this->sub_box_odom_ = nh_.subscribe("/box_odom", 10, &ObjectSpawner::boxOdomCallback, this);
   this->pub_rviz_markers_ = nh_.advertise<visualization_msgs::MarkerArray>("/gazebo/ground_truth/box_markers", 0);
   bridge_open_called_ = false;
   return;
@@ -137,7 +139,7 @@ void ObjectSpawner::spawnRandomBoxes()
       for (const auto& pre_point : this->box_points)
       {
         const double dist = (point - pre_point).Length();
-        if (dist <= 1.2)
+        if (dist <= 1.5)
         {
           has_collision = true;
           break;
@@ -351,20 +353,38 @@ void ObjectSpawner::openBridgeCallback(const std_msgs::Bool::ConstPtr& open_brid
     {
       bridge_open_called_ = true;
       deleteCone();
-      ROS_INFO_STREAM("Bridge will now open for 10s");
+      ROS_INFO_STREAM("Cone will be opened for 10s");
       common::Time::Sleep(10);
       spawnCone();
-      ROS_INFO_STREAM("Bridge is now closed, cannot be opened again");
+      ROS_INFO_STREAM("Cone is now placed back, cannot be removed again");
     }
     else
     {
-      ROS_INFO_STREAM("Bridge has been opened before, cannot be opened again");
+      ROS_INFO_STREAM("Cone has been removed before, cannot be removed again");
     }
   }
   else
   {
-    ROS_INFO_STREAM("Bridge open command is false, nothing to be done");
+    ROS_INFO_STREAM("Cone removal command is false, do nothing...");
   }
+}
+
+void ObjectSpawner::boxOdomCallback(const nav_msgs::Odometry::ConstPtr& msg) 
+{
+  double current_y = msg->pose.pose.position.y;
+  static bool moving_positive = true;
+  const double SPEED = 2.0;
+
+  if (current_y >= 8.0) {
+    moving_positive = false;
+  } else if (current_y <= -8.0) {
+    moving_positive = true;
+  }
+
+  geometry_msgs::Twist cmd;
+  cmd.linear.y = moving_positive ? SPEED : -SPEED;
+
+  pub_box_cmd_vel_.publish(cmd);
 }
 
 } // namespace gazebo

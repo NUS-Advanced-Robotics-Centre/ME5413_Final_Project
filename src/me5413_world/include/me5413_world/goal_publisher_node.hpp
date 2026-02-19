@@ -4,6 +4,8 @@
 
  * Declarations for GoalPublisherNode class
  
+ deprecated for 2526
+
 **/
 
 #ifndef GOAL_PUBLISHER_NODE_H_

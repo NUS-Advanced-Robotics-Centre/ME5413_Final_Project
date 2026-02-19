@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<robot name="planar_cylinder">
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <!-- Radius 0.5m (width 1.0m), Length 1.8m -->
+        <cylinder radius="0.5" length="1.8"/>
+      </geometry>
+      <material name="red">
+        <color rgba="1.0 0.0 0.0 1.0"/>
+      </material>
+    </visual>
+
+    <collision>
+      <geometry>
+        <cylinder radius="0.5" length="1.8"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <!-- Mass 1000kg requires much higher inertia for stability -->
+      <mass value="1000.0"/>
+      <inertia ixx="332.5" ixy="0" ixz="0" iyy="332.5" iyz="0" izz="125.0"/>
+    </inertial>
+  </link>
+
+  <gazebo reference="base_link">
+    <material>Gazebo/Red</material>
+    <mu1>0.0</mu1> 
+    <mu2>0.0</mu2> 
+    <kp>1000000.0</kp> 
+    <kd>1.0</kd> 
+  </gazebo>
+
+  <gazebo>
+    <plugin name="object_controller" filename="libgazebo_ros_planar_move.so">
+      <commandTopic>box_cmd_vel</commandTopic>
+      <odometryTopic>box_odom</odometryTopic>
+      <odometryFrame>box_odom</odometryFrame>
+      <odometryRate>20.0</odometryRate>
+      <robotBaseFrame>box_base_link</robotBaseFrame>
+    </plugin>
+  </gazebo>
+</robot>
