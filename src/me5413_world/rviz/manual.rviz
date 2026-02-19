@@ -219,7 +219,7 @@ Visualization Manager:
       Enabled: true
       Name: InteractiveMarkers
       Show Axes: false
-      Show Descriptions: true
+      Show Descriptions: false
       Show Visual Aids: false
       Update Topic: /twist_marker_server/update
       Value: true
@@ -264,8 +264,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 9.224787712097168
-            Min Value: -2.3244564533233643
+            Max Value: 6.739899158477783
+            Min Value: -3.4830973148345947
             Value: true
           Axis: X
           Channel Name: intensity
@@ -292,8 +292,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 4.826661586761475
-            Min Value: -0.07017484307289124
+            Max Value: 2.337092399597168
+            Min Value: -0.070546954870224
             Value: true
           Axis: Z
           Channel Name: intensity

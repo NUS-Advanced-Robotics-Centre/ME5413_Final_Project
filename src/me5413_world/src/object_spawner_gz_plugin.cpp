@@ -12,11 +12,17 @@ namespace gazebo
 {
 
 const int NUM_BOX_TYPES = 4;
-const int MIN_X_COORD = 2.0;
-const int MIN_Y_COORD = 11.0;
-const int MAX_X_COORD = 22.0;
-const int MAX_Y_COORD = 19.0;
-const int Z_COORD = 3.0;
+const double BOX_SIZE = 0.8;
+const double MIN_X_COORD = -18.0;
+const double MIN_Y_COORD = -8.0;
+const double MAX_X_COORD = -2.0;
+const double MAX_Y_COORD = 8.0;
+const double Z_COORD = 0;
+const double DEST_MAX_X_COORD = 2.5;
+const double DEST_MIN_X_COORD = 2.5;
+const double DEST_MAX_Y_COORD = 10.0;
+const double DEST_MIN_Y_COORD = -10.0;
+const double DEST_Z_COORD = 2.6;
 
 ObjectSpawner::ObjectSpawner() : WorldPlugin() {};
 
@@ -45,7 +51,7 @@ void ObjectSpawner::timerCallback(const ros::TimerEvent&)
 };
 
 
-void ObjectSpawner::spawnRandomBridge()
+void ObjectSpawner::spawnRandomBridge() //deprecate for 2526
 {
   msgs::Factory bridge_msg;
   this->bridge_name = "bridge";
@@ -55,7 +61,7 @@ void ObjectSpawner::spawnRandomBridge()
   bridge_position_ = (static_cast<double>(std::rand()) / RAND_MAX * 0.5 + 0.25) * (MAX_X_COORD - MIN_X_COORD) + MIN_X_COORD;
   msgs::Set(bridge_msg.mutable_pose(), ignition::math::Pose3d(
     ignition::math::Vector3d(bridge_position_, 9.0, 2.6), 
-    ignition::math::Quaterniond(1.57079632679, 0, 0)));
+    ignition::math::Quaterniond(0, 0, -1.5708)));
   this->pub_factory_->Publish(bridge_msg);
   return;
 };
@@ -94,15 +100,15 @@ void ObjectSpawner::spawnRandomBoxes()
   }
 
   // Generate destination box points
-  const double spacing = (MAX_X_COORD - MIN_X_COORD)/(box_labels.size() + 1);
+  const double spacing = (DEST_MAX_Y_COORD - DEST_MIN_Y_COORD)/(box_labels.size());
   for (int i = 0; i < box_labels.size(); i++)
   {
-    const ignition::math::Vector3d point = ignition::math::Vector3d(spacing*(i + 1) + MIN_X_COORD, 0.0, Z_COORD);
+    const ignition::math::Vector3d point = ignition::math::Vector3d(DEST_MAX_X_COORD , spacing*(i+0.5) + DEST_MIN_Y_COORD, DEST_Z_COORD + + BOX_SIZE/2);
     msgs::Factory box_msg;
     const std::string box_name = "number" + std::to_string(box_labels[i]);
     this->box_names.push_back(box_name);
     box_msg.set_sdf_filename("model://" + box_name);
-    msgs::Set(box_msg.mutable_pose(), ignition::math::Pose3d(point, ignition::math::Quaterniond(0, 0, 0)));
+    msgs::Set(box_msg.mutable_pose(), ignition::math::Pose3d(point, ignition::math::Quaterniond(0, 0, -1.5708)));
     this->pub_factory_->Publish(box_msg);
     ROS_DEBUG_STREAM("Generated " << box_name << " at " << point);
     common::Time::MSleep(500);
@@ -120,7 +126,14 @@ void ObjectSpawner::spawnRandomBoxes()
       has_collision = false;
       point = ignition::math::Vector3d(static_cast<double>(std::rand()) / RAND_MAX * (MAX_X_COORD - MIN_X_COORD) + MIN_X_COORD,
                                        static_cast<double>(std::rand()) / RAND_MAX * (MAX_Y_COORD - MIN_Y_COORD) + MIN_Y_COORD,
-                                       Z_COORD);
+                                       Z_COORD + BOX_SIZE/2);
+      
+      if (std::abs(point.X() - (-10.0)) <= 2.0)
+      {
+        has_collision = true;
+        continue;
+      }
+
       for (const auto& pre_point : this->box_points)
       {
         const double dist = (point - pre_point).Length();
@@ -140,7 +153,7 @@ void ObjectSpawner::spawnRandomBoxes()
     const std::string box_name = "number" + std::to_string(boxes[i][0]);
     box_msg.set_sdf_filename("model://" + box_name);
     this->box_names.push_back("number" + std::to_string(boxes[i][0]) + "_" + std::to_string(boxes[i][1]));
-    msgs::Set(box_msg.mutable_pose(), ignition::math::Pose3d(point, ignition::math::Quaterniond(0, 0, 0)));
+    msgs::Set(box_msg.mutable_pose(), ignition::math::Pose3d(point, ignition::math::Quaterniond(0, 0, -1.5708)));
     this->pub_factory_->Publish(box_msg);
     ROS_DEBUG_STREAM("Generated " << box_name << " at " << point);
     common::Time::MSleep(500);
@@ -168,7 +181,7 @@ void ObjectSpawner::spawnRandomBoxes()
     // box_marker.color.r = static_cast<double>(std::rand()) / RAND_MAX * 0.5 + 0.25;
     // box_marker.color.g = static_cast<double>(std::rand()) / RAND_MAX * 0.5 + 0.25;
     // box_marker.color.b = static_cast<double>(std::rand()) / RAND_MAX * 0.5 + 0.25;
-    // this->box_markers_msg_.markers.emplace_back(box_marker);
+    // this->box_markers_msg_.markers.emplace_baccommon::Time::MSleep(200);k(box_marker);
 
     // visualization_msgs::Marker text_marker = box_marker;
     // text_marker.id = 2*i + 1;
@@ -185,7 +198,7 @@ void ObjectSpawner::spawnRandomBoxes()
 
   // // merge the two marker arrays
   // this->box_markers_msg_.markers.insert(this->box_markers_msg_.markers.end(), text_markers_msg.markers.begin(), text_markers_msg.markers.end());
-
+  ROS_INFO_STREAM("Random Boxes Spawned!");
   return;
 };
 
@@ -206,7 +219,7 @@ void ObjectSpawner::deleteObject(const std::string& object_name)
   return;
 };
 
-void ObjectSpawner::deleteBridge()
+void ObjectSpawner::deleteBridge()  //deprecated for 2526
 {
   deleteObject(this->bridge_name);
   this->bridge_name = "";
@@ -218,14 +231,14 @@ void ObjectSpawner::deleteBridge()
 void ObjectSpawner::spawnCone()
 {
   msgs::Factory cone_msg;
-  this->cone_name = "Construction Barrel";
   cone_msg.set_sdf_filename("model://construction_barrel");
+  this->cone_name = "Construction Barrel";
 
   msgs::Set(cone_msg.mutable_pose(), ignition::math::Pose3d(
-    ignition::math::Vector3d(bridge_position_ + 0.8, 7.0, 3.0), //centre of bridge
+    ignition::math::Vector3d(-15, -10, 0.01),
     ignition::math::Quaterniond(0, 0, 0)));
   this->pub_factory_->Publish(cone_msg);
-
+  ROS_INFO_STREAM("Cone Spawned!");
   return;
 };
 
@@ -233,7 +246,45 @@ void ObjectSpawner::deleteCone()
 {
   deleteObject(this->cone_name);
   this->cone_name = "";
+  ROS_INFO_STREAM("Cone Deleted!");
+  return;
+};
 
+void ObjectSpawner::spawnRandomCone()
+{
+  msgs::Factory random_cone_msg;
+  random_cone_msg.set_sdf_filename("model://construction_cone");
+  this->random_cone_name = "Construction Cone";
+
+
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::bernoulli_distribution d(0.5);
+  bool is_top = d(gen);
+  int random_cone_y;
+
+  if (is_top == true)
+  {
+    random_cone_y = 5.0;
+  }
+  else 
+  {
+    random_cone_y = -5.0;
+  }
+
+  msgs::Set(random_cone_msg.mutable_pose(), ignition::math::Pose3d(
+    ignition::math::Vector3d(12, random_cone_y, DEST_Z_COORD),
+    ignition::math::Quaterniond(0, 0, 0)));
+  this->pub_factory_->Publish(random_cone_msg);
+  ROS_INFO_STREAM("Random Cone Spawned!");
+  return;
+};
+
+void ObjectSpawner::deleteRandomCone()
+{
+  deleteObject(this->random_cone_name);
+  this->random_cone_name = "";
+  ROS_INFO_STREAM("Random Cone Deleted!");
   return;
 };
 
@@ -249,7 +300,7 @@ void ObjectSpawner::deleteBoxes()
   }
   this->box_names.clear();
   this->box_points.clear();
-
+  ROS_INFO_STREAM("Random Boxes Deleted!");
   return;
 };
 
@@ -258,19 +309,28 @@ void ObjectSpawner::respawnCmdCallback(const std_msgs::Int16::ConstPtr& respawn_
   const int cmd = respawn_msg->data;
   if (cmd == 0)
   {
-    deleteBridge();
+    // deleteBridge();
     deleteCone();
+    common::Time::MSleep(500);
+    deleteRandomCone();
+    common::Time::MSleep(500);
     deleteBoxes();
     ROS_INFO_STREAM("Random Objects Cleared!");
   }
   else if (cmd == 1)
   {
     deleteCone();
-    deleteBridge();
+    common::Time::MSleep(500);
+    deleteRandomCone();
+    common::Time::MSleep(500);
     deleteBoxes();
-    spawnRandomBridge();
-    spawnRandomBoxes();
+    //deleteBridge();
+    //spawnRandomBridge();
+    spawnRandomCone();
+    common::Time::MSleep(500);
     spawnCone();
+    common::Time::MSleep(500);
+    spawnRandomBoxes();
     ROS_INFO_STREAM("Random Objects Respawned!");
     bridge_open_called_ = false;
   }

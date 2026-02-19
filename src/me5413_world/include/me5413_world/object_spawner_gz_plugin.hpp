@@ -36,6 +36,7 @@ class ObjectSpawner : public WorldPlugin
  public:
   std::string bridge_name;
   std::string cone_name;
+  std::string random_cone_name;
   ignition::math::Vector3d bridge_point; //@shuo is this one still needed?
   std::vector<std::string> box_names;
   std::vector<ignition::math::Vector3d> box_points;
@@ -59,12 +60,14 @@ class ObjectSpawner : public WorldPlugin
   double bridge_position_;
   
   void timerCallback(const ros::TimerEvent&);
-  void spawnRandomBridge();
+  void spawnRandomBridge();  //deprecated for 2526
   void spawnRandomBoxes();
   void deleteObject(const std::string& object_name);
-  void deleteBridge();
+  void deleteBridge();  //not used for 2526
   void deleteCone();
+  void deleteRandomCone();
   void spawnCone();
+  void spawnRandomCone();
   void deleteBoxes();
   void respawnCmdCallback(const std_msgs::Int16::ConstPtr& respawn_msg);
   void openBridgeCallback(const std_msgs::Bool::ConstPtr& open_bridge_msg);

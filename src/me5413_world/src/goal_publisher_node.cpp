@@ -2,7 +2,9 @@
 
  * Copyright (C) 2023 SS47816
 
- * ROS Node for publishing goal poses 
+ * ROS Node for publishing goal poses
+
+ deprecated for 2526
  
 **/
 

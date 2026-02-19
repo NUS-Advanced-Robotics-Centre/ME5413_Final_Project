@@ -88,10 +88,10 @@
       <heading_deg>0</heading_deg>
     </spherical_coordinates>
     <state world_name='default'>
-      <sim_time>902 551000000</sim_time>
-      <real_time>41 487319335</real_time>
-      <wall_time>1771524969 805082412</wall_time>
-      <iterations>41209</iterations>
+      <sim_time>1240 55000000</sim_time>
+      <real_time>529 181927325</real_time>
+      <wall_time>1771526247 909353382</wall_time>
+      <iterations>337504</iterations>
       <model name='ground_plane'>
         <pose>0 0 0 0 -0 0</pose>
         <scale>1 1 1</scale>
@@ -103,37 +103,37 @@
         </link>
       </model>
       <model name='jackal'>
-        <pose>-22.4603 -7.49998 0.063498 0 3e-06 -2e-06</pose>
+        <pose>-22.3592 -7.49997 0.063496 -1e-06 3e-06 -2.1e-05</pose>
         <scale>1 1 1</scale>
         <link name='base_link'>
-          <pose>-22.4603 -7.49998 0.063498 0 3e-06 -2e-06</pose>
-          <velocity>0.000202 1e-06 2e-05 1e-06 -1.8e-05 -0</velocity>
-          <acceleration>1e-06 -0 -0 0 -0 0</acceleration>
-          <wrench>1.3e-05 -0 -0 0 -0 0</wrench>
+          <pose>-22.3592 -7.49997 0.063496 -1e-06 3e-06 -2.1e-05</pose>
+          <velocity>0.000177 -0 1e-05 1e-06 -1.8e-05 -0</velocity>
+          <acceleration>-2e-06 -0 -0 0 -0 0</acceleration>
+          <wrench>-3.9e-05 -0 -0 0 -0 0</wrench>
         </link>
         <link name='front_left_wheel_link'>
-          <pose>-22.3293 -7.31219 0.097997 -8e-06 0.423657 -6e-06</pose>
-          <velocity>0.000202 1e-06 2.1e-05 -1.2e-05 0.001963 3e-06</velocity>
-          <acceleration>1e-06 -0 -0 0 7e-06 0</acceleration>
-          <wrench>0 -0 -0 0 -0 0</wrench>
+          <pose>-22.2282 -7.31218 0.097998 -0.000124 1.45314 -0.000145</pose>
+          <velocity>0.000178 0 1e-06 -2e-06 0.00165 2e-06</velocity>
+          <acceleration>-2e-06 -0 -0 0 -2.2e-05 0</acceleration>
+          <wrench>-1e-06 -0 -0 0 -0 0</wrench>
         </link>
         <link name='front_right_wheel_link'>
-          <pose>-22.3293 -7.68778 0.097997 -7e-06 0.423412 -6e-06</pose>
-          <velocity>0.000202 1e-06 2e-05 -1.1e-05 0.001965 2e-06</velocity>
-          <acceleration>1e-06 -0 -0 0 7e-06 0</acceleration>
-          <wrench>0 -0 -0 0 -0 0</wrench>
+          <pose>-22.2282 -7.68777 0.097998 -0.000113 1.45282 -0.000135</pose>
+          <velocity>0.000178 0 1e-06 -2e-06 0.001653 2e-06</velocity>
+          <acceleration>-2e-06 -0 -0 0 -2.2e-05 0</acceleration>
+          <wrench>-1e-06 -0 -0 0 -0 0</wrench>
         </link>
         <link name='rear_left_wheel_link'>
-          <pose>-22.5913 -7.31219 0.097998 -1e-05 0.422656 -7e-06</pose>
-          <velocity>0.000201 1e-06 1.7e-05 -1.1e-05 0.001975 2e-06</velocity>
-          <acceleration>1e-06 -0 -0 0 7e-06 0</acceleration>
-          <wrench>0 -0 -0 0 -0 0</wrench>
+          <pose>-22.4902 -7.31217 0.097999 -0.000139 1.45216 -0.00016</pose>
+          <velocity>0.000178 0 1e-06 -1e-06 0.00166 1e-06</velocity>
+          <acceleration>-2e-06 -0 -0 0 -2.2e-05 0</acceleration>
+          <wrench>-1e-06 -0 -0 0 -0 0</wrench>
         </link>
         <link name='rear_right_wheel_link'>
-          <pose>-22.5913 -7.68778 0.097998 -9e-06 0.422502 -7e-06</pose>
-          <velocity>0.000201 1e-06 1.6e-05 -1e-05 0.001977 1e-06</velocity>
-          <acceleration>1e-06 -0 -0 0 7e-06 0</acceleration>
-          <wrench>0 -0 -0 0 -0 0</wrench>
+          <pose>-22.4902 -7.68776 0.097999 -0.000127 1.45192 -0.000148</pose>
+          <velocity>0.000177 0 1e-06 -1e-06 0.001664 1e-06</velocity>
+          <acceleration>-2e-06 -0 -0 0 -2.2e-05 0</acceleration>
+          <wrench>-1e-06 -0 -0 0 -0 0</wrench>
         </link>
       </model>
       <model name='smart_house_3_0'>
@@ -476,7 +476,7 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose>-0.167596 -27.8056 50.1019 0 1.0978 1.55965</pose>
+        <pose>-4.69919 -16.3979 68.0648 0 1.3498 1.53565</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
