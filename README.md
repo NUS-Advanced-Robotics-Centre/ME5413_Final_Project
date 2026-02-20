@@ -175,29 +175,44 @@ roslaunch me5413_world navigation.launch
   ![task_image](src/me5413_world/media/overview2526.png)
 
 * Please ensure the objects have been successfully generated at the start of each run
+
 * On the lower floor, count the number of occurance of each type of numbered box (e.g. box 1, 2, 3, 4, the box numbers are randomly generated)
+
 * Unblock the exit from the lower level by publishing a `true` message (`std_msgs/Bool`) to the `/cmd_unblock` topic to remove the orange barrel
   * Note that the exit can only be unblocked once and the unblocked time lasts for 10s
 * Exit the lower level
+
 * Go up the ramp to the upper level
+
 * Navigate past the first two corridors
+
 * At the wall with the two gaps, an orange traffic cone will be randomly placed in one of them closing the entrance, use the other door to navigate into the upper floor main room
+
 * Avoid the simulated person (represented by the moving red cylinder) 
+
 * Finally, stop the Jackal in the room containing the numbered box with the least number of occurance
+
 * Please do not use any of the ground truth topics such as `/gazebo/ground_truth/state` or `/box_odom`
 
 ### 3. Submission
 
 Please submit the following for the project:
   * Code to be submitted via your own Github repo link (Please make the repo public during submission)
+
   * Demo Video of your robot completing the tasks autonomously in a single run
+
   * Generated map files
+
   * Presentation (10 minutes), live demo of your robot (5 minutes), Q&A (3 minutes)
+
   * Report of max 10 pages (Please be concise)
+
   * In your report and presentations, please cover the following:
     * Perception, mapping & localization, navigation solutions
     * Challenge(s) faced and how you overcame them
-  * Interesting ways to solve the challenges and well documented github commits will be much appreciated by the TAs
+
+  * Interesting ways to solve the challenges and well documented Github commits will be much appreciated by the TAs
+
   * Also there is a hidden "5413" in the simulation, kudos to those who managed to map it in as well!
 
 ## Contribution
