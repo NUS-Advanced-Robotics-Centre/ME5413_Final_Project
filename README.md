@@ -61,6 +61,9 @@ cd ME5413_Final_Project
 # Install all dependencies
 rosdep install --from-paths src --ignore-src -r -y
 
+# Sometimes there might be missing dependencies such as sensor drivers for the simulation, if needed run the following to install (Thanks Zewen)
+sudo apt install -y ros-noetic-sick-tim ros-noetic-lms1xx ros-noetic-velodyne-description ros-noetic-pointgrey-camera-description ros-noetic-jackal-control
+
 # Build
 catkin_make
 # Source 
