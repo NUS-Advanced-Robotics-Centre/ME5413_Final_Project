@@ -1,6 +1,6 @@
 # ME5413_Final_Project
 
-NUS ME5413 Autonomous Mobile Robotics Final Project
+NUS ME5413 Autonomous Mobile Robotics Final Project AY25/26
 > Authors: [Christina](https://github.com/ldaowen), [Ziggy](https://github.com/ziggyhuang), [Dongen](https://github.com/nuslde), and [Shuo](https://github.com/SS47816)
 
 ![Ubuntu 20.04](https://img.shields.io/badge/OS-Ubuntu_20.04-informational?style=flat&logo=ubuntu&logoColor=white&color=2bbc8a)
@@ -116,7 +116,7 @@ roslaunch me5413_world manual.launch
 
 ![rviz_manual_image](src/me5413_world/media/rviz_manual.png)
 
-### 2. Mapping
+### 2. Mapping (Naive Version)
 
 After launching **Step 0**, in the second terminal:
 
@@ -135,7 +135,7 @@ rosrun map_server map_saver -f my_map map:=/map
 
 ![rviz_nmapping_image](src/me5413_world/media/rviz_mapping.png)
 
-### 3. Navigation
+### 3. Navigation (Incomplete Version)
 
 Once completed **Step 2** mapping and saved your map, quit the mapping process.
 
@@ -164,9 +164,7 @@ roslaunch me5413_world navigation.launch
 * You may operate the robot manually for mapping
 * You may want to remove all the moving/random objects in the environment by using the panel and/or commenting out some code in the launch file
 * We have provided you a GUI in RVIZ that allows you to click and generate/clear the random objects in the gazebo world:
-  
   ![rviz_panel_image](src/me5413_world/media/control_panel.png)
-
 * You may want to use tools like [EVO](https://github.com/MichaelGrupp/evo) to quantitatively evaluate the performance of your SLAM algorithm.
 * Verify your SLAM accuracy by comparing your odometry with the published `/gazebo/ground_truth/state` topic (`nav_msgs::Odometry`), which contains the ground truth odometry of the robot.
 
@@ -175,44 +173,30 @@ roslaunch me5413_world navigation.launch
   ![task_image](src/me5413_world/media/overview2526.png)
 
 * Please ensure the objects have been successfully generated at the start of each run
-
 * On the lower floor, count the number of occurance of each type of numbered box (e.g. box 1, 2, 3, 4, the box numbers are randomly generated)
-
 * Unblock the exit from the lower level by publishing a `true` message (`std_msgs/Bool`) to the `/cmd_unblock` topic to remove the orange barrel
   * Note that the exit can only be unblocked once and the unblocked time lasts for 10s
 * Exit the lower level
-
 * Go up the ramp to the upper level
-
 * Navigate past the first two corridors
-
 * At the wall with the two gaps, an orange traffic cone will be randomly placed in one of them closing the entrance, use the other door to navigate into the upper floor main room
-
 * Avoid the simulated person (represented by the moving red cylinder) 
-
 * Finally, stop the Jackal in the room containing the numbered box with the least number of occurance
-
 * Please do not use any of the ground truth topics such as `/gazebo/ground_truth/state` or `/box_odom`
 
-### 3. Submission
+### 3. Submission (12 April 2026, 2359 HRS)
 
 Please submit the following for the project:
   * Code to be submitted via your own Github repo link (Please make the repo public during submission)
-
   * Demo Video of your robot completing the tasks autonomously in a single run
-
   * Generated map files
-
   * Presentation (10 minutes), live demo of your robot (5 minutes), Q&A (3 minutes)
-
+    * Please note that we will use the submitted presentation slides during the in-person presentation on 17 April
   * Report of max 10 pages (Please be concise)
-
-  * In your report and presentations, please cover the following:
+  * In your report and presentation, please cover the following:
     * Perception, mapping & localization, navigation solutions
     * Challenge(s) faced and how you overcame them
-
   * Interesting ways to solve the challenges and well documented Github commits will be much appreciated by the TAs
-
   * Also there is a hidden "5413" in the simulation, kudos to those who managed to map it in as well!
 
 ## Contribution
@@ -221,7 +205,7 @@ If you managed to find any bugs, you are welcome to contribute to this repo by o
 
 If you require any clarifications on the task or to operate the simulation, please raise them on Canvas
 
-We are following:
+We are following (as much as possible):
 
 * [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html),
 * [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#main),
