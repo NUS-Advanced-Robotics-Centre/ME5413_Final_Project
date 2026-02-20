@@ -10,7 +10,7 @@ NUS ME5413 Autonomous Mobile Robotics Final Project
 ![GitHub Repo stars](https://img.shields.io/github/stars/NUS-Advanced-Robotics-Centre/ME5413_Final_Project?color=FFE333)
 ![GitHub Repo forks](https://img.shields.io/github/forks/NUS-Advanced-Robotics-Centre/ME5413_Final_Project?color=FFE333)
 
-![cover_image](src/me5413_world/media/gz_world.png)
+![cover_image](src/me5413_world/media/overview2526.png)
 
 ## Dependencies
 
@@ -152,29 +152,59 @@ roslaunch me5413_world navigation.launch
 
 ### 1. Map the environment
 
-* You may use any SLAM algorithm you like, any type:
-  * 2D LiDAR
-  * 3D LiDAR
-  * Vision
-  * Multi-sensor
-* Verify your SLAM accuracy by comparing your odometry with the published `/gazebo/ground_truth/state` topic (`nav_msgs::Odometry`), which contains the gournd truth odometry of the robot.
-* You may want to use tools like [EVO](https://github.com/MichaelGrupp/evo) to quantitatively evaluate the performance of your SLAM algorithm.
-
-### 2. Using your own map, navigate your robot
-
+* You may modify your Jackal robot to use other sensors, but please be realistic (i.e. no camera in the sky, subscribing to gazebo "ground truths")
+* Also in the context of ME5413, please keep to the Jackal base robot (i.e. no drones, humanoids, robot dog...)
+* You may use any SLAM algorithm you like, with any type of sensors:
+  * 2D LiDAR(s)
+  * 3D LiDAR(s)
+  * Vision Sensor(s)
+  * IMU(s)
+  * Fused Multi-sensors
+  * And any other combination...
+* You may operate the robot manually for mapping
+* You may want to remove all the moving/random objects in the environment by using the panel and/or commenting out some code in the launch file
 * We have provided you a GUI in RVIZ that allows you to click and generate/clear the random objects in the gazebo world:
   
   ![rviz_panel_image](src/me5413_world/media/control_panel.png)
 
-* From the starting point, move to one of the four given destination boxes at the end of the map:
-  * Count the number of occurance of each type of box (e.g. box 1, 2, 3, 4, the box numbers are randomly generated)
-  * Cross the bridge (the location of the bridge is randomly generated)
-  * Unlock the blockade on the bridge by publishing a `true` message (`std_msgs/Bool`) to the `/cmd_open_bridge` topic
-  * Dock at the destination box with the least number of occurance
+* You may want to use tools like [EVO](https://github.com/MichaelGrupp/evo) to quantitatively evaluate the performance of your SLAM algorithm.
+* Verify your SLAM accuracy by comparing your odometry with the published `/gazebo/ground_truth/state` topic (`nav_msgs::Odometry`), which contains the ground truth odometry of the robot.
+
+### 2. Using your own map, autonomously navigate your robot to complete the tasks
+
+  ![task_image](src/me5413_world/media/overview2526.png)
+
+* Please ensure the objects have been successfully generated at the start of each run
+* On the lower floor, count the number of occurance of each type of numbered box (e.g. box 1, 2, 3, 4, the box numbers are randomly generated)
+* Unblock the exit from the lower level by publishing a `true` message (`std_msgs/Bool`) to the `/cmd_unblock` topic to remove the orange barrel
+  * Note that the exit can only be unblocked once and the unblocked time lasts for 10s
+* Exit the lower level
+* Go up the ramp to the upper level
+* Navigate past the first two corridors
+* At the wall with the two gaps, an orange traffic cone will be randomly placed in one of them closing the entrance, use the other door to navigate into the upper floor main room
+* Avoid the simulated person (represented by the moving red cylinder) 
+* Finally, stop the Jackal in the room containing the numbered box with the least number of occurance
+* Please do not use any of the ground truth topics such as `/gazebo/ground_truth/state` or `/box_odom`
+
+### 3. Submission
+
+Please submit the following for the project:
+  * Code to be submitted via your own Github repo link (Please make the repo public during submission)
+  * Demo Video of your robot completing the tasks autonomously in a single run
+  * Generated map files
+  * Presentation (10 minutes), live demo of your robot (5 minutes), Q&A (3 minutes)
+  * Report of max 10 pages (Please be concise)
+  * In your report and presentations, please cover the following:
+    * Perception, mapping & localization, navigation solutions
+    * Challenge(s) faced and how you overcame them
+  * Interesting ways to solve the challenges and well documented github commits will be much appreciated by the TAs
+  * Also there is a hidden "5413" in the simulation, kudos to those who managed to map it in as well!
 
 ## Contribution
 
-You are welcome contributing to this repo by opening a pull-request
+If you managed to find any bugs, you are welcome to contribute to this repo by opening a pull-request
+
+If you require any clarifications on the task or to operate the simulation, please raise them on Canvas
 
 We are following:
 
