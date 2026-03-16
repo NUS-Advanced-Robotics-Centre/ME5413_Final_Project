@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  # ROS Noetic image
+  nvidia-ros-noetic:
+    image: nvidia-ros-noetic
+    container_name: nvidia-ros-noetic
+    build:
+      context: .
+      dockerfile: docker/nvidia-ros-noetic.Dockerfile
+    network_mode: host
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ${XAUTHORITY:-$HOME/.Xauthority}:/root/.Xauthority
+
+  dev-overlay:
+    extends: nvidia-ros-noetic
+    image: dev-overlay
+    container_name: dev-overlay
+    build:
+      context: .
+      dockerfile: docker/dev-overlay.Dockerfile
+    network_mode: host
+    volumes:
+      - ./src:/appuser/catkin_ws/src:rw
+    command: sleep infinity
